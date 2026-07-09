@@ -27,5 +27,6 @@ jobs:
 
       - name: no stale references
         run: |
-          ! grep -rn "Start here" --include="*.md" .
+          # SETUP-FOR-CLAUDE.md legitimately names the old "Start here" page in its update path
+          ! grep -rn "Start here" --include="*.md" --exclude=SETUP-FOR-CLAUDE.md .
           ! grep -rn "claude-skills" --include="*.md" .

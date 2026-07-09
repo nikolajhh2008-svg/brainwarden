@@ -1,7 +1,6 @@
-# Home
-
 Your brain at a glance. You can't get lost: every path leads back here.
-(Claude fills and updates this page — starting during setup.)
+(Claude fills and updates this page — starting during setup. No heading
+here on purpose — Obsidian already shows the filename as the title.)
 
 ## Right now
 <!-- Claude: active projects as wikilinks with a one-line status each, e.g. "- exam-prep-biology - next: summarize chapter 3"; below them one "Areas:" line linking every area note -->

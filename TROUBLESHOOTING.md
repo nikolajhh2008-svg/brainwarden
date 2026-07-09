@@ -65,6 +65,12 @@ ask Claude — the brain is versioned, nothing is ever truly gone.
 adopt your existing structure (scan, map, add only what's missing)
 instead of overwriting anything.
 
+**A newer kit version came out — how do I update?** One sentence to
+Claude: *"Update my brainwarden setup from
+https://github.com/nikolajhh2008-svg/brainwarden — follow the Updating
+section in SETUP-FOR-CLAUDE.md."* Your notes are never touched; updates
+only replace skills, the search tool and the dashboard scaffolding.
+
 **How do I uninstall completely?** Three things and you're clean:
 `rm -rf ~/Brain` (or keep it — it's just Markdown), delete the five
 `brain-*` folders from `~/.claude/skills/`, and remove the "Brain" block

@@ -192,3 +192,22 @@ Hand over with a 30-second demo of the five verbs, each one line:
 sourced facts). Finish with one sentence on how to extend later: "Ask me
 to add a module, rename an area, or change the language — the structure
 grows with you."
+
+## Updating a vault built with an older kit version
+
+Someone already ran this setup before? Never rebuild — update in place.
+Their notes are sacred; an update only ever replaces kit infrastructure
+(skills, search tool, dashboard, rules):
+
+1. **Fresh clone** of this repo (old clones may predate a history rewrite
+   — if `git pull` errors, delete the old clone folder and re-clone).
+2. **Skills:** replace the old `brain-*` folders in `~/.claude/skills/`
+   with the current five from `skills/`. If their skills were
+   personalized (translated, custom paths), diff first and port the new
+   features instead of overwriting — ask, don't assume.
+3. **Vault additions, never content changes:** create `Home.md` from the
+   template and fill its blocks from their real notes; if an old
+   `Start here.md` exists, fold its links into Home, update backlinks to
+   it, then remove it; refresh `.tools/search.py` with the current
+   version; update the Commands section of their vault `CLAUDE.md`.
+4. Re-run the Step-7 checklist, then `git commit -m "kit update"`.
