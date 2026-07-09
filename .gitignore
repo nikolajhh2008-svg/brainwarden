@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+*.swp
+.obsidian/
+__pycache__/
+*.pyc
