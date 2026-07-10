@@ -117,10 +117,16 @@ you want it.
 
 - **Never used Obsidian or Claude Code?** → **[TUTORIAL.md](TUTORIAL.md)**
   — zero to a running brain, with a checkpoint after every stage.
-- **Terminal not your thing?** Install [VS Code](https://code.visualstudio.com)
-  with the [Claude Code extension](https://code.claude.com/docs/en/vs-code)
-  (`Cmd/Ctrl+Shift+X` → search "Claude Code" → Install): a graphical chat
-  panel, no command line — paste the same Quickstart sentence there.
+- **Terminal not your thing?** Two graphical ways, same Quickstart
+  sentence pasted there instead:
+  [Claudian](https://github.com/YishenTu/claudian) puts Claude Code
+  directly **inside Obsidian** (install from Community Plugins; desktop
+  only, needs the Claude Code CLI installed once) — you chat right next
+  to your notes. Honest heads-up: its default permission mode gives the
+  agent broad rights without asking; for a vault of personal notes,
+  switch to a stricter mode in its settings first. Alternative: the
+  [Claude Code extension for VS Code](https://code.claude.com/docs/en/vs-code)
+  — a chat panel, no command line.
 - **Comfortable with Claude Code?** The fast lane:
   ```bash
   git clone https://github.com/nikolajhh2008-svg/brainwarden
@@ -224,6 +230,16 @@ the system itself needs none.
 - **Deterministic search first** — `search.py` finds the relevant notes;
   Claude reads hits, not the whole vault (saves context). And what search
   can't find — the things you forgot to ask — the weekly review surfaces.
+
+## Privacy
+
+Everything lives on your machine: your notes in `~/Brain` (yours,
+Git-versioned), the five skills in `~/.claude/skills/`, one opt-in block
+in `~/.claude/CLAUDE.md`. The kit itself makes no network calls and has
+no telemetry. What Claude sends to Anthropic while working is governed
+by your own Claude Code settings — not by this kit. Web research and the
+setup's computer scan only ever run with your explicit consent, and the
+full uninstall is three deletions ([SECURITY.md](SECURITY.md)).
 
 ## Contributing
 

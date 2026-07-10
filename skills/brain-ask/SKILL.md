@@ -1,6 +1,6 @@
 ---
 name: brain-ask
-description: Answer questions from the Brain (~/Brain) with cited notes. Use on "what does my brain know about …", "ask my brain", "what did I decide about …", "who is …", "what's the status of …", or any question about the human's own life, people, projects or past decisions.
+description: Answer questions from the Brain (~/Brain) with cited notes. Use when the user says "what does my brain know about …", "ask my brain", "what did I decide about …", "who is …", "what's the status of …", or when any question is about their own life, people, projects or past decisions.
 ---
 
 # Brain ask (the librarian)
@@ -10,9 +10,11 @@ the human's OWN notes, shows where every claim comes from, and is honest
 about what the brain does not know.
 
 ## Steps
-1. **Search first, wide:** `python3 ~/Brain/.tools/search.py <terms>` with
-   2–3 term variants (synonyms, the person's name, the project slug).
-   Then read ONLY the hits — never the whole vault.
+1. **Prime, then search wide:** skim `~/Brain/Home.md` first (the living
+   dashboard — it often already frames the answer). Then
+   `python3 ~/Brain/.tools/search.py <terms>` with 2–3 term variants
+   (synonyms, the person's name, the project slug) and read ONLY the
+   hits — never the whole vault.
 2. **Answer from the notes**, in the vault language, citing every source
    note as a `[[link]]` so they can click into it in Obsidian. The notes'
    content outranks your general knowledge — if the vault and your

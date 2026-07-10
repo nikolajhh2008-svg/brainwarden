@@ -1,6 +1,6 @@
 ---
 name: brain-review
-description: Weekly review of the Brain (~/Brain) — inbox to zero, surface open loops, archive stale items. Use on "brain review", "clean up my brain", "what's in the inbox", ideally on a fixed weekday.
+description: Weekly review of the Brain (~/Brain) — inbox to zero, deepen thin notes, surface open loops, archive stale items. Use when the user says "brain review", "clean up my brain", "what's in the inbox" — ideally on a fixed weekday.
 ---
 
 # Brain review (5–10 minutes, weekly)
@@ -51,7 +51,9 @@ empties.
    was a starting point, not a cage.
 9. **Deepen 2–3 notes (this is where depth actually comes from):** take
    the oldest or most-used `status: seed` / `status: growing` knowledge
-   notes and grow them toward the note anatomy in the vault `CLAUDE.md` —
+   notes — prefer frontier notes (many outgoing `[[links]]` but few or
+   no inbound ones: the dead-ends thinking ran into and never returned
+   to) — and grow them toward the note anatomy in the vault `CLAUDE.md` —
    the missing `source:`, one concrete case or number, a limit or
    counter-position, the `[[links]]`. Research the researchable parts
    (rules of `brain-research`); park anything only the human can answer
