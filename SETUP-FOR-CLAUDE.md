@@ -10,6 +10,10 @@ their brain work — never before.
 
 ## Step 0 — You are the guide
 The human may not know this kit, Obsidian, or Git. **You drive:**
+- Speak the human's language: from your very first reply, run the
+  entire conversation (checks, questions, explanations) in the
+  language they use with you — this runbook is English, the
+  conversation is theirs.
 - Given only the repo URL? Clone it yourself first:
   `git clone https://github.com/nikolajhh2008-svg/brainwarden.git`
 - Check ALL prerequisites before starting: **Obsidian** installed (if
@@ -55,7 +59,8 @@ Fresh install (ONLY into an empty/new `~/Brain`):
 **Adopting an existing vault? NEVER run that copy over it** — `cp -R`
 silently overwrites files they may already have (their own `Home.md`,
 `About me.md` …). Copy only what's missing instead:
-`cd vault-template && cp -Rn . ~/Brain/` (`-n` = never overwrite a file
+`cd vault-template && cp -Rn . ~/Brain/` (`-n` = never overwrite a file; on macOS BSD-cp exits NON-ZERO when it skips existing files —
+that exit code is expected here, never retry without `-n`
 that exists), then check nothing of theirs changed before going on.
 
 **If they already had a `Home.md`,** `cp -n` correctly skipped the
@@ -67,9 +72,14 @@ links in. Do this BEFORE Step 3b — every later "fill Home" instruction
 assumes the blocks exist.
 
 Verify: `~/Brain/CLAUDE.md` and `~/Brain/.tools/search.py` exist. You may
-delete the cloned repo folder after setup — mention it.
+delete the cloned repo folder after setup — mention it. Before
+deleting, copy `INTERVIEW.md` into the vault
+(`cp INTERVIEW.md <vault>/.tools/`) so the deep interview keeps its
+script when they ask for it weeks later.
 
 ## Step 2 — Install the skills
+Installed the kit as a Claude Code plugin? The five skills are already
+loaded — skip this step.
 Check for name collisions first: if `~/.claude/skills/brain-capture`
 (or -ingest / -review / -research / -ask) already exists, STOP and ask —
 never overwrite an existing skill silently. Then
@@ -120,7 +130,13 @@ move) and enrich them. Never create a duplicate next to their original.
    `About me.md`, `Deadlines.md`, `00-inbox/raw/README.md`, the decision
    template `40-decisions/_template.md` and the `_templates/` into it
    (keep the `{{…}}` placeholder tokens; the vault's `CLAUDE.md` stays
-   English by design — it is read by Claude, not by them).
+   English by design — it is read by Claude, not by them). Keep
+   untranslated: the kit FILE NAMES (`Home.md`, `Deadlines.md`,
+   `About me.md`, `Inbox rule.md`), the four Home block headings,
+   frontmatter values (`type:`, `status: seed/growing/evergreen`) and
+   command words (`capture:`, `brain review`) — only content
+   translates. Replace `{{LANGUAGE}}` with the ENGLISH language name
+   (e.g. `German`).
 5. **Show it:** have them open Obsidian ("Open folder as vault" →
    `~/Brain`) and click **Home**. A populated brain, minutes in, before
    any interview — that moment is the point of this whole step.
@@ -145,7 +161,9 @@ nothing — modules can be added any time later by just asking Claude
 ### 3d. What is fixed vs. free (tell them this!)
 - **Fixed (the skills depend on it):** English top-level folder names for
   `00-inbox`, `10-projects`, `20-areas`, `30-knowledge`, `40-decisions`,
-  `90-archive` — and the numbered-prefix scheme.
+  `90-archive` — the numbered-prefix scheme, the kit file names
+  (`Home.md`, `Deadlines.md`, `About me.md`, `Inbox rule.md`) and the
+  four Home block headings (their CONTENT is free).
 - **Free:** everything else — area names, module folders (50–80), all
   content language, templates (delete what they won't use), even the
   weekly review day.
@@ -183,6 +201,10 @@ adopted iCloud vault, a different name, several machines):
   git commit).
 ```
 
+Re-running the setup? `grep "Brain vault:" ~/.claude/CLAUDE.md`
+first — if the block exists, REPLACE it instead of appending a
+second one.
+
 This block is what makes the brain ambient: EVERY future Claude session —
 whatever project is open — knows where the brain lives and when to write
 to it. Without it, the brain only exists inside the vault folder.
@@ -206,7 +228,8 @@ The brain is already usable. Offer the deepening, don't impose it:
   with the per-block nudges, in the vault language. Style models:
   `examples/`. Afterwards refresh `Home.md` and commit.
 - **Later:** write one note to `00-inbox/` ("run the onboarding
-  interview — say: *interview me for my brain*") and list it under Home's
+  interview — say: *interview me for my brain* — script:
+  `.tools/INTERVIEW.md`") and list it under Home's
   "Open questions". Never pressure — the interview also works in pieces.
 
 Either way, if anything changed after Step 5's baseline commit:
@@ -265,7 +288,10 @@ Their notes are sacred; an update only ever replaces kit infrastructure
    personalized (translated, custom paths), diff first and port the new
    features instead of overwriting — ask, don't assume.
 3. **Vault additions, never content changes:** create `Home.md` from the
-   template and fill its blocks from their real notes; if an old
+   template and fill its blocks from their real notes — in the VAULT'S
+   language (read `{{LANGUAGE}}`'s value from the vault CLAUDE.md and
+   re-translate kit text, never paste the English template over a
+   translated Home); if an old
    `Start here.md` exists, fold its links into Home, update backlinks to
    it, then remove it; refresh `.tools/search.py` with the current
    version; and refresh the whole kit-owned vault `CLAUDE.md` from the

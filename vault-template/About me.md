@@ -6,4 +6,5 @@ created: {{DATE}}
 
 # About me
 
-(Filled during the onboarding interview — see SETUP-FOR-CLAUDE.md, step 6.)
+(Filled during the onboarding interview — just say:
+*interview me for my brain*.)

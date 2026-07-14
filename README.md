@@ -23,6 +23,8 @@ you already have, wherever it lives.
 
 ## Quickstart
 
+> Deutsch? Kurzanleitung in [LIESMICH.md](LIESMICH.md).
+
 You need [Obsidian](https://obsidian.md) (free), a Claude subscription
 with [Claude Code](https://claude.com/claude-code), and about 20
 minutes. Open Claude Code (`claude` in your terminal) and say one
