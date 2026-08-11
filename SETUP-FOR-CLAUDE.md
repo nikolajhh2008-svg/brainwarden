@@ -615,6 +615,7 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    making: there a human owner does open the rules file, so translate it
    too if they ask.)
    Keep untranslated: the kit FILE NAMES, every HTML marker comment,
+   the two supersede keywords (`Supersedes` / `Superseded by`),
    frontmatter keys and values (`type:`, `maturity: seed/growing/
    evergreen`, `status: draft/stable/deprecated`) and command words
    (`capture:`, `brain review`) — only prose translates.

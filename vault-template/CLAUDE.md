@@ -143,7 +143,10 @@ replaces another, an agent that searches its way into the OLD file must
 find the pointer there, otherwise two plausible versions compete. New
 file gets a `## Status` section with
 `Supersedes [40-decisions/2026-05-10-old.md](40-decisions/2026-05-10-old.md)`,
-old file gets `Superseded by [<path>](<path>)` appended — real relative
+old file gets `Superseded by [<path>](<path>)` appended. **Both keywords
+stay English even in a translated vault** — like the frontmatter values, and
+for a hard reason: `ersetzt` is an ordinary German verb, so a tool matching
+the translated word would flag normal prose as a broken chain — real relative
 paths, rest of the old file untouched.
 
 - Inbox captures need NO frontmatter (zero friction) — added at review time.

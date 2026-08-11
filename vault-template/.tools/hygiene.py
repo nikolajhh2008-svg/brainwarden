@@ -176,7 +176,11 @@ def vault_mode(root):
                     errors="ignore").read()
     except OSError:
         return "personal"
-    m = re.search(r"^\*\*Vault mode:\s*([a-z]+)", text, re.M | re.I)
+    # The label gets translated ("Betriebsart:", "Mode du coffre :"), the
+    # VALUE does not — the kit freezes personal|professional|company. So key
+    # off the value on a line that looks like a mode declaration.
+    m = re.search(r"^\*\*[^\n:]{0,40}:\s*(personal|professional|company)\b",
+                  text, re.M | re.I)
     if m and m.group(1).lower() in ("personal", "professional", "company"):
         return m.group(1).lower()
     # A company overlay says so in its heading even before setup fills the line
@@ -225,7 +229,13 @@ def main():
         if not is_infra(rel) and not unlinked_ok(rel) and not inbound[rel]:
             orphans.append(rel)
         words = len(body(text).split())
-        if not is_infra(rel) and words < NEAR_EMPTY_WORDS:
+        # Inbox captures are SUPPOSED to be short — friction there costs
+        # captures, which is the failure this kit exists to prevent. Counting
+        # them as a defect punishes exactly the behaviour the rules ask for,
+        # and someone coming back after three weeks would read "six notes too
+        # thin" instead of "six things you remembered".
+        if not is_infra(rel) and words < NEAR_EMPTY_WORDS \
+                and top_folder(rel) != "00-inbox":
             near_empty.append(f"{rel} ({words} words)")
         if is_infra(rel) or top_folder(rel) == "00-inbox":
             continue                     # inbox captures need no frontmatter
@@ -274,7 +284,17 @@ def main():
     no_index = [line for _, line in sorted(no_index, reverse=True)]
 
     chains, seen = [], set()
-    sup, supby = re.compile(r"supersedes\b", re.I), re.compile(r"superseded by\b", re.I)
+    # Both directions, in every language a translated vault might use. A
+    # vault whose rules file was translated writes "Ersetzt durch" — matching
+    # only the English would report "0 one-sided chains" on a vault full of
+    # them, which is worse than not checking at all.
+    # The keywords stay ENGLISH even in a translated vault — same rule as for
+    # frontmatter values, and for a hard reason: "ersetzt" is an ordinary German
+    # verb ("this folder replaces no system"), so matching it would flag normal
+    # prose as a broken chain. Translated forms are still recognised, but only
+    # at the start of a line, where a status note stands and prose does not.
+    sup = re.compile(r"(supersedes\b|^\s*ersetzt(?! durch)\b|^\s*remplace\b)", re.I | re.M)
+    supby = re.compile(r"(superseded by\b|^\s*ersetzt durch\b|^\s*remplacé par\b)", re.I | re.M)
     for rel in sorted(v.notes):
         for keyword, back, phrase in ((sup, supby, "Superseded by"), (supby, sup, "Supersedes")):
             for target, line, raw in v.links(rel, keyword):
