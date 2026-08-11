@@ -45,3 +45,30 @@ macOS, Linux and Windows.
 the reminder feels frequent; shorter if too much slips through. If you find
 yourself annoyed by it, that is a signal the window is wrong — not that the
 net is wrong.
+
+## `session_queue.py`
+
+**What it is for.** The capture check fires when nothing has reached the
+brain for hours. The weekly sweep looks at changed files and git logs.
+Both are blind to the same person: someone who spends the week in an ERP,
+on the phone and in a warehouse leaves no files and no commits. Their week
+is invisible.
+
+This hook leaves a trace. When a session ends it appends one line to a
+queue file — when, which project, which session, why it ended. The weekly
+review reads it and asks about the sessions it has not seen: *what came out
+of this one?*
+
+**What it records:** that a session happened. **What it does not record:**
+anything that was said. It does not read the transcript, does not call a
+model (a `SessionEnd` hook has 1.5 seconds — anything that thinks does not
+fit), and does not write into the vault. Only the review turns a queue line
+into a note, with a human in the room.
+
+That restraint is the point. The reliable way to kill a personal knowledge
+system is to make it feel like surveillance — and a work vault that seems
+to report upwards gets bypassed, not filled.
+
+**Read it any time:** `python3 <vault>/.tools/harvest.py --queue`
+**Install:** see the header of the script. **Uninstall:** delete the file,
+the settings entry and the queue.

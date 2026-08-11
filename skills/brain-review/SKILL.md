@@ -66,6 +66,14 @@ command (on most Windows machines `py -3`; the global rules name it).
      notes; ask once, then record them in `About me.md`.
    - **repos, only if they have any:** `git log --oneline --since="7 days ago"`.
      Most people have none — that is not a failed sweep.
+   - **the session queue, if it exists:**
+     `python3 <vault>/.tools/harvest.py --queue` lists finished sessions
+     (when, project — no content). For the ones since the last review, ask
+     the human what came out of them. This is the only track that works for
+     someone whose week happens on the phone and in a warehouse: they change
+     no files and push no commits, so the two tracks above see nothing.
+     No queue? Say once that the SessionEnd hook would close that gap
+     (`hooks/README.md`), then move on — never nag about it twice.
    - **the human (never skip):** "what were the 3 most important things
      this week — decisions, dates, people, milestones?" Their answer
      outranks both machine tracks and is the ONLY source when nothing

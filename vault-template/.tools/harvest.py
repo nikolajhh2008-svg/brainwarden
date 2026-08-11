@@ -195,8 +195,38 @@ def candidates(root, since, cap):
         print(f"\n… and {len(kept) - cap} more (raise with --max)")
     return 0
 
+def show_queue(root_cfg):
+    """The session queue, if the SessionEnd hook is installed.
+
+    One line per finished session: when, project, id, why it ended. No
+    content — the queue records THAT something happened, never what. The
+    weekly review walks it and asks about the sessions it has not seen."""
+    path = os.path.join(root_cfg, "state", "brainwarden-session-queue.tsv")
+    if not os.path.exists(path):
+        print("No session queue at " + path)
+        print("The SessionEnd hook is not installed — see hooks/README.md.")
+        print("Without it the weekly sweep only sees changed files and git logs,")
+        print("which is nothing at all for work that happens on the phone.")
+        return 0
+    rows = [l.split("\t") for l in
+            open(path, encoding="utf-8", errors="ignore").read().splitlines() if l.strip()]
+    print(f"sessions in queue: {len(rows)}")
+    by_project = collections.Counter(r[1] for r in rows if len(r) > 1)
+    print("\nby project:")
+    for name, n in by_project.most_common(10):
+        print(f"  {n:4}  {name}")
+    print("\nmost recent:")
+    for r in rows[-15:]:
+        when, project, sid = (r + ["", "", ""])[:3]
+        print(f"  {when}  {project}  {sid[:8]}")
+    print("\nThese are sessions, not findings. The weekly review asks what came")
+    print("out of the ones it has not seen yet — that question is the point.")
+    return 0
+
 def main():
     ap = argparse.ArgumentParser(add_help=True, description=__doc__.split("\n")[0])
+    ap.add_argument("--queue", action="store_true",
+                    help="show the session queue (needs the SessionEnd hook)")
     ap.add_argument("--candidates", action="store_true",
                     help="pre-filter the transcripts (still writes nothing)")
     ap.add_argument("--since", help="only sessions from this date on (YYYY-MM-DD)")
@@ -209,6 +239,9 @@ def main():
             since = datetime.strptime(a.since, "%Y-%m-%d").date()
         except ValueError:
             print("--since needs YYYY-MM-DD"); return 1
+    if a.queue:
+        return show_queue(os.path.expanduser(
+            os.environ.get("CLAUDE_CONFIG_DIR", "~/.claude")))
     root = os.path.expanduser(a.root)
     return candidates(root, since, a.max) if a.candidates else inventory(root)
 
