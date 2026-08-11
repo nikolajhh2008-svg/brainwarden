@@ -9,7 +9,8 @@ first hour → first week → first 30 days → 60 → 90. Nothing personal
 about the individual is stored here — an onboarding note describes the
 path, never how well someone walked it. Anything a newcomer stumbles
 over is a defect in the vault, not in the newcomer: the fix is to
-improve the note. `owner`, `audience` and `review_due` are required.
+improve the note. `owner`, `audience`, `confidentiality` and `review_due` are required
+(the same four as everywhere in this mode).
 **NOT here:** the actual procedures they will learn →
 [../50-processes/](../50-processes/index.md). What the role is
 responsible for → [../60-roles/](../60-roles/index.md). Notes about a

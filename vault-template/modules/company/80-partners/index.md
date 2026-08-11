@@ -9,8 +9,8 @@ contract path, not the numbers copied out: a stale copy is worse than a
 pointer), and our experiences as dated facts. Experiences describe the
 COMPANY's delivery ("2026-03-04 delivery three weeks late, no notice"),
 never a named contact person's character — personal assessments of
-individuals do not belong in this vault. `owner`, `confidentiality` and
-`review_due` are required. Shape:
+individuals do not belong in this vault. `owner`, `audience`, `confidentiality` and
+`review_due` are required (the same four as everywhere in this mode). Shape:
 [../_templates/partner-note.md](../_templates/partner-note.md).
 **NOT here:** internal roles → [../60-roles/](../60-roles/index.md).
 The decision to pick this partner →

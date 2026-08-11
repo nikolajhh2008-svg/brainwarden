@@ -104,9 +104,10 @@ replaces another, an agent that searches its way into the OLD file must
 find the pointer there, otherwise two plausible versions compete. New
 file gets a `## Status` section with
 `Supersedes [40-decisions/2026-05-10-old.md](40-decisions/2026-05-10-old.md)`,
-old file gets `Superseded by [<path>](<path>)` appended and its existing
-`## Status` body replaced by that pointer — never leave "in force"
-standing above a supersede notice. Real relative paths, rest untouched.
+old file: its `## Status` body is REPLACED by
+`Superseded by [<path>](<path>)` (append the section if it has none), and its
+frontmatter gets `status: deprecated`. Never leave an "in force" line standing
+above a supersede notice. Real relative paths, rest of the file untouched.
 
 - Inbox captures need NO frontmatter (zero friction) — added at review time.
 - File names: descriptive, kebab-case; date-prefixed only for episodic notes.

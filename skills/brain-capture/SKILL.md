@@ -45,8 +45,12 @@ command (on most Windows machines `py -3`; the global rules name it).
   (`python3 <vault>/.tools/search.py <topic>`), then write both sides: the
   new record gets a `## Status` section with
   `Supersedes [40-decisions/<old>.md](40-decisions/<old>.md)`, and the OLD
-  file gets `## Status` + `Superseded by [40-decisions/<new>.md](…)`
-  appended at the end — nothing else in it changes.
+  file: its `## Status` body is REPLACED by
+  `Superseded by [<path>](<path>)` (append the section if it has none), and
+  its frontmatter gets `status: deprecated`. Never leave an "in force" line
+  standing above a supersede notice — an agent greps the first `## Status`
+  and believes it. Nothing else in the old record changes; this one section
+  is the only exception to append-only.
 - **Dates:** a capture with a concrete date/deadline ALSO gets a one-liner
   in `<vault>/Deadlines.md` right away (date first) — dates never wait for
   the weekly review. If it lands in the next ~3 dates, refresh the "Next

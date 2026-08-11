@@ -204,6 +204,14 @@ command (on most Windows machines `py -3`; the global rules name it).
   valid entry; never invent impact.
 
 ## Company mode (only when the vault `CLAUDE.md` names the mode `company`)
+- **`00-inbox/suggestions/` goes to zero too — it is step 1 for a second
+  folder.** Each suggestion leaves through exactly one exit: (a) the person
+  who may release it says yes → move it to its folder, set `status: stable`
+  and let THEM fill `verified:`; (b) it needs a decision they cannot make
+  today → leave it and name it in the report, with who has to decide;
+  (c) it is wrong or already covered → delete it and say why. A suggestion
+  that survives two reviews unanswered is a broken promise to whoever wrote
+  it — the next one never comes.
 - People become ROLES in `60-roles/` — never personal dossiers.
 - Nothing becomes company truth unattended, and the two places are not
   interchangeable: a NEW note you write goes to `00-inbox/suggestions/`

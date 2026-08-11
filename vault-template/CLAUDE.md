@@ -143,7 +143,12 @@ replaces another, an agent that searches its way into the OLD file must
 find the pointer there, otherwise two plausible versions compete. New
 file gets a `## Status` section with
 `Supersedes [40-decisions/2026-05-10-old.md](40-decisions/2026-05-10-old.md)`,
-old file gets `Superseded by [<path>](<path>)` appended. **Both keywords
+old file: its `## Status` body is REPLACED by
+  `Superseded by [<path>](<path>)` (append the section if it has none), and
+  its frontmatter gets `status: deprecated`. Never leave an "in force" line
+  standing above a supersede notice — an agent greps the first `## Status`
+  and believes it. Nothing else in the old record changes; this one section
+  is the only exception to append-only. **Both keywords
 stay English even in a translated vault** — like the frontmatter values, and
 for a hard reason: `ersetzt` is an ordinary German verb, so a tool matching
 the translated word would flag normal prose as a broken chain — real relative
