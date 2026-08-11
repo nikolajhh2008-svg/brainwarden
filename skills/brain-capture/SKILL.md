@@ -1,23 +1,26 @@
 ---
 name: brain-capture
-description: Frictionless capture into the Brain (~/Brain/00-inbox). Use when the user says "capture: …", "note this down", "remember this for my brain", or when a spontaneous idea surfaces mid-session.
+description: Frictionless capture into the Brain (~/Brain/00-inbox). Use when the user says "capture: …", "note this down", "remember this for my brain", or when a spontaneous idea, decision or date surfaces mid-session.
 ---
 
 # Brain capture (zero friction)
 
-A thought becomes a file in `~/Brain/00-inbox/` IMMEDIATELY — no questions
+A thought becomes a file in `<vault>/00-inbox/` IMMEDIATELY — no questions
 about filing, no tags, no thinking. Sorting happens later at the review.
 
-**Conventions:** `~/Brain` below means the vault path recorded in your
-global rules (`Brain vault:` line) — only when none is set does it mean
-`~/Brain` literally. `python3` means your working python command
-(on most Windows machines that's `py -3`; the global rules block names
-the right one).
+**Conventions:** `<vault>` = the vault path from the `Brain vault:` line in
+your global rules (none set → `~/Brain`). `python3` = your working python
+command (on most Windows machines `py -3`; the global rules name it).
 
 ## Steps
+0. **Read `<vault>/CLAUDE.md` before the first write of the session.** It
+   carries the vault language, the schema and the mode — and unless this
+   session was started inside the vault, none of it is in your context.
+   Not there? Wrong path or unfinished setup: say so instead of writing
+   files into a random folder. (One read per session is enough.)
 1. Content = whatever follows "capture:" (or the thought from context when
    they say "capture that").
-2. Write the file: `~/Brain/00-inbox/YYYY-MM-DD-<short-slug>.md`
+2. Write the file: `<vault>/00-inbox/YYYY-MM-DD-<short-slug>.md`
    ```markdown
    # <one-line title>
 
@@ -31,13 +34,28 @@ the right one).
    Home". No essays.
 
 ## Special cases
-- **Decisions:** starts with "decision:" (or clearly is one) → write a
-  decision record to `~/Brain/40-decisions/YYYY-MM-DD-slug.md` instead
-  (template: `40-decisions/_template.md`). Append-only.
-- **Deadlines:** if the capture contains a concrete date/deadline, ALSO
-  add a one-liner to `~/Brain/Deadlines.md` right away — deadlines must
-  never wait for the weekly review. If it lands in the next ~3 dates,
-  also refresh the "Next deadlines" block in `~/Brain/Home.md`.
+- **Decisions — recognize them by MEANING, not by keyword:** the human
+  settles an open question ("decision: …", "Entscheidung: …", "décision :",
+  "we're going with Postgres", "ok, no second supplier"). Whatever language
+  or wording they used, write a decision record to
+  `<vault>/40-decisions/YYYY-MM-DD-slug.md` instead of an inbox file
+  (template: `40-decisions/_template.md`) — context, decision, rejected
+  alternatives. Append-only.
+  **Reverses an earlier decision?** Search it first
+  (`python3 <vault>/.tools/search.py <topic>`), then write both sides: the
+  new record gets a `## Status` section with
+  `Supersedes [40-decisions/<old>.md](40-decisions/<old>.md)`, and the OLD
+  file gets `## Status` + `Superseded by [40-decisions/<new>.md](…)`
+  appended at the end — nothing else in it changes.
+- **Dates:** a capture with a concrete date/deadline ALSO gets a one-liner
+  in `<vault>/Deadlines.md` right away (date first) — dates never wait for
+  the weekly review. If it lands in the next ~3 dates, refresh the "Next
+  deadlines" block in `<vault>/Home.md` too.
+  **A moved date REPLACES its line, it is never appended** — two dates for
+  one appointment is worse than none. Find the old one first:
+  `python3 <vault>/.tools/search.py <old-date> <topic>`, then update every
+  hit (Deadlines.md, the project note's log, Home.md) and say in your one
+  line which files you corrected.
 - **Reference material** ("keep this findable": a link, a quote, a
   recommendation): still just one inbox file — the review gives it the
   light treatment (tags, no atomization). Never over-process a bookmark.
@@ -47,7 +65,14 @@ the right one).
 When creating any note from a template, fill `{{DATE}}` (and `{{NAME}}`)
 with real values — placeholders never leave the `_templates/` folder.
 
+## Company mode (only when the vault `CLAUDE.md` names the mode `company`)
+Captures still go straight to the inbox. But anything about a person is
+captured as a ROLE, not a dossier, and nothing you write becomes company
+truth: a note that leaves the inbox keeps `status: draft` until a human
+sets `verified: {by: human:<name>, at: YYYY-MM-DD}`.
+
 ## Rules
 - NEVER ask "where should I file this?" — the inbox is always right.
 - One capture = one file. Two thoughts = two files.
+- Capture what they said; never add a conclusion they didn't draw.
 - Works from ANY session, whatever project is open.

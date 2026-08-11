@@ -1,8 +1,10 @@
 ---
 type: source
-tags: [source]
-source: <full reference: author (year). Title. Publisher/URL. Retrieved date>
+title: <Author (Year) — short title>
 created: {{DATE}}
+tags: [source]
+status: draft
+source: <full reference: author (year). Title. Publisher/URL. Retrieved date>
 ---
 
 # <Author (Year) — short title>
@@ -18,3 +20,6 @@ created: {{DATE}}
 <How credible/useful? What could it feed — a thesis, project, exam? 1–2 sentences.>
 
 Related: [[Home]]
+
+<!-- Several sources in one note? Use `sources:` instead of `source:`:
+     sources: [{resource: <uri>, title: <str>}, …] -->

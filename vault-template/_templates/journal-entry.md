@@ -1,7 +1,9 @@
 ---
 type: knowledge
-tags: [journal]
+title: {{DATE}}
 created: {{DATE}}
+tags: [journal]
+maturity: seed
 ---
 
 # {{DATE}}

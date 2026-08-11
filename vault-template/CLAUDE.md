@@ -11,6 +11,23 @@ they're upgrading from, and set it to the new version afterwards)
 this language (set during setup; the folder names stay English so the
 skills keep working).
 
+**Vault mode: {{MODE}}** — one of `personal`, `professional`, `company`
+(set during setup). The mode decides which folders exist; `index.md` in
+this folder is the map of THIS vault.
+
+## Navigation — read the signpost before you write
+Every folder carries an `index.md`: what belongs there, what does NOT,
+and the entry points. It is the canonical signpost for ANY agent (the
+tiny `CLAUDE.md` next to it only pulls the same file into Claude's
+context automatically).
+- Landed in a folder via search or glob? Read its `index.md` FIRST.
+- Created a note that others should start from? Add it to that
+  `index.md` under "Entry points" and bump its `generated:` marker.
+- Links inside an `index.md` are **real relative paths**, never
+  `[[wikilinks]]` — a wikilink carries no path and an agent cannot
+  resolve it. In normal notes `[[wikilinks]]` stay the rule (Obsidian).
+- An `index.md` never lists every file — only the ways in.
+
 ## Folder map (flat on purpose — folder depth is not a feature)
 | Folder | Contains | Rule of thumb |
 |---|---|---|
@@ -21,6 +38,13 @@ skills keep working).
 | `40-decisions/` | Decision records (`YYYY-MM-DD-slug.md`) | append-only |
 | `50–80` | **Reserved for YOUR modules** (journal, media log, health, money …) | added on demand |
 | `90-archive/` | Finished items from 10/20 | cold storage |
+
+**Mode differences (the mode line above says which one applies):**
+`professional` adds `50-processes/` (SOPs). `company` adds
+`50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/` and
+`00-inbox/suggestions/`, and drops `10-projects/`, `20-areas/` and
+`30-knowledge/people/` — roles instead of dossiers about people. Each of
+those folders explains its own extra rules in its `index.md`.
 
 **Why the number gaps?** They are deliberate expansion space: new
 top-level modules slot in as `50-journal/`, `60-media/` etc. without ever
@@ -33,21 +57,53 @@ needs this NOW?), never by topic taxonomy. Findability comes from
 `[[links]]`, tags and search — not from folder depth.
 
 ## Note schema (machine-readable)
-Frontmatter for every note OUTSIDE the inbox:
+Required on every note OUTSIDE the inbox:
 ```yaml
 ---
-type: knowledge | source | decision | project | area
-tags: [kebab-case, lowercase, few]
-source: <URL/book/person — only for external sources>
+type: knowledge | source | decision | project | area | person | sop | role | partner
+title: <human readable>
 created: YYYY-MM-DD
-status: seed | growing | evergreen   # maturity — knowledge notes only
+tags: [kebab-case, lowercase, few]
 ---
 ```
-- `status` (knowledge notes only) marks **maturity, not importance**:
-  `seed` = a thin first capture · `growing` = own words + a source ·
-  `evergreen` = meets the note anatomy below. The marker keeps thinness
-  HONEST and hands the weekly review its deepening candidates — it is
-  never a reason to reject or delete a thin note.
+Optional — add a field the moment it applies, never "just because":
+```yaml
+maturity: seed | growing | evergreen   # knowledge notes: how worked out is it?
+status: draft | stable | deprecated    # does it still hold? (required from professional up)
+source: <URL/book/person>              # one external source
+sources: [{resource: <uri>, title: <str>}]      # several sources
+stale_after: YYYY-MM-DD                 # from this date on, distrust it
+verified: {by: human:<name>, at: YYYY-MM-DD}     # a human confirmed it
+generated: {by: <agent>/<model>, at: YYYY-MM-DD} # an AI produced it
+```
+
+**`maturity` vs `status` — two different questions.** `maturity` (knowledge
+notes) asks how worked out a note is: `seed` = a thin first capture ·
+`growing` = own words + a source · `evergreen` = meets the note anatomy
+below. `status` asks whether the content still holds: `draft` ·
+`stable` · `deprecated`. A note can be `evergreen` and `deprecated` at
+once — beautifully worked out, and no longer true. `maturity` marks
+maturity, NOT importance: it keeps thinness HONEST and hands the weekly
+review its deepening candidates, it is never a reason to reject or
+delete a thin note.
+
+**`verified` vs `generated` — the most important distinction in this
+vault.** `verified` means a human being read this and said "yes, that is
+right". `generated` means a machine wrote it and nobody has checked it
+yet. Rule for Claude: never set `verified` yourself — that field belongs
+to the human; anything you write or fill in carries `generated` until a
+human replaces it. Old field name: what used to be
+`status: seed|growing|evergreen` is now `maturity:` — if you meet the
+old spelling in a note, rename it.
+
+**Superseding — write it on BOTH files, as plain text.** When a note
+replaces another, an agent that searches its way into the OLD file must
+find the pointer there, otherwise two plausible versions compete. New
+file gets a `## Status` section with
+`Supersedes [40-decisions/2026-05-10-old.md](40-decisions/2026-05-10-old.md)`,
+old file gets `Superseded by [<path>](<path>)` appended — real relative
+paths, rest of the old file untouched.
+
 - Inbox captures need NO frontmatter (zero friction) — added at review time.
 - File names: descriptive, kebab-case; date-prefixed only for episodic notes.
 
@@ -67,10 +123,12 @@ status: seed | growing | evergreen   # maturity — knowledge notes only
 - **Knowledge note** (`30-knowledge/`, target `evergreen`): the idea in
   your own words → the evidence (`source:` + where in it) → one concrete
   case, number or example → a limit or counter-position where one exists →
-  the `[[links]]`. Aim ~100–400 words. `seed` is allowed — the status just
-  keeps the thinness honest and flags it for a later review.
-- **Person note** (`30-knowledge/people/`): a dossier, not an index card —
-  role/relationship, verified facts, recent interactions, open questions.
+  the `[[links]]`. Aim ~100–400 words. `seed` is allowed — `maturity`
+  just keeps the thinness honest and flags it for a later review.
+  `maturity: evergreen` is only earned once all of this is actually there.
+- **Person note** (`30-knowledge/people/`, `personal`/`professional` only):
+  a dossier, not an index card — role/relationship, verified facts,
+  recent interactions, open questions.
 - **Project note** (`10-projects/`): state + the next physical action + a
   short running log; grows by at least a line every time it comes up.
 - **Area note** (`20-areas/`): the standard you hold + current state + what
@@ -79,8 +137,11 @@ status: seed | growing | evergreen   # maturity — knowledge notes only
   brevity is correct here.
 - **MOC** (only past ~150 notes): a map with 2–3 sentences of framing per
   strand, never a bare list of links.
+- **SOP / role / partner note** (company + professional modes): shape and
+  required fields live in the `index.md` of `50-processes/`, `60-roles/`
+  and `80-partners/`.
 - **Principle:** depth comes from revision rounds (the review), not the
-  first draft — captures may be thin, `status` keeps that honest.
+  first draft — captures may be thin, `maturity` keeps that honest.
 
 ## The red line — Claude gardens, it does not author
 The notes are the human's thinking in the human's words. Claude tends the
@@ -99,14 +160,19 @@ garden; it never replaces the plants.
   vault root (this folder) first — saves context; then read only the
   hits, never the whole vault. (`--stats` prints the vault's honest
   numbers: note counts, maturity distribution, review history.)
-- `Home.md` is the living dashboard — the review refreshes all four
-  blocks; deadline captures update its "Next deadlines" block right away.
-  It must always reflect the current state of the brain.
+- `Home.md` is the living dashboard for the HUMAN — the review refreshes
+  all four blocks; deadline captures update "Next deadlines" right away.
+  Address the blocks by their `<!-- block:… -->` markers, never by the
+  heading text (headings get translated, markers do not), and replace
+  only what sits between a marker pair. `index.md` is the equivalent for
+  agents — Home is prose, `index.md` is paths.
 - Incoming sources: files in `00-inbox/raw/` → skill `brain-ingest`.
 - Template per note type: knowledge → `_templates/knowledge-note.md` ·
   source → `source-note.md` · person → `person-note.md` · project →
   `project-note.md` · area → `area-note.md` · journal → `journal-entry.md`
-  · decision → `40-decisions/_template.md`. When instantiating, fill the
+  · SOP → `sop-note.md` · role → `role-note.md` · partner →
+  `partner-note.md` (the last three only exist in the modes that have
+  those folders) · decision → `40-decisions/_template.md`. When instantiating, fill the
   DATE/NAME placeholders with real values; the template files themselves
   keep their placeholder tokens forever (their prose may be translated —
   the tokens stay).
@@ -115,8 +181,10 @@ garden; it never replaces the plants.
   everywhere else, no new subfolder without a reason.
 - Before creating a people/knowledge note, search first — extend instead
   of duplicating.
-- Review hygiene: orphan notes, dead `[[links]]`, empty files.
-- Finished project / ended area → move to `90-archive/`.
+- Review hygiene: `python3 .tools/hygiene.py` reports orphan notes, dead
+  links, empty files and notes missing from their folder's `index.md`.
+- Finished project / ended area → move to `90-archive/`, and remove it
+  from the source folder's `index.md` entry points.
 - The structure may EVOLVE: if reviews show a folder or area no longer
   fits the person's life, propose the change — the onboarding interview was a
   starting point, not a life sentence.

@@ -1,7 +1,9 @@
 ---
 type: project
-tags: []
+title: <Project name>
 created: {{DATE}}
+tags: []
+status: draft
 ---
 
 # <Project name>
@@ -17,3 +19,7 @@ created: {{DATE}}
 
 ## Done means
 - <acceptance criteria — how future-me knows this can move to 90-archive/>
+
+<!-- status: draft while it is being set up · stable once it is running ·
+     deprecated if it was dropped without finishing. Finished or dropped
+     → move to 90-archive/ and remove it from 10-projects/index.md. -->

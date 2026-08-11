@@ -1,7 +1,9 @@
 ---
 type: knowledge
-tags: [me]
+title: About me
 created: {{DATE}}
+tags: [me]
+status: draft
 ---
 
 # About me
