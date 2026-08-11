@@ -48,8 +48,16 @@ COMPANY_DROPS = [
 ]
 
 
-def copy_tree(src, dst, skipped, overwrite=False):
-    """Copy contents of src into dst. Never overwrites unless told to."""
+def copy_tree(src, dst, skipped, overwrite=False, omit=()):
+    """Copy contents of src into dst. Never overwrites unless told to.
+
+    `omit` is a set of vault-relative paths that must not be copied at all.
+    Not copying beats copying-then-deleting: the delete pass could only ever
+    run once, so a SECOND run on the same company vault re-created every
+    folder the first one had removed — and then refused to clean up, because
+    by then the vault "already had content". Skipping at the source is
+    idempotent by construction.
+    """
     for root, dirs, files in os.walk(src):
         # `modules/` is kit scaffolding; the rest is build litter. Git ignores
         # bytecode caches, so a fresh clone has none — but anyone who ran the
@@ -57,10 +65,16 @@ def copy_tree(src, dst, skipped, overwrite=False):
         dirs[:] = [d for d in dirs
                    if d not in ("modules", "__pycache__", ".git")]
         rel = os.path.relpath(root, src)
+        if rel != "." and rel.replace(os.sep, "/") in omit:
+            dirs[:] = []
+            continue
         target_dir = dst if rel == "." else os.path.join(dst, rel)
         os.makedirs(target_dir, exist_ok=True)
         for name in files:
             if name == ".DS_Store" or name.endswith((".pyc", ".pyo", ".swp")):
+                continue
+            here_rel = name if rel == "." else f"{rel.replace(os.sep, '/')}/{name}"
+            if here_rel in omit:
                 continue
             target = os.path.join(target_dir, name)
             if os.path.exists(target) and not overwrite:
@@ -104,17 +118,6 @@ def keep_kit_extras(here, vault):
     return kept
 
 
-def drop(vault, rel):
-    path = os.path.join(vault, *rel.split("/"))
-    if os.path.isdir(path):
-        shutil.rmtree(path)
-        return True
-    if os.path.exists(path):
-        os.remove(path)
-        return True
-    return False
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("vault", help="where the vault goes")
@@ -137,39 +140,33 @@ def main():
         print("Nothing will be overwritten — existing files are kept and listed.")
         print("If you meant to start fresh, pick an empty folder instead.\n")
 
+    # A shared vault never receives these in the first place — see copy_tree.
+    omit = set(COMPANY_DROPS) if a.mode == "company" else set()
+
     skipped = []
-    copy_tree(template, vault, skipped)
+    copy_tree(template, vault, skipped, omit=omit)
 
     if a.mode in ("professional", "company"):
         copy_tree(os.path.join(template, "modules", "processes"), vault, skipped,
-                  overwrite=not existing)
+                  overwrite=not existing, omit=omit)
     if a.mode == "company":
         # The company overlay REPLACES core files that describe folders this
         # mode does not have — a signpost pointing at a missing folder makes
         # the whole navigation lie. On an adopted vault we do not overwrite;
         # the runbook walks that case by hand.
         copy_tree(os.path.join(template, "modules", "company"), vault, skipped,
-                  overwrite=not existing)
-        if existing:
-            # NEVER delete inside a folder that already held something. The
-            # drop list exists to remove scaffolding this script just copied
-            # — run against a populated folder it deleted the person's own
-            # `10-projects/` while the header promised nothing would be
-            # overwritten. A tool that says "nothing will be lost" and then
-            # loses something is worse than one that refuses.
-            present = [r for r in COMPANY_DROPS
-                       if os.path.exists(os.path.join(vault, *r.split("/")))]
-            if present:
-                print("\nNOT removed, because this folder already had content:")
-                for r in present:
-                    print(f"    {r}")
-                print("  These do not belong in a shared vault. Move what you")
-                print("  need out of them, delete them yourself, and check the")
-                print("  adopt path in the setup runbook (step 3c) first.")
-        else:
-            removed = [r for r in COMPANY_DROPS if drop(vault, r)]
-            if removed:
-                print(f"removed (not part of a shared vault): {len(removed)} items")
+                  overwrite=not existing, omit=omit)
+        # Anything on the list that is here now came from the FOLDER, not from
+        # this script. Never delete it — say what it is and let a human decide.
+        present = [r for r in COMPANY_DROPS
+                   if os.path.exists(os.path.join(vault, *r.split("/")))]
+        if present:
+            print("\nAlready in this folder, and not part of a shared vault:")
+            for r in present:
+                print(f"    {r}")
+            print("  Nothing was deleted. Move what you need out of them, then")
+            print("  remove them yourself — and read step 3c of the runbook,")
+            print("  which walks adopting an existing vault by hand.")
 
     kept = keep_kit_extras(here, vault)
 
@@ -179,6 +176,7 @@ def main():
     print(f"  {folders} folders · template: {os.path.relpath(template, here)}")
     if kept:
         print(f"  kept for later (survives deleting this repo): {', '.join(kept)}")
+    skipped = list(dict.fromkeys(skipped))     # core + overlays can name the same file
     if skipped:
         print(f"\n  {len(skipped)} existing files left untouched:")
         for s in skipped[:10]:

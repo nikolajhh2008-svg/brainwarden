@@ -266,6 +266,19 @@ def check_kit_portability():
 
 
 # ------------------------------------------------------ 4. the assembled vaults
+def file_inventory(root):
+    """Every file under root, as vault-relative paths. Used to prove that a
+    second assemble run changes nothing."""
+    out = set()
+    for dirpath, dirs, files in os.walk(root):
+        dirs[:] = [d for d in dirs if d != "__pycache__"]
+        for name in files:
+            if name.endswith((".pyc", ".pyo")):
+                continue
+            out.add(os.path.relpath(os.path.join(dirpath, name), root))
+    return out
+
+
 def assemble(dest, mode):
     """Build a vault exactly the way the runbook builds it."""
     script = os.path.join(ROOT, "assemble.py")
@@ -343,6 +356,26 @@ def check_mode(mode, tmp):
         assemble(vault, mode)
     except RuntimeError as e:
         return bad(f"{mode} vault assembles", str(e)[:120])
+
+    # Run it a SECOND time on the same folder before anything else touches
+    # it. This check exists because that case was broken and invisible: the
+    # company mode rebuilt every folder it had just removed, then refused to
+    # clean up because the vault "already had content". Assembling always
+    # into a fresh temp directory is exactly what hid it.
+    before = file_inventory(vault)
+    try:
+        assemble(vault, mode)
+    except RuntimeError as e:
+        return bad(f"{mode} assembles twice", str(e)[:120])
+    after = file_inventory(vault)
+    if before != after:
+        added = sorted(after - before)[:4]
+        bad(f"{mode} assembles twice",
+            f"second run changed the vault: +{len(after - before)} "
+            f"-{len(before - after)} ({', '.join(added)})")
+    else:
+        ok(f"{mode} assembles twice")
+
     set_mode(vault, mode)
 
     try:

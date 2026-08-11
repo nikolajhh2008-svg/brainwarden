@@ -194,7 +194,7 @@ Default paths, offered — never imposed:
 | Mode | Default path | Started with |
 |---|---|---|
 | `personal` | `~/Brain` | `claude` (Step 4) |
-| `professional` | `~/Brain-work` | `workbrain` |
+| `professional` | `~/Brain-work` | `claude` — as a SECOND brain next to a private one: `workbrain` (Step 4b) |
 | `company` | `~/Brain-<company-slug>` (e.g. `~/Brain-acme`) | `teambrain` |
 
 **First check whether the target path already exists.** If it does: STOP
@@ -233,7 +233,10 @@ path a first-time user walks: the scaffolding is never copied instead of
 being copied and then deleted. And it behaves identically on macOS,
 Linux and Windows, where `cp -R`, quoting and `rm -rf` do not.
 
-**It never overwrites.** Existing files are kept and listed at the end.
+**It never overwrites anything that was already there.** Files that
+existed before you ran it are kept and listed at the end. (The overlays
+DO replace core files the script itself just copied a moment earlier —
+that is the next paragraph, and a different thing entirely.)
 That makes a wrong path a non-event rather than a catastrophe — but it is
 NOT the adopt path: for an existing vault, follow 3c, which has steps a
 copy tool cannot do (folding their `Home.md` into the new one by hand).
@@ -315,6 +318,13 @@ The rest of adopting:
   assumes the marker pairs exist.
 - On an adopted vault, **never delete a folder** because this mode does
   not use it (3d). Leave it, and note it under Home's "Open questions".
+- **`company`: check which `CLAUDE.md` you ended up with.**
+  `head -1 <vault>/CLAUDE.md` must say *shared company knowledge vault* —
+  if it says *personal knowledge vault*, `cp -Rn` kept the core file and
+  the binding rules now describe projects, areas and person notes that do
+  not exist here. `hygiene.py` must report `mode: company`. Copy the
+  company versions of `CLAUDE.md`, `Home.md`, `Deadlines.md` and the five
+  `index.md` over by hand, one OK per file.
 
 ### 3d. What must exist afterwards
 
@@ -389,12 +399,19 @@ exist — an index that lists a folder the mode does not have is exactly
 the lie this system exists to prevent.
 
 ### 3f. What survives deleting the repo
-`assemble.py` already put three things into `<vault>/.tools/` that are
-needed AFTER the setup, when the cloned repo is usually gone:
-`INTERVIEW.md` (the deep interview is meant to happen weeks later) and
-`hooks/` (offered in Step 8c as something to come back for, not to
-install now). It prints them under "kept for later" — no command of your
-own needed here.
+On the fresh path (3b), `assemble.py` already put two things into
+`<vault>/.tools/` that are needed AFTER the setup, when the cloned repo is
+usually gone: `INTERVIEW.md` (the deep interview is meant to happen weeks
+later) and `hooks/` (three files, offered in Step 8c as something to come
+back for, not to install now). It prints them under "kept for later" — no
+command of your own needed there.
+
+**On the adopt path (3c) they are missing** — `cp -Rn` does not bring
+them, because they do not live in `vault-template/`. Copy them yourself
+before you go on, or 3f, 8b and 8c all point at files that are not there:
+
+    cp INTERVIEW.md <vault>/.tools/
+    cp -R hooks <vault>/.tools/hooks
 
 `.tools/` is kit infrastructure, not vault content: it is excluded from
 search and from the placeholder check in Step 9. Never edit those copies,
@@ -460,7 +477,10 @@ below stands for `~/.claude-work` (professional) or
    ```bash
    alias workbrain='CLAUDE_CONFIG_DIR=~/.claude-work claude'
    ```
-   (`company`: `alias teambrain='CLAUDE_CONFIG_DIR=~/.claude-acme claude'`)
+   (`company`: `alias teambrain='CLAUDE_CONFIG_DIR=~/.claude-acme claude'`
+   — but do NOT copy the skills there: in `company` mode they already sit
+   in `<vault>/.claude/skills/` from Step 4a, and the separate
+   configuration directory only keeps sessions and settings apart.)
 4. `source ~/.zshrc` (or open a new terminal), then `workbrain` starts
    Claude Code with the work brain's rules, skills and sessions only.
 
@@ -627,16 +647,30 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
 1. **Set language and mode:** replace `{{LANGUAGE}}` (the ENGLISH name of
    the language, e.g. `German`) and `{{MODE}}` (`personal`,
    `professional` or `company`) in `<vault>/CLAUDE.md` and in the root
-   `index.md`. In `company` mode additionally: `{{COMPANY}}` in
+   `index.md`. In `company` mode both files already name the mode
+   literally — there only `{{LANGUAGE}}` is left, and the
+   `(NOT SET — …)` warning from Step 9 can never fire. In `company` mode additionally: `{{COMPANY}}` in
    `About this vault.md` and `70-onboarding/onboarding-path.md`, plus
    **every** `<…>` angle-bracket field — they sit in three files, not
    one: `About this vault.md` (owner, purpose, who may read, who may
    release, and `review_due:`), `Deadlines.md` (`owner:`, `review_due:`)
    and `70-onboarding/onboarding-path.md` (`owner:`, `review_due:`).
-   `review_due:` gets today + 12 months. **No check catches these** — the
-   placeholder scan looks for `{{…}}`, and `hygiene.py` accepts any
-   non-empty value — so find them by looking:
-   `grep -rn "owner: <\|review_due: <" <vault> --exclude-dir=_templates`.
+   `review_due:` gets today + 12 months. Three of the nine are prose, not
+   frontmatter (`**What it is for:**`, `**Who may read it:**`,
+   `**Who may release content:**`), so a frontmatter-only grep misses
+   them. **No check catches any of this** — the placeholder scan looks for
+   `{{…}}`, and `hygiene.py` accepts any non-empty value. Find them by
+   looking:
+
+       grep -rn "<[A-Za-z][^>]*>" <vault> --include="*.md" \
+            --exclude-dir=_templates --exclude-dir=.tools \
+            --exclude=CLAUDE.md --exclude=_template.md
+
+   Nine of its hits are the fields; three are command examples that must
+   stay as they are (`search.py <terms>`, `capture: <thought>`,
+   `{by: human:<name>, at: <date>}`). `<vault>/CLAUDE.md` is excluded on
+   purpose: its `owner: <role …>` is the schema EXAMPLE inside a fenced
+   block, not a field. Editing it there breaks the rules file.
 2. If the language is not English, translation happens in TWO waves.
    Measured: a full pass is 23–25 files, which does not fit inside "the
    first win within minutes" — and most of those files the human never
@@ -691,7 +725,9 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    personal dossier, and decision records name the deciding **role**.
 5. **`{{DATE}}`:** replace it with today's date in the self page and
    `Deadlines.md`, and with the real date in every note you created from
-   a template. **`company` mode: also `THIS-COPY.md`, which carries it
+   a template. **`professional` mode: also `handover.md`** — it arrives
+   with the processes overlay, sits in the vault root and carries one
+   `{{DATE}}` that nothing else in this runbook mentions. **`company` mode: also `THIS-COPY.md`, which carries it
    FOUR times** — the copy's date, `created:`, the first changelog line,
    and `review_due:`. The first three get today. **`review_due:` gets
    today + 12 months**: set to today, the vault reports itself expired the
@@ -709,11 +745,18 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    stay.
 
 ## Step 6 — Global rules
+
+**`company`: skip this whole step.** A shared vault deliberately gets no
+global rules block anywhere. Its skills travel inside it (Step 4a), and a
+session started in the vault folder finds the mode in `<vault>/CLAUDE.md`.
+A global line would point every private session at company content —
+exactly what the mode is built to prevent. Everything below applies to
+`personal` and `professional`.
+
 With their OK, write this block into the rules file **of this vault's
 configuration directory** — that is `~/.claude/CLAUDE.md` for the ambient
-brain, and `~/.claude-work/CLAUDE.md` (resp. `~/.claude-<company-slug>/
-CLAUDE.md`) for every additional brain from Step 4b. Create the file if it
-does not exist.
+brain, and `~/.claude-work/CLAUDE.md` for a second brain from Step 4b.
+Create the file if it does not exist.
 
 ```markdown
 ## Brain (Obsidian vault + Claude working directory)
