@@ -13,7 +13,7 @@ fail=0
 say() { printf '%-52s %s\n' "$1" "$2"; }
 bad() { say "$1" "FAIL — $2"; fail=1; }
 
-python3 -m py_compile vault-template/.tools/search.py vault-template/.tools/hygiene.py \
+python3 -m py_compile vault-template/.tools/search.py vault-template/.tools/hygiene.py vault-template/.tools/harvest.py \
   && say "tools compile" "ok" || bad "tools compile" "syntax error"
 
 ( cd vault-template && python3 .tools/search.py inbox --k 3 >/dev/null \

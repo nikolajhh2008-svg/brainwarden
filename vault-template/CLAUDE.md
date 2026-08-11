@@ -189,6 +189,10 @@ garden; it never replaces the plants.
   of duplicating.
 - Review hygiene: `python3 .tools/hygiene.py` reports orphan notes, dead
   links, empty files and notes missing from their folder's `index.md`.
+- Cold start from past sessions: `python3 .tools/harvest.py` (inventory
+  only) and `--candidates` (deterministic pre-filter). It never writes and
+  never calls a model — see Step 8a of the setup runbook for the procedure
+  and the consent rules.
 - Finished project / ended area → move to `90-archive/`, and remove it
   from the source folder's `index.md` entry points.
 - The structure may EVOLVE: if reviews show a folder or area no longer

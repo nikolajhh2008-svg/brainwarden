@@ -720,8 +720,58 @@ folder; Git plus cloud sync on the same folder is how vaults corrupt.
 Before the first push, check the vault contains no credentials and no
 personal data that does not belong there.
 
-## Step 8 — Offer the onboarding interview (recommended — but THEIR call)
-The brain is already usable. Offer the deepening, don't impose it:
+## Step 8 — Two ways to deepen: the harvest, then the interview
+
+The brain works. What it lacks is depth, and there are two sources for
+that: what the machine already recorded, and what only the human can say.
+Offer the harvest FIRST — an interview that starts from real material asks
+better questions than one starting from nothing.
+
+### 8a. The harvest (optional, `personal` and `professional` only)
+
+Claude Code keeps session transcripts in `~/.claude/projects/` as plain
+text, 30 days by default. For anyone who has used it for a while, that is
+the richest record of how they actually work that exists on their disk —
+and it expires. In a `company` vault, skip this step entirely: those
+transcripts are personal, and a shared vault is the wrong place for them.
+
+**The rule that makes this safe: nothing is read without a yes, nothing is
+written without a second yes.**
+
+1. **Inventory, reading nothing.** `python3 <vault>/.tools/harvest.py`
+   prints how many sessions exist, over what period, in which projects —
+   file metadata only, no content. Show it and ask whether to go on.
+2. **State the expiry, once.** If `cleanupPeriodDays` is unset, the
+   default is 30 days and older transcripts are already gone. Offer to
+   raise it (`~/.claude/settings.json`) — their call, and a change to
+   their configuration, so it needs an explicit yes.
+3. **Pre-filter with no model at all.**
+   `python3 <vault>/.tools/harvest.py --candidates --since <date>` drops
+   harness injections, system plumbing, acknowledgements, duplicates and
+   anything without a decision/date/milestone/lesson word in it. Measured
+   on a real machine: 1500 human turns in, 34 candidates out. This costs
+   nothing and takes seconds, which is the point — the documented failure
+   mode of automatic capture is a vault drowning in its own noise (an
+   audit of one such system found 97.8% of entries worthless).
+4. **Judge a SAMPLE, not the archive.** Take the newest ~20 candidates,
+   turn them into proper notes yourself, and show them. If that harvest
+   does not convince them, a bigger one will not either — it will just
+   take longer.
+5. **Only then the rest**, and only with their go.
+6. **Every harvested note carries its origin** — the date and the session
+   it came from, in the note. Without it, nobody can tell a remembered
+   fact from an invented one six months later.
+7. **A harvested note is never a decision record.** Decisions get written
+   by the human, or confirmed by them; a transcript line that *sounds*
+   like a decision is a candidate for a question, not a record.
+
+Cap it: **at most 3 notes per session** harvested, and "nothing worth
+keeping in this one" is a correct and frequent result.
+
+### 8b. The onboarding interview (recommended — but THEIR call)
+The brain is already usable. Offer the deepening, don't impose it. If the
+harvest ran, name the gaps it left and let the interview close those
+first — that is a better opening than a generic questionnaire:
 
 > "Your brain is running. The next step is the onboarding interview
 > (10–15 minutes) — it's what makes the brain really *know* you.
