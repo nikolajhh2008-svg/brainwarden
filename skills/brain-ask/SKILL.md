@@ -1,6 +1,6 @@
 ---
 name: brain-ask
-description: Answer questions from the Brain (~/Brain) with cited notes. Use when the user says "what does my brain know about …", "ask my brain", "what did I decide about …", "who is …", "what's the status of …", or when any question is about their own life, people, projects or past decisions.
+description: Answer questions from the Brain with cited notes. Use when the user says "what does my brain know about …", "ask my brain", "what did I decide about …", "who is …", "what's the status of …", or when any question is about their own life, people, projects or past decisions.
 ---
 
 # Brain ask (the librarian)

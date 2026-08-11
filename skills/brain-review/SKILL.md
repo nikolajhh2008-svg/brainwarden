@@ -1,6 +1,6 @@
 ---
 name: brain-review
-description: Weekly review of the Brain (~/Brain) — inbox to zero, deepen thin notes, surface open loops, keep signposts and Home current, archive stale items. Use when the user says "brain review", "clean up my brain", "what's in the inbox" — ideally on a fixed weekday.
+description: Weekly review of the Brain — inbox to zero, deepen thin notes, surface open loops, keep signposts and Home current, archive stale items. Use when the user says "brain review", "clean up my brain", "what's in the inbox" — ideally on a fixed weekday.
 ---
 
 # Brain review (5–10 minutes, weekly)
@@ -121,21 +121,27 @@ command (on most Windows machines `py -3`; the global rules name it).
     `brain-research`).
     **What only the human can supply** (their reasoning, their example,
     their number): park it in the note as `open → ask: …`, add it to Home's
-    "Open questions", and LEAVE `maturity:` untouched. Never invent a case,
+    Home's `block:open-questions`, and LEAVE `maturity:` untouched. Never invent a case,
     a number or an opinion to complete the anatomy — an honest `seed` beats
     a fabricated `evergreen`. Bump `maturity:` only once the anatomy is
     genuinely met; 2–3 notes a week compounds, chasing the whole vault stalls.
 12. **Random revisit:** open ONE random older note. Stale? Missing an obvious
     link? A near-twin that should merge? One concrete improvement, move on.
 13. **Refresh `Home.md`** — all four blocks, without dropping what is
-    already in them:
-    - **"Right now":** active projects with a one-line status each, AND the
+    already in them. **Find each block by its HTML marker, never by its
+    heading text** (`<!-- block:right-now -->` … `<!-- /block:right-now -->`,
+    same for `next-deadlines`, `open-questions`, `new-this-week`): the
+    headings are translated into the vault language, the markers are not.
+    Rewrite only what is BETWEEN a marker pair, and never touch a line
+    carrying a `<!-- keep:… -->` marker — it is there because losing it
+    breaks something:
+    - **`block:right-now`:** active projects with a one-line status each, AND the
       `Areas:` line linking every note in `20-areas/` — rebuild that line
       from the folder listing every single time. It is the only inbound
       link the area notes have; dropping it orphans all of them.
-    - **"Next deadlines":** next 3 dates from `Deadlines.md` ·
-      **"Open questions":** this review's open loops and parked questions ·
-      **"New this week":** the 3–5 newest or most-grown notes.
+    - **`block:next-deadlines`:** next 3 dates from `Deadlines.md` ·
+      **`block:open-questions`:** this review's open loops and parked questions ·
+      **`block:new-this-week`:** the 3–5 newest or most-grown notes.
 14. **Commit:** `cd <vault> && git add -A && git commit -m "review YYYY-MM-DD"`.
 15. **Report:** what was filed where, what was deleted, what needs their
     input — every filing decision visible, all of it reversible via Git.
@@ -158,5 +164,7 @@ Headless, no human in the loop: (1) delete nothing that isn't unambiguous
 junk — when unsure, file it; the step-1 empty-file rule is the exception
 and still wins (empty = delete + report). (2) Never archive without asking
 — list candidates as questions. (3) Route ALL questions, including step 2's
-"3 most important things", to Home's "Open questions" block, never to chat.
-(4) Finish with Home refresh, `git commit`, short report to a log file.
+"3 most important things", to Home's `block:open-questions`, never to chat.
+(4) Finish with Home refresh, `git commit`, and a short report to
+`<vault>/.tools/logs/auto-review-YYYY-MM-DD.md` — one file per run, outside
+the notes so it never counts as one; keep the last ~12 and delete older ones.

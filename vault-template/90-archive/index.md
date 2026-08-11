@@ -21,7 +21,7 @@ not archived, they are corrected where they live.
 <!--
 With content, list only the archived items that still get referenced,
 grouped by year is enough, e.g.:
-* [2025/exam-prep-biology/](2025/exam-prep-biology/) - finished 2025-06, the study plan that worked
+`* [2025/exam-prep-biology/](2025/exam-prep-biology/) - finished 2025-06, the study plan that worked`
 -->
 
 <!-- generated: 2026-08-11 -->

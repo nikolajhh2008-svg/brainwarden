@@ -37,19 +37,29 @@ rm -f  ~/Brain/_templates/person-note.md \
        ~/Brain/_templates/journal-entry.md   # their folders do not exist here
 ```
 
-Order matters: step 4 deliberately OVERWRITES six core `index.md` files
-that describe folders which do not exist in a company vault — the root
-one plus `00-inbox/`, `30-knowledge/`, `40-decisions/`, `90-archive/`
-and `_templates/`. That is intended: every link inside an `index.md` has
-to be a path that really exists, otherwise the whole signpost system
-lies. Use plain `cp -R` for the overlay even on the adopt path (these
-are kit infrastructure, not the human's content); the only content file
-in the overlay is `About this vault.md`, so on an adopt run copy that
-one with `cp -n` afterwards if it already exists.
+Order matters: step 4 deliberately OVERWRITES seven core files that talk
+about folders which do not exist in a company vault — six `index.md`
+(root, `00-inbox/`, `30-knowledge/`, `40-decisions/`, `90-archive/`,
+`_templates/`) plus `Home.md` (the core one links `[[About me]]`, which
+company mode deletes). That is intended: every link in a signpost has to
+be a path that really exists, otherwise the whole system lies. Use plain
+`cp -R` for the overlay even on the adopt path (these are kit
+infrastructure, not the human's content); the only content file in the
+overlay is `About this vault.md`, so on an adopt run copy that one with
+`cp -n` afterwards if it already exists.
+
+The company `Home.md` keeps the SAME four block markers as the core one
+(`block:right-now`, `block:next-deadlines`, `block:open-questions`,
+`block:new-this-week`) — the skills address those markers, so they must
+never be renamed per mode.
 
 `person-note.md` is deleted on purpose, not just left unlisted: a
 template for dossiers about people is a trap in a vault whose rule is
 "roles, not people".
+
+Overlays only ship a folder's `CLAUDE.md` when they CREATE that folder —
+where they merely override an `index.md`, the identical three-line
+`CLAUDE.md` is already there from step 1.
 
 `personal` gets no overlay at all.
 
@@ -57,8 +67,8 @@ template for dossiers about people is a trap in a vault whose rule is
 
 | Overlay | Adds |
 |---|---|
-| `processes/` | `50-processes/` (index + CLAUDE.md), `_templates/sop-note.md` |
-| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and six overriding `index.md` files (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`) |
+| `processes/` | `50-processes/` (index + CLAUDE.md), `_templates/sop-note.md`, and an overriding `_templates/index.md` that lists it |
+| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and seven overriding files: six `index.md` (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`) + `Home.md` |
 
 ## Placeholders the setup still has to fill
 - `{{MODE}}` and `{{LANGUAGE}}` in the vault `CLAUDE.md`

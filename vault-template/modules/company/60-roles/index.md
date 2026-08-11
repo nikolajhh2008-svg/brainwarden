@@ -21,7 +21,7 @@ companies → [../80-partners/](../80-partners/index.md).
 
 <!--
 With content, one line per role, real relative path, e.g.:
-* [shift-lead.md](shift-lead.md) - runs the daily shift, approves swaps, first escalation
+`* [shift-lead.md](shift-lead.md) - runs the daily shift, approves swaps, first escalation`
 Roles that no longer exist move to ../90-archive/ instead of being deleted.
 -->
 

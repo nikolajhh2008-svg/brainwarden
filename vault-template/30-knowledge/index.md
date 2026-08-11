@@ -5,12 +5,11 @@ notes, source notes, and one note per person in `people/`.
 
 **Rules here:** one idea per note, in the human's own words — a copied
 paragraph is collecting, not understanding. `maturity:` says how worked
-out a note is (`seed` → `growing` → `evergreen`); `evergreen` is earned
-only when the note carries idea + evidence + one concrete case + a limit
-or counter-position, ~100–400 words. At most ONE level of subfolders
-here (`people/` is the example) — depth is not findability, links and
-search are. Search before creating: extend an existing note instead of
-adding a near-duplicate.
+out a note is; `evergreen` is earned only when it carries idea +
+evidence + one concrete case + a limit or counter-position, ~100–400
+words. At most ONE level of subfolders (`people/` is the example) —
+depth is not findability, links and search are. Search before creating:
+extend a note instead of adding a near-duplicate.
 **NOT here:** work with a deadline →
 [../10-projects/](../10-projects/index.md) · standing responsibilities →
 [../20-areas/](../20-areas/index.md) · a decision that was made →
@@ -23,7 +22,7 @@ adding a near-duplicate.
 <!--
 With content, add the maps of content (only worth building past ~150
 notes) and the two or three notes that actually open a subject, e.g.:
-* [learning-methods-moc.md](learning-methods-moc.md) - map of everything on learning
+`* [learning-methods-moc.md](learning-methods-moc.md) - map of everything on learning`
 Never list all notes — search does that better.
 -->
 

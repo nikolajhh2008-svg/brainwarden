@@ -17,7 +17,7 @@ creates them here)*
 
 <!--
 With content, one line per area, real relative path, e.g.:
-* [studies/studies.md](studies/studies.md) - school, exams, the Matura year
+`* [studies/studies.md](studies/studies.md) - school, exams, the Matura year`
 Keep this list complete: these notes are also linked from the "Areas:"
 line in ../Home.md, which is their only inbound link.
 -->

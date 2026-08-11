@@ -118,9 +118,13 @@ in protection the kit does not provide:
 > unreadable for part of the team? Then it belongs in its own vault, and
 > we decide that now, not later."
 
-Write the four answers into `About this vault.md` (Step 5), under the
-headings `Company`, `Areas`, `Approval`, `Confidential content` — add a
-heading if the template does not have it yet.
+Write the four answers into `About this vault.md` (Step 5), into the
+fields that page already has: the company name replaces `{{COMPANY}}`
+("Whose knowledge this is"), the release authority goes into "Who may
+release content", the audience into "Who may read it". The list of areas
+has no field yet — add it as a short `## Areas` section with one line per
+area; the answer to question 4 belongs in "What is in here — and what is
+not".
 
 ### 1c. `company` only — two things you say out loud once
 Not features, not settings — notices. Say them plainly, then move on, and
@@ -181,9 +185,36 @@ that line, not a hardcoded location. The defaults above are only for fresh
 installs. From here on, `<vault>` means the path you actually used.
 
 ### 3b. Fresh install (ONLY into an empty or non-existent folder)
-    mkdir -p <vault> && cp -R vault-template/. <vault>/
-(note the `/.` — it copies the contents including the hidden `.tools/`,
-without nesting a folder inside a folder).
+The template has ONE core plus mode overlays in `vault-template/modules/`
+(`processes/` for `professional` and `company`, `company/` for `company`;
+`personal` gets no overlay). Apply them in exactly this order —
+`personal` stops after command 2:
+
+```bash
+# 1 — the core, every mode (note the `/.` : the CONTENTS, incl. hidden .tools/)
+mkdir -p <vault> && cp -R vault-template/. <vault>/
+
+# 2 — modules/ is kit scaffolding and must NEVER end up inside a vault
+rm -rf <vault>/modules
+
+# 3 — professional AND company
+cp -R vault-template/modules/processes/. <vault>/
+
+# 4 — company only, after command 3 and in this order
+cp -R vault-template/modules/company/. <vault>/
+rm -rf <vault>/10-projects <vault>/20-areas <vault>/30-knowledge/people
+rm -f  <vault>/"About me.md"
+rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
+       <vault>/_templates/area-note.md <vault>/_templates/journal-entry.md
+```
+
+The order matters: the company overlay deliberately OVERWRITES six core
+`index.md` files (root, `00-inbox/`, `30-knowledge/`, `40-decisions/`,
+`90-archive/`, `_templates/`) because they describe folders a company
+vault does not have — a signpost pointing at a missing folder makes the
+whole navigation lie. The four deleted templates are deleted on purpose,
+not merely left unused: a person-dossier template in a vault whose rule
+is "roles, never people" is a trap.
 
 ### 3c. Adopting an existing vault — add only what is missing
 **Never run the 3b copy over an existing vault.** `cp -R` silently
@@ -203,6 +234,16 @@ non-zero status when it skips. That is the safety net doing its job:
   if it is a Git repo, otherwise spot-check their `Home.md` and one of
   their own notes) before going on.
 
+The mode overlays (3b, commands 3 and 4) are kit infrastructure, not
+their content — apply them with plain `cp -R` even here, with one
+precaution: the company overlay also carries the two CONTENT files
+`Home.md` and `About this vault.md`. If either already exists in their
+vault, move it aside first (`mv "<vault>/Home.md" "<vault>/Home.mine.md"`),
+apply the overlay, then restore theirs and fold the template's parts into
+it by hand (see the Home bullet below) — a `cp -R` would otherwise
+overwrite a page they wrote. `rm -rf <vault>/modules` still applies; the
+deletions in command 4 do NOT (see the last bullet below).
+
 The rest of adopting:
 - Scan their existing folder structure and map it onto the rules of this
   mode (inbox? projects? areas? processes?); add only what is missing.
@@ -216,41 +257,39 @@ The rest of adopting:
   note any pre-existing inbox file of theirs for merging at the first
   review.
 - **If they already had a `Home.md`,** `cp -n` correctly skipped the
-  template — but the skills need its four dashboard blocks (`Right now`,
-  `Next deadlines`, `Open questions`, `New this week`). Add those four
-  headings to THEIR existing Home (their own content stays above); if
-  their Home is thin, offer to replace it with the template and fold
-  their links in. Do this BEFORE Step 5 — every later "fill Home"
-  instruction assumes the blocks exist.
+  template — but the skills need its four dashboard blocks. Copy the
+  four marker pairs from `vault-template/Home.md` into THEIR Home
+  (`<!-- block:right-now -->` … `<!-- /block:right-now -->`, then
+  `next-deadlines`, `open-questions`, `new-this-week`, each with a
+  heading above it); their own content stays above and below. If their
+  Home is thin, offer to replace it with the template and fold their
+  links in. Do this BEFORE Step 5 — every later "fill Home" instruction
+  assumes the marker pairs exist.
 - On an adopted vault, **never delete a folder** because this mode does
   not use it (3d). Leave it, and note it under Home's "Open questions".
 
-### 3d. The folders of this mode
-After a fresh copy (3b), the vault holds every folder the kit ships.
-Remove what this mode does not use — **only ever directly after a fresh
-copy into an empty folder, never on an adopted vault:**
-
-- `personal`:
-  `cd <vault> && rm -rf 50-processes 60-roles 70-onboarding 80-partners "About this vault.md"`
-- `professional`:
-  `cd <vault> && rm -rf 60-roles 70-onboarding 80-partners "About this vault.md"`
-- `company`:
-  `cd <vault> && rm -rf 10-projects 20-areas 30-knowledge/people "About me.md"`
-
-What must exist afterwards:
+### 3d. What must exist afterwards
 
 | Mode | Folders |
 |---|---|
 | `personal` | `00-inbox/` (+`raw/`), `10-projects/`, `20-areas/`, `30-knowledge/` (+`people/`), `40-decisions/`, `90-archive/` |
 | `professional` | the same **+ `50-processes/`** |
-| `company` | `00-inbox/` (+`raw/`), `30-knowledge/`, `40-decisions/`, `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/`, `90-archive/` |
+| `company` | `00-inbox/` (+`raw/`, +`suggestions/`), `30-knowledge/`, `40-decisions/`, `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/`, `90-archive/` — no `10-projects/`, no `20-areas/`, no `30-knowledge/people/` |
 
 Plus, in every mode: `_templates/`, `.tools/`, `Home.md`, `Deadlines.md`,
 `CLAUDE.md`, `index.md`, and the self page (`About me.md`, or
-`About this vault.md` in `company`).
+`About this vault.md` in `company`). `modules/` must NOT exist inside the
+vault — if it does, command 2 of 3b was skipped.
 
-A folder this mode needs is missing from the template? Create it
-(`mkdir -p <vault>/50-processes`) and give it its two waypoint files (3e).
+A folder is missing? You skipped an overlay — apply it (3b). Never
+hand-create a module folder: the overlay brings its `index.md`, its
+`CLAUDE.md` and the matching note template with it, and a bare `mkdir`
+leaves an unsigned folder behind.
+
+`00-inbox/suggestions/` (company only) is where colleagues without
+release rights contribute: everything in there is a proposal by
+definition, and the weekly review empties it together with the inbox.
+Say that sentence when you hand over a company vault.
 
 ### 3e. Waypoints — two files per folder
 **Every folder that holds notes gets exactly two navigation files.** This
@@ -283,15 +322,20 @@ with spaces; only entry points, never a full file listing; nothing an
 agent could see for itself. Nothing to list yet? Write
 `* (none yet — the first note lands here)`.
 
-The template ships these files — keep what is there, create what is
-missing, and after Step 5 update the "Entry points" of every folder you
-actually filled. `_templates/` and `.tools/` get NO waypoints: they hold
-tooling, not notes, and the search tool skips them.
+The template and its overlays ship both files for every folder they
+create, `_templates/` included — keep what is there, write the pair
+yourself only for a folder you create later (a module from 5c, a promoted
+project folder), and after Step 5 update the "Entry points" of every
+folder you actually filled. `.tools/` is the one folder without
+waypoints: it holds tooling, not notes, and search skips it.
 
-The **root `index.md`** is the cold entry for any agent and states: the
-mode, the vault language, a one-line map per folder, the pointer to
-`Home.md` (for the human) and `CLAUDE.md` (the rules), and the search
-command with the real `<python>` and the real `<vault>` path.
+The **root `index.md`** is the cold entry for any agent: mode, vault
+language, a one-line map per folder, the pointers to `Home.md` (human)
+and `CLAUDE.md` (rules), and the search command. It ships with `{{MODE}}`
+and `{{LANGUAGE}}` to fill (5e); the company overlay replaces it with its
+own variant. Check that its folder map matches the folders that actually
+exist — an index that lists a folder the mode does not have is exactly
+the lie this system exists to prevent.
 
 ### 3f. Keep the interview script
 Copy the interview into the vault before the cloned repo folder is
@@ -431,38 +475,46 @@ Never create a duplicate next to their original.
    words, a concrete next step, and every date from answer 4.
 3. **`professional` additionally: the first workflow.** Take the
    recurring task from answer 1 that annoys them most and write it into
-   `50-processes/<slug>.md`: what triggers it, 3–7 steps in their words,
-   who is involved, what usually goes wrong. That note is what turns a
-   work brain from a notes folder into something that can take work off
-   their plate later.
-4. **Fill `Home.md`:** their project under "Right now" (as a
-   `[[wikilink]]` with a one-line status), an "Areas:" line linking every
-   area note (so no note starts as an orphan), the process under "Right
-   now" too if there is one, their dates under "Next deadlines", anything
-   you couldn't fill under "Open questions".
+   `50-processes/<slug>.md` (`_templates/sop-note.md`): what triggers it,
+   3–7 steps in their words, who is involved, what usually goes wrong.
+   That note is what turns a work brain from a notes folder into
+   something that can take work off their plate later.
+4. **Fill `Home.md`:** their project in the `right-now` block (as a
+   `[[wikilink]]` with a one-line status), the "Areas:" line (the one
+   carrying `<!-- keep:areas-line -->`) linking every area note, so no
+   note starts as an orphan; the process in `right-now` too if there is
+   one; their dates in `next-deadlines`; anything you couldn't fill in
+   `open-questions`. Replace only what sits between a marker pair.
 
 **`company`** (no projects, no areas — a company vault carries processes,
 roles and knowledge):
 1. **Write the first SOP** from their answer into
-   `50-processes/<slug>.md`: purpose in one line, what triggers it, 3–7
-   concrete steps in the company's own words, who owns it, what usually
-   goes wrong. Their words, their terms — you write nothing they did not
-   say.
-2. **Create the role that owns it** in `60-roles/<role>.md`: what the
-   role is responsible for, which processes it owns, what it decides —
-   the ROLE, never a person dossier.
-3. **Onboarding entry:** one line in `70-onboarding/index.md` (or a first
-   note there) linking the SOP: "day one: read this".
-4. **Fill `Home.md`:** the SOP under "Right now", the role and the
-   onboarding entry as links, dates under "Next deadlines", everything
-   open (approval, unanswered areas) under "Open questions".
+   `50-processes/<slug>.md` (`_templates/sop-note.md`): purpose in one
+   line, what triggers it, 3–7 concrete steps in the company's own words,
+   who owns it, what usually goes wrong. Their words, their terms — you
+   write nothing they did not say.
+2. **Create the role that owns it** in `60-roles/<role>.md`
+   (`_templates/role-note.md`): what the role is responsible for, which
+   processes it owns, what it decides — the ROLE, never a person dossier.
+3. **Onboarding entry:** add the SOP to `70-onboarding/onboarding-path.md`
+   as the first real step ("day one: read this"), with a real relative
+   link.
+4. **Fill `Home.md`:** the SOP in the `right-now` block, the role and the
+   onboarding path as links, dates in `next-deadlines`, everything open
+   (approval, areas without a process yet) in `open-questions`. Replace
+   only what sits between a marker pair.
+5. **Set the company frontmatter** on all three notes: `owner:` (from 1b
+   question 3), `audience:`, `confidentiality:`, `review_due:` and
+   `status: draft` until the person named in 1b confirms them — plus
+   `generated:` on anything you drafted. `verified:` is never yours to
+   fill.
 
-Then, in every mode:
-5. **Update the waypoints** of the folders you filled (3e): the new notes
-   become "Entry points", `generated:` gets today's date.
-6. **Show it:** have them open Obsidian ("Open folder as vault" →
-   `<vault>`) and click **Home**. A populated brain, minutes in, before
-   any interview — that moment is the point of this whole step.
+Then, in every mode, two more things:
+- **Update the waypoints** of the folders you filled (3e): the new notes
+  become "Entry points", the `generated:` marker gets today's date.
+- **Show it:** have them open Obsidian ("Open folder as vault" →
+  `<vault>`) and click **Home**. A populated brain, minutes in, before
+  any interview — that moment is the point of this whole step.
 
 ### 5c. Offer the optional modules (`personal` / `professional` only)
 Present this list in one short message; each pick becomes a numbered
@@ -490,47 +542,48 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
 - **Fixed (the skills depend on it):** the English top-level folder names
   of this mode (3d), the numbered-prefix scheme, the kit file names
   (`Home.md`, `Deadlines.md`, `About me.md` / `About this vault.md`,
-  `Inbox rule.md`, `index.md`, `CLAUDE.md`) and the four Home block
-  headings (their CONTENT is free).
+  `Inbox rule.md`, `index.md`, `CLAUDE.md`) and the four `<!-- block:… -->`
+  markers in `Home.md` (their headings and content are free — see 5e.3).
 - **Free:** everything else — area names, module folders, all content
   language, templates (delete what they won't use), even the weekly
   review day.
 
 ### 5e. Language, name, and the remaining placeholders
-1. **Set the language:** replace `{{LANGUAGE}}` in `<vault>/CLAUDE.md`
-   and in the language line of the root `index.md` with the ENGLISH name
-   of the language (e.g. `German`).
-2. If it is not English, translate `Home.md`, `Inbox rule.md`, the self
-   page (`About me.md` / `About this vault.md`), `Deadlines.md`,
+1. **Set language and mode:** replace `{{LANGUAGE}}` (the ENGLISH name of
+   the language, e.g. `German`) and `{{MODE}}` (`personal`,
+   `professional` or `company`) in `<vault>/CLAUDE.md` and in the root
+   `index.md`. In `company` mode additionally: `{{COMPANY}}` in
+   `About this vault.md` and `70-onboarding/onboarding-path.md`, plus the
+   `<…>` angle-bracket fields in `About this vault.md` (owner, purpose,
+   who may read, who may release) from the answers in 1b.
+2. If the language is not English, translate `Home.md`, `Inbox rule.md`,
+   the self page (`About me.md` / `About this vault.md`), `Deadlines.md`,
    `00-inbox/raw/README.md`, the decision template
    `40-decisions/_template.md`, the `_templates/` and every `index.md`
    waypoint into it (keep the `{{…}}` placeholder tokens). The vault's
    `CLAUDE.md` stays English by design — it is read by Claude, not by
    them.
-   Keep untranslated: the kit FILE NAMES, the four Home block headings,
+   Keep untranslated: the kit FILE NAMES, every HTML marker comment,
    frontmatter keys and values (`type:`, `maturity: seed/growing/
    evergreen`, `status: draft/stable/deprecated`) and command words
    (`capture:`, `brain review`) — only prose translates.
-3. **The four Home headings stay English — make that visible.** They are
-   an interface, not text: the skills address the blocks by name. So the
-   page must not look like an abandoned translation:
-   - put an anchor comment directly above each of the four headings, so
-     later kit versions can address the blocks independently of any
-     visible text:
-     ```markdown
-     <!-- brain-block: next-deadlines -->
-     ## Next deadlines
-     ```
-     The four anchors are `right-now`, `next-deadlines`,
-     `open-questions`, `new-this-week`. If the template already ships
-     them, leave them alone.
-   - and add ONE line in the vault language under Home's intro:
-     *"The four block headings stay English on purpose — Claude's skills
-     address them by that name."*
-   An agent looks for the anchor first and the heading text second: the
-   anchor is an exact, language-independent token, while a heading is a
-   natural-language string that translation, renaming or a typo can
-   break.
+3. **Translate the four Home headings too — the markers do the work.**
+   `Home.md` delimits its four blocks with marker pairs
+   (`<!-- block:right-now -->` … `<!-- /block:right-now -->`, likewise
+   `next-deadlines`, `open-questions`, `new-this-week`). Those markers,
+   not the headings, are the interface: the skills refresh what sits
+   between a pair. So the visible headings belong in the vault language
+   like everything else — a half-English dashboard is not a rule of this
+   kit, it is a bug.
+   - Translate the four headings, leave every marker byte-identical, and
+     never delete a line carrying `<!-- keep:… -->` (e.g. the "Areas:"
+     line) — update its content instead.
+   - An HTML comment is an exact, language-independent token that
+     survives translation, renaming and typos; a heading is a
+     natural-language string that any of the three can break. That is
+     why the marker is the anchor and the heading is free.
+   - Adopted Home without markers? You added them in 3c — verify before
+     translating, otherwise the first review overwrites the wrong lines.
 4. **The first name** (`personal` / `professional`): ask for it and write
    it down in two places — after that, no session ever asks again:
    - `About me.md`, as the first line under the heading:
@@ -646,7 +699,8 @@ Substitute `<vault>`, `<python>` and — for a second brain — the
 configuration directory in every command:
 
 - [ ] `ls <vault>` shows exactly the folders of this mode (3d) plus their
-      modules
+      own modules — and **no `modules/` folder** (that one is kit
+      scaffolding; if it is there, run `rm -rf <vault>/modules`)
 - [ ] every folder with notes has both waypoint files:
       ```bash
       cd <vault> && for d in [0-9]*/; do
@@ -654,10 +708,14 @@ configuration directory in every command:
       done
       ```
 - [ ] `<vault>/Home.md` names their real first project (`company`: their
-      real first process) under "Right now" — not the template
+      real first process) in the `right-now` block — not the template
       placeholder line
-- [ ] `<vault>/Home.md` has a real entry under "Next deadlines" (or the
-      explicit "no dates yet" line plus the open question from 5a)
+- [ ] `<vault>/Home.md` has a real entry in the `next-deadlines` block
+      (or the explicit "no dates yet" line plus the open question from 5a)
+- [ ] all four marker pairs survived editing and translation:
+      ```bash
+      grep -c "block:" <vault>/Home.md    # 8 markers = 4 pairs
+      ```
 - [ ] `<python> <vault>/.tools/search.py test` runs without error, and
       `ls <vault>/.tools/` shows `search.py`, `hygiene.py` and
       `INTERVIEW.md`
@@ -678,7 +736,7 @@ configuration directory in every command:
       must be empty
 - [ ] No setup placeholders left OUTSIDE the templates and tooling:
       ```bash
-      grep -rnE "\{\{(NAME|LANGUAGE|DATE)\}\}" <vault> --exclude-dir=_templates --exclude-dir=.tools --exclude-dir=.git | grep -v "_template.md"
+      grep -rnE "\{\{(NAME|LANGUAGE|DATE|MODE|COMPANY)\}\}" <vault> --exclude-dir=_templates --exclude-dir=.tools --exclude-dir=.git | grep -v "_template.md"
       ```
       `_templates/`, `40-decisions/_template.md` and `.tools/` are
       excluded on purpose: the templates keep their tokens forever, and
@@ -705,8 +763,9 @@ sourced facts). With two brains, add the one sentence that matters:
 sentence on how to extend later: "Ask me to add a module, rename an area,
 or change the language — the structure grows with you." Optional extra to
 mention (don't set it up unasked): "I can also schedule the weekly review
-to run itself — ask me any time; see the auto-review entry in
-TROUBLESHOOTING.md for the usage-cost trade-offs and where it logs."
+to run itself — ask me any time; it writes what it did to
+`<vault>/.tools/logs/auto-review-YYYY-MM-DD.md`, and the auto-review
+entry in TROUBLESHOOTING.md has the usage-cost trade-offs first."
 
 ## Updating a vault built with an older kit version
 
@@ -719,17 +778,20 @@ KEYS — never note content:
    — if `git pull` errors, delete the old clone folder and re-clone).
    Check `grep "Kit version" <vault>/CLAUDE.md` to see what you're
    upgrading from (vaults older than 1.0.0 have no marker — treat them as
-   pre-1.0). After the update, set the marker to the version at the top of
-   this repo's `CHANGELOG.md`; its canonical place is an own line directly
-   under the vault CLAUDE.md's intro paragraph, format
+   pre-1.0). After the update, set the marker to the version this clone
+   actually is — read it from `.claude-plugin/plugin.json`
+   (`metadata.version`), never from `CHANGELOG.md`'s top heading, which
+   says `[Unreleased]` between releases. Its canonical place is an own
+   line directly under the vault CLAUDE.md's intro paragraph, format
    `Kit version: X.Y.Z (…)`; add it there if missing.
 2. **Mode:** vaults from before 2.0 have none. Ask the Step-1 question
    once, then record the answer in the Step-6 block (`Mode:` line) and in
    the root `index.md`. A vault with `10-projects/` + `20-areas/` and one
    person's content is `personal` unless they say otherwise — say which
    you assumed. Changing mode never deletes folders: if they now want a
-   work brain, build the second vault fresh (Steps 3–9); if they add
-   `professional` to an existing vault, only `50-processes/` is created.
+   work brain, build the second vault fresh (Steps 3–9); if an existing
+   vault becomes `professional`, apply only the processes overlay —
+   `cp -R vault-template/modules/processes/. <vault>/` — and nothing else.
 3. **Skills:** replace the old `brain-*` folders in `~/.claude/skills/`
    with the current five from `skills/`. If their skills were
    personalized (translated, custom paths), diff first and port the new
@@ -756,21 +818,26 @@ KEYS — never note content:
    - Tell them in one sentence what changed and why: maturity ("how far
      is this note?") and validity ("is this still true?") are two
      different questions that used to share one field.
-5. **Backfill the waypoints (new in 2.0):** every folder holding notes
-   gets `index.md` + `CLAUDE.md` per 3e, with entry points taken from what
-   is actually in there — the real notes, not a full listing. Existing
-   `index.md` files are updated, never overwritten wholesale.
-6. **Vault additions, never content changes:** create `Home.md` from the
-   template and fill its blocks from their real notes — in the VAULT'S
-   language (read `{{LANGUAGE}}`'s value from the vault CLAUDE.md and
-   re-translate kit text, never paste the English template over a
-   translated Home), including the four block anchors from 5e.3; if an
-   old `Start here.md` exists, fold its links into Home, update backlinks
-   to it, then remove it; refresh `.tools/` (`search.py`, `hygiene.py`)
-   and the interview script (3f) with the current versions; and refresh
-   the whole kit-owned vault `CLAUDE.md` from the current template —
-   preserving their `{{LANGUAGE}}` value and any personal edits (diff
-   first, ask when unsure), not just the Commands section.
+5. **Backfill the waypoints (new in 2.0):** pre-2.0 vaults have no
+   `index.md`/`CLAUDE.md` pairs at all. Copy the ones their mode ships
+   (`vault-template/`, plus the overlays for `professional`/`company`),
+   then rewrite each `index.md`'s "Entry points" from what is actually in
+   that folder — the real notes, never a full listing — and set the
+   `generated:` marker. An `index.md` they already wrote themselves is
+   updated, never overwritten wholesale.
+6. **Vault additions, never content changes:** bring `Home.md` up to the
+   current template — it now carries the four `<!-- block:… -->` marker
+   pairs (5e.3); add them around their existing four blocks rather than
+   pasting the English template over a translated Home (read
+   `{{LANGUAGE}}`'s value from the vault CLAUDE.md and keep their
+   language); if an old `Start here.md` exists, fold its links into Home,
+   update backlinks to it, then remove it; refresh `.tools/`
+   (`search.py`, `hygiene.py` — `hygiene.py` is new in 2.0 and the weekly
+   review's hygiene step now depends on it) and the interview script
+   (3f); and refresh the whole kit-owned vault `CLAUDE.md` from the
+   current template — preserving their `{{LANGUAGE}}`/`{{MODE}}` values
+   and any personal edits (diff first, ask when unsure), not just the
+   Commands section.
 7. **Since 1.2.0 the skills follow the `Brain vault:` line** in the global
    rules — make sure the block has one with their real vault path (add it
    if the old block predates it), plus the `Mode:` and `Human:` lines from

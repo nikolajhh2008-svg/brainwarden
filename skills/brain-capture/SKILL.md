@@ -1,6 +1,6 @@
 ---
 name: brain-capture
-description: Frictionless capture into the Brain (~/Brain/00-inbox). Use when the user says "capture: …", "note this down", "remember this for my brain", or when a spontaneous idea, decision or date surfaces mid-session.
+description: Frictionless capture into the Brain's inbox. Use when the user says "capture: …", "note this down", "remember this for my brain", or when a spontaneous idea, decision or date surfaces mid-session.
 ---
 
 # Brain capture (zero friction)

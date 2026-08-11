@@ -1,7 +1,7 @@
 {
   "name": "brainwarden",
   "description": "Five Claude Code skills for running an Obsidian second brain — capture, ingest, ask, review, research. For the full guided vault setup, follow SETUP-FOR-CLAUDE.md instead.",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "author": {
     "name": "nikolajhh2008-svg",
     "url": "https://github.com/nikolajhh2008-svg"

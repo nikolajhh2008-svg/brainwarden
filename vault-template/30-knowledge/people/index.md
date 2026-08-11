@@ -22,7 +22,7 @@ first few)*
 <!--
 With content, list only the people an agent needs in order to understand
 the human's context (family, close colleagues), not everyone, e.g.:
-* [alex-example.md](alex-example.md) - study partner, shared project since 2025
+`* [alex-example.md](alex-example.md) - study partner, shared project since 2025`
 -->
 
 <!-- generated: 2026-08-11 -->

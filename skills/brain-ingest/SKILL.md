@@ -1,6 +1,6 @@
 ---
 name: brain-ingest
-description: Work sources into the Brain — split PDFs/transcripts/articles from ~/Brain/00-inbox/raw/ (or a URL) into atomic, linked knowledge notes. Use when the user says "ingest", "work in this source", "split this PDF/transcript", or when new files land in raw/.
+description: Work sources into the Brain — split PDFs/transcripts/articles from the vault's 00-inbox/raw/ (or a URL) into atomic, linked knowledge notes. Use when the user says "ingest", "work in this source", "split this PDF/transcript", or when new files land in raw/.
 ---
 
 # Brain ingest (source → atomic notes)

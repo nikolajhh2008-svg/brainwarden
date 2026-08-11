@@ -34,7 +34,7 @@ command (on most Windows machines `py -3`; the global rules name it).
 5. **What research cannot supply, you must not supply either:** the
    human's reasoning, their example, their opinion, a number nobody
    published. Park it in the note as `open → ask: …`, add it to Home's
-   "Open questions", and leave `maturity:` where it is. An honest
+   Home's `block:open-questions`, and leave `maturity:` where it is. An honest
    `maturity: seed` beats a fabricated `evergreen` — inventing the missing
    piece would put words in their mouth, which is the one thing this vault
    must never do. Bump `maturity:` only once the note anatomy is genuinely

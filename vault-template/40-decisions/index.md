@@ -21,7 +21,7 @@ decided. Reusable insight from the decision →
 <!--
 With content, list only the decisions still in force that explain how
 this vault or this life is set up, e.g.:
-* [2026-01-15-digital-notes.md](2026-01-15-digital-notes.md) - why everything lives in this vault
+`* [2026-01-15-digital-notes.md](2026-01-15-digital-notes.md) - why everything lives in this vault`
 Superseded records stay in the folder but drop off this list.
 -->
 

@@ -4,7 +4,7 @@ One folder, two windows: an Obsidian vault AND a Claude Code working
 directory on the same Markdown files. Structure: PARA-inspired
 (deliberately flat) plus Zettelkasten principles for knowledge.
 
-Kit version: 1.2.0 (brainwarden — updates read this line to know what
+Kit version: 2.0.0 (brainwarden — updates read this line to know what
 they're upgrading from, and set it to the new version afterwards)
 
 **Vault language: {{LANGUAGE}}** — write all notes, titles and links in
@@ -50,7 +50,10 @@ those folders explains its own extra rules in its `index.md`.
 top-level modules slot in as `50-journal/`, `60-media/` etc. without ever
 re-sorting the core. Ask Claude to add a module and it lands in a gap —
 the core six folders and their English names stay fixed (the skills
-depend on them).
+depend on them). Which gaps are still free depends on the mode: in
+`personal` all of 50–80; in `professional` everything except 50
+(`50-processes/` sits there); in `company` none — 50–80 are all taken,
+so user modules are not offered there.
 
 **Core sorting principle:** file by ACTIONABILITY (which project/area
 needs this NOW?), never by topic taxonomy. Findability comes from

@@ -4,14 +4,14 @@ Personal knowledge vault (Obsidian folder + Claude Code working
 directory, same Markdown files). **Mode:** {{MODE}} · **Note language:**
 {{LANGUAGE}} (folder names stay English).
 
-**Rules here:** [CLAUDE.md](CLAUDE.md) is binding — folder map,
-frontmatter schema, the `verified` vs `generated` rule, and the red line
-"Claude gardens, it does not author". Read it before writing anything.
+**Rules here:** [CLAUDE.md](CLAUDE.md) is binding — schema, the
+`verified` vs `generated` rule, and the red line "Claude gardens, it
+does not author". Read it before writing anything.
 **Search before reading:** `python3 .tools/search.py <terms>` from this
-folder, then open only the hits. `--stats` for the honest numbers,
-`python3 .tools/hygiene.py` for orphans and dead links.
-**NOT here:** loose notes in the root. Everything belongs in a numbered
-folder; unsorted thoughts go to [00-inbox/](00-inbox/index.md).
+folder, then open only the hits (`--stats` for the honest numbers,
+`hygiene.py` for orphans and dead links).
+**NOT here:** loose notes in the root — everything belongs in a numbered
+folder, unsorted thoughts in [00-inbox/](00-inbox/index.md).
 
 ## Folder map — one line each, every folder has its own index.md
 * [00-inbox/](00-inbox/index.md) - raw captures, unsorted, emptied weekly
