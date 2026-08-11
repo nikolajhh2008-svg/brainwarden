@@ -74,10 +74,10 @@ root `index.md`, and every later session reads it from there.
 
 | | `personal` | `professional` | `company` |
 |---|---|---|---|
-| Folders | `00,10,20,30(+people),40,90` | the same **+ `50-processes/`** | `00,30,40,50,60,70,80,90` — **no** projects/areas, **no** `people/` |
+| Folders | `00,10,20,30(+people),40,90` | the same **+ `50-processes/` + `60-contribution/`** | `00,30,40,50,60,70,80,90` — **no** projects/areas, **no** `people/` |
 | Self page | `About me.md` | `About me.md` | `About this vault.md` |
 | First win | first project + dates | + first workflow | first SOP + the role that owns it |
-| Frontmatter | base schema | base **+ `status:`** | base + `status:` + `owner:`/`audience:`/`confidentiality:`/`review_due:` |
+| Frontmatter | base schema | base **+ `status:` + `ownership:`/`confidentiality:`** | base + `status:` + `owner:`/`audience:`/`confidentiality:`/`review_due:` |
 | Interview | person track | person track, work only | process track (Step 8) |
 | Who writes | the human | the human | anyone; published after approval |
 | Modules 50–80 | free for their own | `50` taken, `60–80` free | all taken — no user modules |
@@ -206,6 +206,12 @@ rm -rf <vault>/10-projects <vault>/20-areas <vault>/30-knowledge/people
 rm -f  <vault>/"About me.md"
 rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
        <vault>/_templates/area-note.md <vault>/_templates/journal-entry.md
+# these came with the processes overlay and belong to a PERSONAL work brain,
+# not to a shared one: in a company vault everything belongs to the company,
+# so there is no handover question and no personal contribution log
+rm -rf <vault>/60-contribution
+rm -f  <vault>/handover.md <vault>/_templates/contribution-entry.md \
+       <vault>/_templates/learning-note.md
 ```
 
 The order matters: the company overlay deliberately OVERWRITES nine core
@@ -286,7 +292,7 @@ The rest of adopting:
 | Mode | Folders |
 |---|---|
 | `personal` | `00-inbox/` (+`raw/`), `10-projects/`, `20-areas/`, `30-knowledge/` (+`people/`), `40-decisions/`, `90-archive/` |
-| `professional` | the same **+ `50-processes/`** |
+| `professional` | the same **+ `50-processes/` + `60-contribution/`** |
 | `company` | `00-inbox/` (+`raw/`, +`suggestions/`), `30-knowledge/`, `40-decisions/`, `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/`, `90-archive/` — no `10-projects/`, no `20-areas/`, no `30-knowledge/people/` |
 
 Plus, in every mode: `_templates/`, `.tools/`, `Home.md`, `Deadlines.md`,
@@ -553,8 +559,8 @@ Then, in every mode, two more things:
 ### 5c. Offer the optional modules (`personal` / `professional` only)
 Present this list in one short message; each pick becomes a numbered
 top-level folder — **the gaps in the numbering exist exactly for this**
-(`50–80` in `personal`, `60–80` in `professional`, where `50-processes/`
-is taken):
+(`50–80` in `personal`, `70–80` in `professional`, where `50-processes/`
+and `60-contribution/` are taken):
 - **`50-journal/`** — daily/weekly journaling (template ships with the
   kit: `_templates/journal-entry.md`)
 - **`60-media/`** — reading/watch log (books, papers, videos with one-line

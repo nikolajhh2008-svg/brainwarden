@@ -21,13 +21,15 @@ the root belong in a numbered folder, unsorted thoughts in
 * [30-knowledge/](30-knowledge/index.md) - what is worth keeping; `people/` inside
 * [40-decisions/](40-decisions/index.md) - decision records, append-only
 * [50-processes/](50-processes/index.md) - the work you repeat, written down once
+* [60-contribution/](60-contribution/index.md) - what you did, with evidence, while you remember it
 * [90-archive/](90-archive/index.md) - finished, kept for the record
 * [_templates/](_templates/index.md) - the shape of each note type
-* `60–80` - reserved for modules added on demand (each brings its own index.md)
+* `70–80` - reserved for modules added on demand (each brings its own index.md)
 
 ## Entry points
 * [Home.md](Home.md) - the human's dashboard; prose, wikilinks, current state
 * [Deadlines.md](Deadlines.md) - every date, single source of truth
 * [About me.md](About%20me.md) - who this vault belongs to
+* [handover.md](handover.md) - what leaves with the job, as a query rather than a folder
 
 <!-- generated: 2026-08-11 -->

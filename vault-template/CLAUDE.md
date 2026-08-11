@@ -40,7 +40,9 @@ context automatically).
 | `90-archive/` | Finished items from 10/20 | cold storage |
 
 **Mode differences (the mode line above says which one applies):**
-`professional` adds `50-processes/` (SOPs). `company` adds
+`professional` adds `50-processes/` (your own runbooks — "how I do this",
+not the company's official process) and `60-contribution/` (what you did,
+with evidence). `company` adds
 `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/` and
 `00-inbox/suggestions/`, and drops `10-projects/`, `20-areas/` and
 `30-knowledge/people/` — roles instead of dossiers about people. Each of
@@ -76,6 +78,10 @@ status: draft | stable | deprecated    # does it still hold? (required from prof
 source: <URL/book/person>              # one external source
 sources: [{resource: <uri>, title: <str>}]      # several sources
 stale_after: YYYY-MM-DD                 # from this date on, distrust it
+ownership: private | company | mixed    # who it belongs to (work brains: required)
+confidentiality: public | internal | strict
+ai_release: local | external_ok         # may this leave the machine?
+last_verified: YYYY-MM-DD               # runbooks: when you last actually ran it
 verified: {by: human:<name>, at: YYYY-MM-DD}     # a human confirmed it
 generated: {by: <agent>/<model>, at: YYYY-MM-DD} # an AI produced it
 ```
@@ -101,6 +107,34 @@ into a note does NOT get `generated:`, or the marker would sit on
 everything and mean nothing. Old field name: what used to be
 `status: seed|growing|evergreen` is now `maturity:` — if you meet the
 old spelling in a note, rename it.
+
+**`ownership:` — the field a work brain cannot do without.** In
+`professional` mode every note carries `ownership: private | company |
+mixed` plus `confidentiality:`. This is not bureaucracy, it is the only
+thing that makes the vault separable later. In Germany and Austria an
+employee must hand over everything obtained from the employment when they
+leave — and courts have held that this includes **notes the employee wrote
+themselves** about customer conversations and project work, with only
+genuinely private records exempt, and that copies must be deleted too
+(§ 667 BGB analog; BAG 14.12.2011 – 10 AZR 283/10). Draw that line on the
+day a note is written and leaving takes minutes. Draw it on the last day
+and it cannot be drawn at all.
+
+A third field follows from it: `ai_release: local | external_ok`. Company
+AI policies typically forbid putting contracts, customer data, financial
+reports or source code into an external model. With this field an agent
+decides that for itself instead of the human having to remember every
+time. Rule for the weekly review: **nothing stays `mixed` for more than a
+week** — split it or reclassify it.
+
+**Notes about colleagues are facts only.** Role, responsibility, how to
+reach them, what they are working on, what was agreed. Never character
+judgements, performance assessments or guesses about motives. The test
+before writing a line: *could I show this to that person if they asked?*
+They can: informal management notes about a named person's conduct or
+performance fall under a subject access request, and the GDPR's household
+exemption does not cover notes with a professional purpose (Art. 2(2)(c),
+recital 18; CJEU Lindqvist C-101/01, Ryneš C-212/13).
 
 **Superseding — write it on BOTH files, as plain text.** When a note
 replaces another, an agent that searches its way into the OLD file must

@@ -16,6 +16,9 @@ map in [../index.md](../index.md).
 ## Entry points
 * [knowledge-note.md](knowledge-note.md) - one idea: own words, evidence, case, limit
 * [source-note.md](source-note.md) - a book/paper/video: claims, quotes, verdict
+* [meeting-note.md](meeting-note.md) - decisions WITH their reasoning, commitments with a direction
+* [learning-note.md](learning-note.md) - what you can do now, and whether it leaves with you
+* [contribution-entry.md](contribution-entry.md) - what you did, with a source for every number
 * [sop-note.md](sop-note.md) - a procedure: purpose, scope, roles, steps, exceptions, history
 * [person-note.md](person-note.md) - a dossier about one person
 * [project-note.md](project-note.md) - goal, next action, running log

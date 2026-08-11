@@ -166,6 +166,23 @@ command (on most Windows machines `py -3`; the global rules name it).
 15. **Report:** what was filed where, what was deleted, what needs their
     input — every filing decision visible, all of it reversible via Git.
 
+## Work mode (only when the vault `CLAUDE.md` names the mode `professional`)
+- **Nothing stays `ownership: mixed`.** Every mixed note from this week is
+  split or reclassified now. A vault that is not separable on an ordinary
+  Tuesday is not separable on someone's last day either.
+- **The show-them test** on every person note you touched: could this be
+  shown to that person if they asked for it? Facts about role, work and
+  agreements pass. Character judgements and guesses about motives do not —
+  delete them, do not rephrase them.
+- **Runbooks you actually ran this week** get a fresh `last_verified:`.
+  Anything past 12 months gets flagged as unverified rather than quietly
+  carried on — company systems change under you without telling you.
+- **Contribution log, five minutes:** what shipped, what you reviewed,
+  what you designed or documented, who you helped, what you learned. Every
+  number needs its source in the same line — an unsourced number is a
+  self-assessment wearing a measurement's clothes. An empty week is a
+  valid entry; never invent impact.
+
 ## Company mode (only when the vault `CLAUDE.md` names the mode `company`)
 - People become ROLES in `60-roles/` — never personal dossiers.
 - Nothing becomes company truth unattended, and the two places are not

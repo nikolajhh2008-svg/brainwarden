@@ -44,6 +44,9 @@ for mode in personal professional company; do
     rm -rf "$V/10-projects" "$V/20-areas" "$V/30-knowledge/people"
     rm -f "$V/About me.md" "$V/_templates/person-note.md" "$V/_templates/project-note.md" \
           "$V/_templates/area-note.md" "$V/_templates/journal-entry.md"
+    rm -rf "$V/60-contribution"
+    rm -f "$V/handover.md" "$V/_templates/contribution-entry.md" \
+          "$V/_templates/learning-note.md"
   fi
   if ( cd "$V" && python3 .tools/hygiene.py | grep -qE "^(dead links|orphans|folders with notes but no index\.md|frontmatter gaps).*: [1-9]" ); then
     bad "$mode vault clean" "hygiene has findings"

@@ -2,6 +2,7 @@
 type: sop
 title: <what this procedure produces, as a task: "Approve an incoming invoice">
 created: {{DATE}}
+last_verified: {{DATE}}   # the day you last actually ran this
 tags: []
 owner: <team or role that answers for this content — never a private person's name>
 status: draft
