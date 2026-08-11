@@ -8,7 +8,7 @@ Nothing here is installed by the setup. You add a hook yourself, or you ask
 Claude to ("install the capture check from brainwarden's hooks folder").
 Removing one is deleting a file and one entry in `settings.json`.
 
-## `capture-check.sh`
+## `capture_check.py`
 
 **What it is for.** Capture is a habit, and habits lapse. You work two days
 straight, decisions get made, dates get mentioned — and none of it reaches
@@ -37,7 +37,9 @@ lesson learned the hard way — and capture what is worth keeping.
 anything anywhere, and does not decide what is worth keeping. That judgement
 stays with the model in front of you, which has the actual context.
 
-**Install:** see the header of the script. Requires `jq`.
+**Install:** see the header of the script. Needs nothing but Python 3,
+which the vault's own tools already require — so it behaves identically on
+macOS, Linux and Windows.
 
 **Tuning:** `BRAINWARDEN_CAPTURE_WINDOW` (minutes, default 240). Longer if
 the reminder feels frequent; shorter if too much slips through. If you find
