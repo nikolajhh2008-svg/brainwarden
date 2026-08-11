@@ -73,7 +73,7 @@ line of your note content.
   a private brain, and the choice is recorded in the vault so every
   later session reads it instead of guessing.
 - **Work brain:** everything a private one has, minus the private half,
-  plus `50-processes/` for the workflows you repeat. The first win
+  plus `50-processes/` for the workflows you repeat and `60-contribution/` for what you actually did. The first win
   includes the first workflow written down.
 - **Company vault:** shared knowledge for several people, with
   `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/` and an

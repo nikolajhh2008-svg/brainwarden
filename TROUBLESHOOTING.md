@@ -102,13 +102,13 @@ that no `index.md` mentions.
 **Why do the folder numbers jump (…40, then 90)?** The gap is expansion
 space: optional modules (journal, media log, health, money …) slot in as
 50–80 without re-sorting anything. Ask Claude to add one anytime. In a
-work brain `50-processes/` already sits there, and a company brain uses
+work brain `50-processes/` and `60-contribution/` already sit there, and a company brain uses
 all of 50–80 (processes, roles, onboarding, partners) — there, new
 content goes into one of those instead of a new folder.
 
 **My work brain has folders my private one doesn't (and vice versa).**
 That's the mode: a private brain has projects and areas, a work brain
-adds `50-processes/` for recurring workflows, a company brain drops
+adds `50-processes/` for recurring workflows and `60-contribution/` for what you actually did, a company brain drops
 projects, areas and person notes entirely and carries processes, roles,
 onboarding and partners instead. Each folder explains itself in its own
 `index.md`.

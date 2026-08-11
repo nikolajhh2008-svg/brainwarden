@@ -212,6 +212,7 @@ deliberately five skills and three small scripts.
 | [`vault-template/modules/`](vault-template/modules/) | Overlays copied on top for a work or company vault |
 | [`skills/`](skills/) | The five skills: capture · ingest · ask · review · research |
 | [`hooks/`](hooks/) | Optional: a net that catches what you forgot to capture |
+| [`assemble.py`](assemble.py) · [`check.sh`](check.sh) | Build a vault in one command; measure the kit before you push |
 | [`SETUP-FOR-CLAUDE.md`](SETUP-FOR-CLAUDE.md) | The setup runbook Claude executes itself, all three modes in one |
 | [`TUTORIAL.md`](TUTORIAL.md) · [`PHILOSOPHY.md`](PHILOSOPHY.md) | The human-side guide, and why it's built this way |
 | [`COWORK.md`](COWORK.md) | Reading the vault in Claude Cowork — what carries over, what does not |

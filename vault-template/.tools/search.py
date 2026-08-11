@@ -9,7 +9,14 @@ Scoring per file and term:
 
     title/filename   word start 5.0   inside a word 2.0
     tags             word start 3.0   inside a word 1.0
-    body line        word start 1.0   inside a word 0.4  (max 3.0 per term)
+    body line        word start 1.0   inside a word 0.4
+                     (per term at most 5.0 from word starts, 3.0 from insides)
+
+Both body scores are capped, and that cap is what keeps the ranking honest:
+uncapped, a project log that happens to write "Vertrag" on a hundred lines
+scored 100.0 and buried `Vertrag.md` — the note that IS about contracts — at
+11.0. Repetition is not aboutness. The cap equals one title hit, so the file
+NAMED after the term is never outranked by a file that merely mentions it.
 
 Hits INSIDE a word count — German glues words together, so `Vertrag` has
 to find `Rahmenvertrag`, `Kosten` has to find `Mehrkostenforderungen` and
@@ -23,11 +30,22 @@ top-k files with matching lines — Claude then reads ONLY those files.
 """
 import os, re, sys, unicodedata
 
+# Windows falls back to the console codepage (cp1252/cp850) the moment the
+# output is redirected or piped — and `↳`, or any arrow inside a matched
+# note line, does not exist there, so the search died with a
+# UnicodeEncodeError. Console streams are utf-8 already; this fixes pipes.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError, OSError):
+        pass
+
 SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates"}
 
 W_NAME, W_NAME_IN = 5.0, 2.0        # title / filename
 W_TAG, W_TAG_IN = 3.0, 1.0          # tags
 W_BODY, W_BODY_IN = 1.0, 0.4        # body lines
+BODY_CAP = 5.0                      # max word-start body score per term
 BODY_IN_CAP = 3.0                   # max inside-word body score per term
 MIN_IN_LEN = 4                      # shorter terms: word starts only
 
@@ -207,13 +225,13 @@ def score_file(text, name, terms):
             score += W_TAG
         elif inside_ok and t in tags:
             score += W_TAG_IN
-        inside_score = 0.0
+        body_score = inside_score = 0.0
         for raw, line in zip(raw_lines, folded_lines):
             start_hit = bool(pat.search(line))
             if not start_hit and not (inside_ok and t in line):
                 continue
             if start_hit:
-                score += W_BODY
+                body_score = min(body_score + W_BODY, BODY_CAP)
             else:
                 inside_score = min(inside_score + W_BODY_IN, BODY_IN_CAP)
             clean = raw.strip()[:120]
@@ -221,7 +239,7 @@ def score_file(text, name, terms):
                 bucket = starts if start_hit else insides
                 if clean not in starts and clean not in insides and len(bucket) < 3:
                     bucket.append(clean)
-        score += inside_score
+        score += body_score + inside_score
     return score, (starts + insides)[:3]
 
 def main():
