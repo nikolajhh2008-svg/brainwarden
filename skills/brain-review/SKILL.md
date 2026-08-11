@@ -26,8 +26,10 @@ the global rules name it).
      · person → `30-knowledge/people/` · **recurring task you will do again → `50-processes/`** ·
      **something you did, with evidence → `60-contribution/`** (last two: work brains only). Meeting
      notes file with what they are ABOUT.
-   - **(b) a date:** one line in `Deadlines.md` (date first) + one in its project's log, then delete
-     the file. No knowledge note for a date.
+   - **(b) a date:** one line in `Deadlines.md` (date first) + one in the log of whatever it belongs
+     to — a project, or an area. Plenty of dates belong to neither (a dentist appointment): then
+     `Deadlines.md` alone is the complete answer, not half a job. Then delete the file. No knowledge
+     note for a date.
    - **(c) deleted** — say so; deleting is a feature. A TASK, not knowledge ("call the insurer"),
      goes where tasks live (Home's `block:open-questions` or its project's log), then the file goes.
    - **dedup:** `python3 <vault>/.tools/search.py <name/topic>` before writing — extend, never twin.
@@ -85,8 +87,11 @@ the global rules name it).
      written-into folder's `index.md` as real relative paths, never `[[wikilinks]]`, under ~25
      lines, `<!-- generated: -->` = today. Routine notes stay out of the index but must be reachable
      by a `[[link]]`.
-   - **decay:** projects whose log has not moved in 30+ days (`find <vault>/10-projects -name '*.md' -mtime +30`,
-     blind to files this review itself touched) → ONE collected question, "archive to `90-archive/`
+   - **decay:** projects whose LOG has not moved in 30+ days — read the newest date inside each
+     project note, do not trust the file's timestamp. It says when the file was written to, which
+     this review itself just did (and a fresh `git clone` sets every file to today, so it finds
+     nothing at all). `find <vault>/10-projects -name '*.md' -mtime +30` is a shortcut for the
+     untouched ones, never the whole answer. → ONE collected question, "archive to `90-archive/`
      or still active?", never one per file. Archive beats delete for finished projects, delete beats
      archive for noise.
 5. **Deepen 2–3 notes (this is where depth comes from):** oldest or most-used `maturity: seed`/`growing`
@@ -152,6 +157,11 @@ Trigger-based, not scheduled; say in the report which ones ran.
   in place and drops to `status: draft`, never moved out. Either way the human sets
   `verified: {by: human:<name>, at: YYYY-MM-DD}`, never you.
 - Never invent an owner, a number or a field value. Missing stays missing.
+- **Report the number that matters:** `python3 <vault>/.tools/progress.py` — how many notes carry
+  `verified:`, and only then how many gaps are left. Name the movement since last week ("2 more
+  released"), and if nothing moved, say that plainly. A shared vault fails by looking finished:
+  gaps close when someone deletes a marker, but only a human's `verified:` makes a note something a
+  colleague may act on. `--by-role` names who to ask next; that belongs in the report, not a guess.
 
 ## Autonomous mode (only when run unattended by a scheduler)
 Headless, no human in the loop: (1) delete nothing that isn't unambiguous junk — unsure → file it;
