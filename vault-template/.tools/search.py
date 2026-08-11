@@ -41,7 +41,7 @@ VALIDITY = ("draft", "stable", "deprecated")
 # their code examples ("status: seed | growing | evergreen" in CLAUDE.md)
 # used to be counted as real frontmatter.
 INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md",
-               "About me.md", "Inbox rule.md", "README.md"}
+               "About me.md", "About this vault.md", "Inbox rule.md", "README.md"}
 
 def plural(n, word):
     return f"{n} {word}" + ("" if n == 1 else "s")

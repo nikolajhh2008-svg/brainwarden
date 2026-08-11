@@ -1,16 +1,123 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.0] — 2026-08-11
 
+One kit, three kinds of brain, and a vault an AI agent can navigate
+without guessing. Existing vaults are updated in place: the update path
+replaces kit infrastructure and renames one frontmatter key, never a
+line of your note content.
+
+### Two things change in existing vaults
+
+- **`status:` no longer means maturity — that field is now `maturity:`.**
+  Two different questions were sharing one key: how worked out is this
+  note, and does it still hold? A note can be beautifully written and no
+  longer true, and the old schema had no way to say so. From now on
+  `maturity: seed | growing | evergreen` on knowledge notes, and
+  `status: draft | stable | deprecated` wherever validity matters
+  (required from a work brain upwards). **The update path in
+  SETUP-FOR-CLAUDE.md migrates existing vaults:** it shows you the hits
+  first, renames only the key, never a value or a line of text, and
+  commits that rename on its own so it can be reverted alone. Leftovers
+  are caught later too — `brain-review` renames what it meets,
+  `hygiene.py` and `search.py --stats` report what is left.
+- **Every folder that holds notes now carries two navigation files.**
+  Older vaults have none; the update path copies the pair
+  into each folder and rewrites the entry points from what is actually
+  in it, leaving any `index.md` you wrote yourself in place.
+
+### The vault is now built for agents first
+
+- **A signpost in every folder.** `index.md` states what belongs there,
+  what does not, and the two or three notes worth starting from, in
+  about 25 lines. Next to it, a three-line `CLAUDE.md` pulls that
+  signpost into Claude's context the moment a file in that folder is
+  read, so it costs nothing until it is needed. `index.md` is the
+  canonical half, because any tool can read a plain file.
+- **A root `index.md`** is the cold entry point for a session that has
+  never seen the vault: mode, note language, one line per folder, the
+  search command, and the pointers to `Home.md` (yours) and `CLAUDE.md`
+  (the rules).
+- **Links inside a signpost are real relative paths, never
+  `[[wikilinks]]`** — a wikilink carries no path, so an agent reading
+  the raw file cannot resolve it. Inside notes, wikilinks stay the rule.
+- **Who stands behind a note is a field now.** `verified: {by: human:…,
+  at: …}` means a person confirmed the content, `generated: {by: …,
+  at: …}` means a machine drafted it. Claude never sets `verified:` on
+  its own work. `Deadlines.md` makes the same distinction for dates:
+  confirmed ones under "Hard (verified)", the rest until checked.
+- **A replacement is recorded on both files.** The new note gets
+  `Supersedes <path>`, the outdated one gets `Superseded by <path>`
+  appended as plain text. An agent that lands in the old version through
+  a search now finds the pointer instead of believing what it reads.
+
+### Three kinds of brain
+
+- **The setup opens with one question:** for me · for my work · both,
+  kept separate · for a company. It decides which folders exist, which
+  questions follow and what the first win is. Unclear answers default to
+  a private brain, and the choice is recorded in the vault so every
+  later session reads it instead of guessing.
+- **Work brain:** everything a private one has, minus the private half,
+  plus `50-processes/` for the workflows you repeat. The first win
+  includes the first workflow written down.
+- **Company vault:** shared knowledge for several people, with
+  `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/` and an
+  `00-inbox/suggestions/` drop zone for colleagues without release
+  rights. No projects, no areas, and **roles instead of dossiers on
+  people**, which is a data-protection decision, not a style one.
+  Company notes additionally carry `owner:`, `audience:`,
+  `confidentiality:` and `review_due:`. `confidentiality:` is a label
+  and not access control, and the setup says so out loud.
+- **Two brains side by side:** the second one gets its own Claude Code
+  configuration directory and a one-word start command (`workbrain`,
+  or `teambrain` for a company), so work rules, skills and sessions
+  never load in a private session.
+- **Company mode states two things out loud** during setup, as pointers
+  rather than legal advice: this kit keeps no usage or search log of any
+  kind, and people working with an AI system must be able to tell that
+  they are.
+
+### New tool: `.tools/hygiene.py`
+
+The weekly review's hygiene step used to ask for a vault-wide link-graph
+judgement with no instrument for it. It now measures instead: orphans,
+dead links, near-empty notes, notes no signpost points to, folders that
+lost their `index.md`, frontmatter gaps and one-sided supersede chains.
+Read-only, standard library only, and it masks code blocks first so a
+rules file's `[[example]]` is never reported as a dead link.
+
+### Search
+
+- **German compounds are found.** Hits inside a word now count, so
+  `Vertrag` finds `Rahmenvertrag` and `Kosten` finds
+  `Mehrkostenforderungen`. They score lower than a hit at a word start
+  and are capped per term, so short common words cannot flood the
+  results; terms under four characters still match at word starts only.
+- **`--stats` tells the truth again:** it reads `maturity:`, flags notes
+  still using `status:` for it, and no longer counts kit files such as
+  `CLAUDE.md` and the templates as if they were your notes.
+
+### Also
+
+- **`Home.md` survives translation.** Its four dashboard blocks are
+  delimited by `<!-- block:… -->` markers, and the skills address those
+  markers rather than the headings, so a German vault gets German
+  headings instead of a half-English dashboard.
 - **Interview goes deeper where it counts:** new adaptive block 4
   ("Zoom in: your work or your studies") — narrow down first
   (studying / working / both), then follow the fitting branch into
   concrete tasks, recurring work, time sinks and tools. Recurring
   tasks land as area notes: the raw material for everything an
-  assistant can later take off your plate.
+  assistant can later take off your plate. The interview also picks its
+  track from the mode, and never runs a personal deep interview on a
+  shared company vault.
 - **Deadlines.md states its format:** one line per deadline, date
   first (`2026-08-15` or `15.08.2026`) — readable for humans and
   parseable for tools that treat the file as the deadline source.
+- **New note types with templates and worked examples:** SOP, role,
+  partner and onboarding plan, plus `examples/EXAMPLE-sop.md` and
+  `examples/EXAMPLE-role.md` showing the bar.
 
 ## [1.2.0] — 2026-07-10
 

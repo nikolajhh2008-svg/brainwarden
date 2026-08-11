@@ -17,6 +17,20 @@ jobs:
           cd vault-template && python3 .tools/search.py inbox --k 3
           python3 .tools/search.py --stats
 
+      - name: hygiene.py compiles and reports a clean template
+        run: |
+          python3 -m py_compile vault-template/.tools/hygiene.py
+          cd vault-template && python3 .tools/hygiene.py
+          # the shipped template must not carry dead links or unsignposted folders
+          ! python3 .tools/hygiene.py | grep -qE "^(dead links|folders with notes but no index\.md).*: [1-9]"
+
+      - name: every content folder carries both signpost files
+        run: |
+          cd vault-template
+          for d in $(find . -name index.md -not -path "./modules/*" -exec dirname {} \;); do
+            test -f "$d/CLAUDE.md" || { echo "missing CLAUDE.md next to $d/index.md"; exit 1; }
+          done
+
       - name: exactly five skills, each with a SKILL.md
         run: |
           test "$(ls skills | wc -l)" -eq 5

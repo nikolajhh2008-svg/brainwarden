@@ -4,7 +4,7 @@ One folder, two windows: an Obsidian vault AND a Claude Code working
 directory on the same Markdown files. Structure: PARA-inspired
 (deliberately flat) plus Zettelkasten principles for knowledge.
 
-Kit version: 2.0.0 (brainwarden — updates read this line to know what
+Kit version: 1.3.0 (brainwarden — updates read this line to know what
 they're upgrading from, and set it to the new version afterwards)
 
 **Vault language: {{LANGUAGE}}** — write all notes, titles and links in

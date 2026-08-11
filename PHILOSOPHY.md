@@ -17,25 +17,77 @@ folder taxonomy → maintaining the system costs more than it returns →
 abandoned. Tiago Forte's warning: *"if your organizational system is as
 complex as your life, maintaining it will rob you of the time and energy
 you need to live that life."*
-→ *Kit answer:* six flat folders, filing by **actionability** (which
-project/area needs this now?) instead of topic trees — and the sorting
-itself is delegated to the weekly review, which Claude runs.
+→ *Kit answer:* six flat folders in a private brain, eight at most in a
+company one, filing by **actionability** (which project or area needs
+this now?) instead of topic trees — and the sorting itself is delegated
+to the weekly review, which Claude runs.
 
 **3. Collecting without using** (the "digital attic"). Notes go in,
 nothing ever comes out; the vault becomes storage, then guilt, then
 abandoned.
 → *Kit answer:* the success metric is **output** — study sheets, drafts,
-plans, decisions. The weekly review ends by asking what the brain should
-produce next, and `brain-ask` makes withdrawal as easy as deposit.
+plans, decisions. `brain-ask` makes withdrawal as easy as deposit, and the
+weekly review pulls in the same direction: it surfaces stalled loops and
+open questions and offers to research them. What the review does *not* do
+is ask you what the brain should produce next. That would close the loop
+properly, and it belongs on the wish list, not in this description.
 
 **4. All setup, no payoff.** Beginners spend the first session choosing
 taxonomies and comparing methods, meet an empty vault, and never come
 back — the investment came before any win.
-→ *Kit answer:* the setup asks **three questions** and then builds real
-notes itself — your project, your deadlines, a populated `Home`
-dashboard. The first win arrives minutes in, before any interview, before
-any method talk. And returning after weeks away is a designed path (the
-review catches up in batches), not a walk of shame.
+→ *Kit answer:* the setup asks who the brain is for, then **four short
+questions**, and then builds real notes itself — your project, your
+deadlines, a populated `Home` dashboard. The first win arrives minutes
+in, before any interview, before any method talk. And returning after
+weeks away is a designed path (the review catches up in batches), not a
+walk of shame.
+
+## Why the vault is built for agents first
+
+The premise of this kit is that you will not maintain the vault. An AI
+will, in sessions that start cold and land in the middle of your notes
+through a search or a glob. So the first question asked of every design
+decision is not "does this look tidy in Obsidian?" but: **can an agent
+that lands here keep going without guessing?** Four things follow from
+that.
+
+**Signposts, not search alone.** Search returns files, not orientation. A
+model that reads three hits out of four hundred notes has no idea what
+the folder is for, what does not belong in it, or which note the others
+hang off. So every folder that holds notes carries an `index.md` that
+says exactly that in about 25 lines, plus a three-line `CLAUDE.md` that
+pulls the signpost into Claude's context on the first read in that
+folder. `index.md` is the canonical one because it is a plain file any
+tool can open, Claude or not; the `CLAUDE.md` is only the delivery
+mechanism. And a signpost lists entry points, never every file, and only
+things an agent cannot see for itself — describing a visible file listing
+costs tokens and dilutes the lines that carry information.
+
+**Real paths, not wikilinks, inside a signpost.** `[[Note name]]` is an
+Obsidian convention that resolves through the app's index; an agent
+reading the raw file gets a name and no location. Inside notes,
+wikilinks stay the rule, because that is what makes the graph work for
+you. Inside signposts, links are relative paths, because that is what
+makes them work without Obsidian.
+
+**Validity is a field, not a tone of voice.** A person reads "we used to
+do it that way" and understands. A model reads it as instruction. So the
+two questions a note raises get two machine-readable fields instead of
+one: `maturity:` says how worked out it is, `status:` says whether it
+still holds. A note can be `evergreen` and `deprecated` at the same time,
+beautifully worked out and no longer true. The pair that matters most in
+a shared vault is `verified:` against `generated:`: a human confirmed
+this, or a machine drafted it. Claude never sets `verified:` on its own
+work, which is what stops a proposal from quietly becoming the rule.
+
+**Only what is in the Markdown counts.** No database, no index to
+rebuild, no hidden sidecar file. That is why a note that replaces another
+gets the notice written into the body of *both* files: an agent that
+arrives in the outdated version through a search reads that body, and
+nothing else will tell it. Rules nothing checks erode, so
+`.tools/hygiene.py` reports the one-sided chains, along with orphans,
+dead links, near-empty notes, frontmatter gaps and folders that lost
+their signpost.
 
 ## The structural choices, briefly defended
 
@@ -47,10 +99,23 @@ review catches up in batches), not a walk of shame.
 - **Flat beats deep.** Links, tags and deterministic search
   (`.tools/search.py`) do the finding; folder depth just hides things.
   (This is the Linking-Your-Thinking insight, minus the learning curve.)
+  Deterministic, not embeddings: the same query gives the same hits
+  forever, with no index to build and nothing to send anywhere. It also
+  scores matches inside a word, because German glues words together and a
+  search for `Vertrag` that misses `Rahmenvertrag` is simply broken.
+- **Three shapes, one core.** A brain for yourself, one for your work,
+  one shared by a company: one core template, the same five skills, and
+  overlays copied on top. Two purposes never share a vault, because "keep
+  this separate" is a promise a folder cannot keep. A shared vault also
+  drops person notes and carries roles instead: a role description
+  survives every hire and every departure, and nobody has to be assessed
+  for it.
 - **Numbered with gaps.** `00 10 20 30 40 … 90` keeps folders sorted and
-  leaves 50–80 free for opt-in modules (journal, media, health, money)
-  so growth never forces a re-sort — the useful half of Johnny Decimal
-  without its rigidity.
+  leaves 50–80 for later, so growth never forces a re-sort — the useful
+  half of Johnny Decimal without its rigidity. In a private brain those
+  four numbers are yours (journal, media, health, money, or your own); a
+  work brain spends one on `50-processes/`; a company vault spends all
+  four on processes, roles, onboarding and partners.
 - **The interview is a starting point, not a cage.** Reviews are
   explicitly allowed to propose structure changes as your life changes.
 - **AI as maintainer, not author.** Claude files, links, prunes and

@@ -208,11 +208,16 @@ rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
        <vault>/_templates/area-note.md <vault>/_templates/journal-entry.md
 ```
 
-The order matters: the company overlay deliberately OVERWRITES six core
-`index.md` files (root, `00-inbox/`, `30-knowledge/`, `40-decisions/`,
-`90-archive/`, `_templates/`) because they describe folders a company
-vault does not have — a signpost pointing at a missing folder makes the
-whole navigation lie. The four deleted templates are deleted on purpose,
+The order matters: the company overlay deliberately OVERWRITES seven core
+files — six `index.md` (root, `00-inbox/`, `30-knowledge/`,
+`40-decisions/`, `90-archive/`, `_templates/`) **and `Home.md`** —
+because they describe folders a company vault does not have; a signpost
+pointing at a missing folder makes the whole navigation lie. The company
+`Home.md` carries the SAME four block markers, so the review treats it
+identically. On a FRESH install that overwrite is what you want. On the
+ADOPT path it is not: never run the overlay over someone's existing
+`Home.md` — copy the company one aside, fold their content into it by
+hand, one OK per change (3c). The four deleted templates are deleted on purpose,
 not merely left unused: a person-dossier template in a vault whose rule
 is "roles, never people" is a trap.
 
@@ -784,7 +789,7 @@ KEYS — never note content:
    says `[Unreleased]` between releases. Its canonical place is an own
    line directly under the vault CLAUDE.md's intro paragraph, format
    `Kit version: X.Y.Z (…)`; add it there if missing.
-2. **Mode:** vaults from before 2.0 have none. Ask the Step-1 question
+2. **Mode:** vaults from before 1.3 have none. Ask the Step-1 question
    once, then record the answer in the Step-6 block (`Mode:` line) and in
    the root `index.md`. A vault with `10-projects/` + `20-areas/` and one
    person's content is `personal` unless they say otherwise — say which

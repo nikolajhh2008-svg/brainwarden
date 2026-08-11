@@ -45,33 +45,50 @@ terminal, type `claude`, then say literally:
 > https://github.com/nikolajhh2008-svg/brainwarden — clone it and
 > follow SETUP-FOR-CLAUDE.md step by step.
 
-Claude fetches the kit, checks your prerequisites, asks **three short
-questions** (your life situation, the first thing the brain should help
-with, **your brain's language** — German works fine) — and then builds
-your first real notes from your answers: your areas, your first project,
-your deadlines, and a `Home` page that shows it all.
+Claude fetches the kit and checks your prerequisites. Then comes the one
+question that shapes everything: **is this brain for you, for your work,
+for both kept apart, or for a company?** Unsure? Say "for me". A work
+brain can be added later, and nothing you build now is wasted.
+
+After that, four short questions: your situation, the first thing the
+brain should help with, the language your notes live in (German works
+fine), and the next date you must not miss. From those answers Claude
+builds your first real notes: your areas, your first project, your
+deadlines, and a `Home` page that shows it all. A company brain starts
+differently, with one procedure written down and the role that owns it.
 
 *(Advanced alternative: clone the repo yourself, `cd` into it, start
 `claude` and say: "Read SETUP-FOR-CLAUDE.md and set up my brain
 accordingly.")*
 
-✅ **Checkpoint:** `ls ~/Brain` shows the six core folders (`00-inbox` …
-`90-archive`; the extra `_templates` folder is normal — that's where note
-blueprints live) — and Claude tells you your first project is already in
-there. (If "capture:" isn't recognized right away, restart Claude Code
-once — fresh skills load with a new session.)
+✅ **Checkpoint:** `ls ~/Brain` (or whichever path Claude named) shows
+numbered folders from `00-inbox` to `90-archive` — exactly which ones
+depends on your answer above — plus a `_templates` folder, where the note
+blueprints live. Every folder that holds notes also carries an `index.md`
+and a three-line `CLAUDE.md`: the signposts Claude navigates by, safe for
+you to ignore. And Claude tells you your first project (in a company
+brain, your first procedure) is already in there. (If "capture:" isn't
+recognized right away, restart Claude Code once — fresh skills load with
+a new session.)
+
+*(Chose "both, kept separate"? Then you get two vaults and two commands:
+`claude` opens the private brain, `workbrain` the work one. Claude builds
+the private one first, completely, before starting the second.)*
 
 ---
 
 ## Stage 3 — See it in Obsidian (2 min)
 
-Obsidian → **"Open folder as vault"** → pick `~/Brain` → click **Home**.
+Obsidian → **"Open folder as vault"** → pick your vault folder (`~/Brain`
+unless you chose another path; a work brain defaults to `~/Brain-work`) →
+click **Home**.
 
 This is the moment: your dashboard already shows *your* project, *your*
 deadlines — a brain that's alive before you wrote a single note yourself.
 
-✅ **Checkpoint:** `Home` names your first project under "Right now" and
-you can click through to [[Deadlines]].
+✅ **Checkpoint:** `Home` names your first project under "Right now" (in a
+company brain, your first procedure) and you can click through to
+[[Deadlines]].
 
 ---
 
@@ -80,11 +97,16 @@ you can click through to [[Deadlines]].
 Claude offers this at the end of the setup — **your call, now or later.**
 It's what turns a running brain into one that really *knows* you: your
 people, your goals, your working style. Just talk — voice dumps welcome,
-skipping allowed. Anything that shouldn't go in: just say "private".
+skipping allowed. Anything that shouldn't go in: just say "private". In a
+work brain the private half is skipped by design; in a company brain the
+interview is about the company's processes, roles and terms instead of
+about you.
 
 ✅ **Checkpoint:** Obsidian shows "About me" and individual people notes
 under `30-knowledge/people/` — and the graph view shows its first
-connections. (Skipped it? Fine — it waits as an open question on `Home`.)
+connections. (Company brain: "About this vault" plus your first roles
+under `60-roles/`; there are no notes about people there, on purpose.)
+(Skipped it? Fine — it waits as an open question on `Home`.)
 
 ---
 
@@ -106,8 +128,13 @@ connections. (Skipped it? Fine — it waits as an open question on `Home`.)
 **5. Research** — the power move:
 > research my brain
 
-✅ **Checkpoint:** After the review `00-inbox/` is empty, your thought has
-become a linked note — and `Home` shows it under "New this week".
+✅ **Checkpoint:** After the review, the only things still sitting in
+`00-inbox/` are `Inbox rule.md` and the `raw/` folder. **Those two always
+stay** — the rule page is a permanent instruction sheet, and `raw/` is
+the drop zone for the next PDF. "Inbox to zero" means every *capture* is
+gone: yours has become a linked note somewhere else, and `Home` lists it
+under "New this week". The review also runs a check for orphaned notes
+and dead links and tells you what it fixed.
 
 ---
 
