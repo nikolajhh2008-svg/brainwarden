@@ -801,7 +801,7 @@ KEYS — never note content:
    with the current five from `skills/`. If their skills were
    personalized (translated, custom paths), diff first and port the new
    features instead of overwriting — ask, don't assume.
-4. **Migrate `status:` → `maturity:` (breaking rename in 2.0).** The old
+4. **Migrate `status:` → `maturity:` (renamed in 1.3).** The old
    kit used `status: seed|growing|evergreen` for maturity; `status:` is
    now reserved for validity (`draft|stable|deprecated`). Only the KEY
    changes, never a value, never a line of note text:
@@ -823,7 +823,7 @@ KEYS — never note content:
    - Tell them in one sentence what changed and why: maturity ("how far
      is this note?") and validity ("is this still true?") are two
      different questions that used to share one field.
-5. **Backfill the waypoints (new in 2.0):** pre-2.0 vaults have no
+5. **Backfill the waypoints (new in 1.3):** older vaults have no
    `index.md`/`CLAUDE.md` pairs at all. Copy the ones their mode ships
    (`vault-template/`, plus the overlays for `professional`/`company`),
    then rewrite each `index.md`'s "Entry points" from what is actually in
@@ -837,7 +837,7 @@ KEYS — never note content:
    `{{LANGUAGE}}`'s value from the vault CLAUDE.md and keep their
    language); if an old `Start here.md` exists, fold its links into Home,
    update backlinks to it, then remove it; refresh `.tools/`
-   (`search.py`, `hygiene.py` — `hygiene.py` is new in 2.0 and the weekly
+   (`search.py`, `hygiene.py` — `hygiene.py` is new in 1.3 and the weekly
    review's hygiene step now depends on it) and the interview script
    (3f); and refresh the whole kit-owned vault `CLAUDE.md` from the
    current template — preserving their `{{LANGUAGE}}`/`{{MODE}}` values
