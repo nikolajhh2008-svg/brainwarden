@@ -30,5 +30,7 @@ role X", and any private note — this vault is shared.
 * [About this vault.md](About%20this%20vault.md) - what this vault is for, who releases
 * [70-onboarding/onboarding-path.md](70-onboarding/onboarding-path.md) - start here on day one
 * [Home.md](Home.md) - the human dashboard · [Deadlines.md](Deadlines.md) - every date
+* [THIS-COPY.md](THIS-COPY.md) - when this copy is from and how to get a fresh one. A shared vault is copied, and copies age silently
+* `python3 .tools/progress.py` - how much of this vault is verified, and how much is still scaffolding
 
 <!-- generated: 2026-08-11 -->

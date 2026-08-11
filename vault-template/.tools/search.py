@@ -9,14 +9,16 @@ Scoring per file and term:
 
     title/filename   word start 5.0   inside a word 2.0
     tags             word start 3.0   inside a word 1.0
-    body line        word start 1.0   inside a word 0.4
-                     (per term at most 5.0 from word starts, 3.0 from insides)
+    body line        word start 1.0 for the first, less for each further
+                     one, approaching 5.0 · inside a word 0.4 (max 3.0)
 
-Both body scores are capped, and that cap is what keeps the ranking honest:
-uncapped, a project log that happens to write "Vertrag" on a hundred lines
-scored 100.0 and buried `Vertrag.md` — the note that IS about contracts — at
-11.0. Repetition is not aboutness. The cap equals one title hit, so the file
-NAMED after the term is never outranked by a file that merely mentions it.
+Body mentions have diminishing returns, and that is what keeps the ranking
+honest: summed straight, a project log that happens to write "Vertrag" on a
+hundred lines scored 100.0 and buried `Vertrag.md` — the note that IS about
+contracts — at 11.0. On a 10 MB log it reached 132731.0. Repetition is not
+aboutness. The total from body mentions now stays under one title hit, so
+the file NAMED after the term always wins against one that merely says it
+often — while ten mentions still rank above three.
 
 Hits INSIDE a word count — German glues words together, so `Vertrag` has
 to find `Rahmenvertrag`, `Kosten` has to find `Mehrkostenforderungen` and
@@ -45,7 +47,8 @@ SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates"}
 W_NAME, W_NAME_IN = 5.0, 2.0        # title / filename
 W_TAG, W_TAG_IN = 3.0, 1.0          # tags
 W_BODY, W_BODY_IN = 1.0, 0.4        # body lines
-BODY_CAP = 5.0                      # max word-start body score per term
+BODY_CAP = 5.0                      # body word starts approach, never pass, this
+BODY_HALF = 4.0                     # shape of that approach (see score_file)
 BODY_IN_CAP = 3.0                   # max inside-word body score per term
 MIN_IN_LEN = 4                      # shorter terms: word starts only
 
@@ -81,6 +84,16 @@ def parse_args(argv):
                 pass
             i += 2
             continue
+        if a.startswith("--") and a != "--stats":
+            # Anything else starting with `--` used to vanish without a word,
+            # so `search.py --root /other/vault gold` searched THIS vault for
+            # "gold" and looked like it had honoured the flag. There is no
+            # --root here on purpose: the tool searches the vault it lives in.
+            print(f"Unknown option: {a}\n"
+                  "Usage: search.py <term> [term2 ...] [--k N] | --stats\n"
+                  "(No --root: this tool searches the vault it sits in — run "
+                  "the copy inside that vault.)")
+            return None, k
         if not a.startswith("--"):
             terms.append(a)
         i += 1
@@ -225,13 +238,13 @@ def score_file(text, name, terms):
             score += W_TAG
         elif inside_ok and t in tags:
             score += W_TAG_IN
-        body_score = inside_score = 0.0
+        hits, inside_score = 0, 0.0
         for raw, line in zip(raw_lines, folded_lines):
             start_hit = bool(pat.search(line))
             if not start_hit and not (inside_ok and t in line):
                 continue
             if start_hit:
-                body_score = min(body_score + W_BODY, BODY_CAP)
+                hits += 1
             else:
                 inside_score = min(inside_score + W_BODY_IN, BODY_IN_CAP)
             clean = raw.strip()[:120]
@@ -239,7 +252,13 @@ def score_file(text, name, terms):
                 bucket = starts if start_hit else insides
                 if clean not in starts and clean not in insides and len(bucket) < 3:
                     bucket.append(clean)
-        score += body_score + inside_score
+        # Diminishing returns instead of a straight sum: the first mention is
+        # worth a full W_BODY (1.0), the hundredth almost nothing, and the
+        # total can never reach BODY_CAP. A plain cap would do the same job
+        # against flooding but would make every file with five or more
+        # mentions score IDENTICALLY, and ties get broken alphabetically —
+        # that throws away real signal to fix a fake one.
+        score += BODY_CAP * hits / (hits + BODY_HALF) + inside_score
     return score, (starts + insides)[:3]
 
 def main():
@@ -247,6 +266,8 @@ def main():
     if "--stats" in sys.argv[1:]:
         return stats(root)
     terms, k = parse_args(sys.argv[1:])
+    if terms is None:               # unknown option — already explained
+        return 1
     if not terms:
         print("Usage: search.py <term> [term2 ...] [--k N] | --stats"); return 1
     terms = [fold(t) for t in terms]
@@ -257,7 +278,13 @@ def main():
             continue
         score, lines = score_file(text, fold(os.path.basename(rel)[:-3]), terms)
         if score:
-            scored.append((score, rel, lines))
+            # Signposts are halved, not hidden. They describe where things
+            # live, so they mention every topic in the vault at least once —
+            # and a folder map scoring above the note it points at is how a
+            # duplicate check misses the twin it was looking for. Halving
+            # keeps "where is X filed?" answerable while a real note on the
+            # subject always wins.
+            scored.append((score * (0.5 if is_infra(rel) else 1.0), rel, lines))
     scored.sort(key=lambda s: (-s[0], s[1]))
     if not scored:
         print("No hits."); return 0

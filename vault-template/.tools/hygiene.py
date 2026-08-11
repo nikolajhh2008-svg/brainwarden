@@ -148,6 +148,33 @@ def top_folder(rel):
 def unlinked_ok(rel):
     return top_folder(rel) in UNLINKED_OK
 
+
+def read_ignores(root):
+    """Folders another system writes into, from `.hygieneignore` in the root.
+
+    A vault is a folder, so other tools end up writing into it — an
+    assistant's memory store, a Zotero export, a plugin's daily notes.
+    Those files follow their own conventions and will never carry this
+    schema. Reported forever, they are noise that pushes the real findings
+    off the end: measured on one live vault, 42 of 42 findings came from a
+    single machine-written folder, and a report that is always red is a
+    report nobody reads.
+
+    One folder path per line, `#` starts a comment. Never silent — the
+    header says how many folders were skipped and how many notes that hid.
+    """
+    path = os.path.join(root, ".hygieneignore")
+    out = []
+    try:
+        with open(path, encoding="utf-8-sig", errors="ignore") as fh:
+            for line in fh:
+                line = line.split("#")[0].strip().strip("/")
+                if line:
+                    out.append(line.replace("\\", "/"))
+    except OSError:
+        pass
+    return out
+
 class Vault:
     """The vault as a link graph. Reads every note exactly once."""
 
@@ -335,16 +362,28 @@ def vault_mode(root):
 def main():
     argv = sys.argv[1:]
     limit, root = 10, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # A bare path is accepted as the vault. It used to be swallowed in
+    # silence: `hygiene.py /some/vault` then scanned the tool's OWN vault and
+    # printed a clean bill of health for a folder the caller never asked
+    # about. A report about the wrong vault is worse than an error message.
+    skip = False
     for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
         if a == "--max" and i + 1 < len(argv):
             try:
                 limit = max(1, int(argv[i + 1]))
             except ValueError:
                 pass
+            skip = True
         elif a == "--root" and i + 1 < len(argv):
             root = os.path.abspath(os.path.expanduser(argv[i + 1]))
-        elif a.startswith("--") and a not in ("--max", "--root"):
+            skip = True
+        elif a.startswith("-"):
             print(__doc__.strip()); return 1
+        else:
+            root = os.path.abspath(os.path.expanduser(a))
     if not os.path.isdir(root):
         print(f"No vault at {root}"); return 1
 
@@ -352,10 +391,25 @@ def main():
     if not v.notes:
         print(f"hygiene — {root}\nNo notes found (is this a vault?)"); return 0
 
+    ignores = read_ignores(root)
+
+    def ignored(rel):
+        """Inside a folder listed in `.hygieneignore`."""
+        p = rel.replace(os.sep, "/")
+        return any(p == i or p.startswith(i + "/") for i in ignores)
+
+    ignored_notes = sorted(r for r in v.notes if ignored(r))
+    ignored_folders = sorted({i for i in ignores
+                              if any(r.replace(os.sep, "/").startswith(i)
+                                     for r in ignored_notes)})
+
     signposts = {rel for rel in v.notes if v.is_signpost(rel)}
     inbound = collections.Counter()
     dead, signposted = [], set()
+    graph = collections.defaultdict(set)
     for rel in sorted(v.notes):
+        if ignored(rel):
+            continue
         for target, line, raw in v.links(rel):
             hit = v.resolve(target, rel)
             if hit is None:
@@ -365,14 +419,30 @@ def main():
                     "which is a dead link on Linux]" if variant else ""))
             elif hit != rel:
                 inbound[hit] += 1
-                if rel in signposts and hit in v.notes:
-                    signposted.add(hit)
+                if hit in v.notes:
+                    graph[rel].add(hit)
+
+    # Reachable = a PATH leads here from some signpost, not just a direct
+    # entry in one. Requiring the direct entry contradicted the rule the
+    # vault itself states — "an index.md never lists every file, only the
+    # ways in" — and made "0 unreachable" achievable only by listing every
+    # file, which is the opposite of what a signpost is for. A note the
+    # signpost reaches through two links is found; a note nothing leads to
+    # is not, and that is the actual finding.
+    queue = list(signposts)
+    while queue:
+        for nxt in graph.get(queue.pop(), ()):
+            if nxt not in signposted:
+                signposted.add(nxt)
+                queue.append(nxt)
 
     orphans, near_empty, gaps, expired = [], [], [], []
     mode, mode_note = vault_mode(root)
     today = datetime.date.today().isoformat()
     gap_counts = collections.Counter()
     for rel, text in sorted(v.notes.items()):
+        if ignored(rel):
+            continue
         if not is_infra(rel) and not unlinked_ok(rel) and not inbound[rel]:
             orphans.append(rel)
         words = len(body(text).split())
@@ -420,7 +490,8 @@ def main():
     for rel in v.notes:
         folders[os.path.dirname(rel)].append(rel)
     for folder, members in sorted(folders.items()):
-        real = sorted(r for r in members if not is_infra(r) and not unlinked_ok(r))
+        real = sorted(r for r in members
+                      if not is_infra(r) and not unlinked_ok(r) and not ignored(r))
         if not real:
             continue
         if os.path.join(folder, "index.md") in v.notes:
@@ -440,8 +511,15 @@ def main():
     # verb ("this folder replaces no system"), so matching it would flag normal
     # prose as a broken chain. Translated forms are still recognised, but only
     # at the start of a line, where a status note stands and prose does not.
-    sup = re.compile(r"(supersedes\b|^\s*ersetzt(?! durch)\b|^\s*remplace\b)", re.I | re.M)
-    supby = re.compile(r"(superseded by\b|^\s*ersetzt durch\b|^\s*remplacé par\b)", re.I | re.M)
+    # The English form is anchored too, for the same reason as the translated
+    # ones: a signpost entry like `* [x.md](x.md) - supersedes the old flow`
+    # DESCRIBES a replacement, it does not declare one, and reading it as a
+    # claim invented a chain whose other half could never exist. A real status
+    # note stands at the start of its line (after at most a list or quote mark
+    # and bold), which is exactly what spec 4.2 prescribes.
+    LEAD = r"^[ \t]*(?:[-*>][ \t]*)?\**[ \t]*"
+    sup = re.compile(LEAD + r"(supersedes\b|ersetzt(?! durch)\b|remplace\b)", re.I | re.M)
+    supby = re.compile(LEAD + r"(superseded by\b|ersetzt durch\b|remplacé par\b)", re.I | re.M)
     for rel in sorted(v.notes):
         for keyword, back, phrase in ((sup, supby, "Superseded by"), (supby, sup, "Supersedes")):
             for target, line, raw in v.links(rel, keyword):
@@ -457,6 +535,11 @@ def main():
     print(f"mode: {mode}" + (f" ({mode_note})" if mode_note else ""))
     print(f"{len(v.notes)} notes scanned ({len([r for r in v.notes if is_infra(r)])} kit files, "
           f"{len(signposts)} signposts)")
+    if ignored_notes:
+        # Named, never silent: an exemption you cannot see is indistinguishable
+        # from a check that stopped working.
+        print(f"skipped via .hygieneignore: {len(ignored_notes)} notes in "
+              f"{', '.join(ignored_folders)}")
     report(f"orphans — nothing links here (excl. {', '.join(UNLINKED_OK)})", orphans, limit)
     report("dead links — target does not exist", dead, limit)
     report(f"near-empty — under {NEAR_EMPTY_WORDS} words of body", near_empty, limit)

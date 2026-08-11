@@ -34,11 +34,12 @@ Claude arbeitet nicht heimlich. Für **jeden** Schritt, der etwas auf deinem
 Rechner anlegt, ändert oder löscht, fragt es dich vorher. Das sind ungefähr
 zwanzig Nachfragen – das ist normal und kein Zeichen, dass etwas schiefgeht.
 
-Zwei davon sehen erschreckender aus, als sie sind:
+Zwei Stellen lohnt es sich zu kennen:
 
-- **`rm -rf …/modules`** löscht nur Gerüstmaterial aus dem Bausatz, das in
-  deinem fertigen Ordner nichts zu suchen hat. Nicht deine Notizen – die
-  gibt es zu dem Zeitpunkt noch gar nicht.
+- **`assemble.py`** legt deinen Ordner an: Es kopiert die Vorlage, nimmt
+  nur die Teile, die zu deiner Antwort auf die erste Frage passen, und
+  lässt Gerüstmaterial aus dem Bausatz weg. Es überschreibt **nie** etwas,
+  was schon da ist – zeigt dir am Ende sogar, was es stehen gelassen hat.
 - **Ein Eintrag in `~/.claude/CLAUDE.md`** ist die eine Zeile, mit der jede
   spätere Claude-Sitzung weiß, wo dein Brain liegt. Claude fragt vorher.
 

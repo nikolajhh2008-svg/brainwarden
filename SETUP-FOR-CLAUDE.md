@@ -161,6 +161,29 @@ Check ALL of these before touching anything:
 - No git? The setup still works — skip the clone (download the ZIP) and
   the commit steps, and say so.
 
+### 2a. Which shell these commands assume
+Everything in this runbook is written for a **POSIX shell**: zsh or bash on
+macOS, bash on Linux, **Git Bash** on Windows. That is not a preference, it
+is the supported path — Claude Code's own Bash tool uses Git Bash on
+Windows, so the commands you run land there anyway.
+
+**PowerShell and `cmd` are not that shell.** `ls`, `grep`, `rm -rf`,
+`cp -R`, `find` and `sed` do not exist there, and a path like `~/Brain`
+is not expanded. If the human is standing in PowerShell, they need
+[Git for Windows](https://git-scm.com/downloads/win) (default settings)
+and a fresh terminal; `claude doctor` must list Git Bash. Where a command
+below is one a HUMAN types rather than you, a PowerShell equivalent is
+given next to it.
+
+Two consequences worth knowing before you touch a Windows machine:
+- **`python3` usually does not exist there.** Windows ships `python` and
+  `py`. Worse, a bare `python3` on a machine without Python opens the
+  Microsoft Store instead of failing — so a command can appear to "do
+  nothing". This is exactly why Step 2 makes you remember `<python>`.
+- **`sed` and `find` differ between macOS (BSD) and Linux/Git Bash (GNU)**
+  — `sed -i` is the classic trap. This runbook hands anything of that kind
+  to Python instead, which behaves identically everywhere.
+
 ## Step 3 — Create the vault
 Run this step once per vault (two vaults for answer 3 — the private one
 first, completely, through Step 9).
@@ -190,31 +213,36 @@ The template has ONE core plus mode overlays in `vault-template/modules/`
 `personal` gets no overlay). Apply them in exactly this order —
 `personal` stops after command 2:
 
-```bash
-# 1 — the core, every mode (note the `/.` : the CONTENTS, incl. hidden .tools/)
-mkdir -p <vault> && cp -R vault-template/. <vault>/
+One command does all of it, from the kit folder:
 
-# 2 — modules/ is kit scaffolding and must NEVER end up inside a vault
-rm -rf <vault>/modules
-
-# 3 — professional AND company
-cp -R vault-template/modules/processes/. <vault>/
-
-# 4 — company only, after command 3 and in this order
-cp -R vault-template/modules/company/. <vault>/
-rm -rf <vault>/10-projects <vault>/20-areas <vault>/30-knowledge/people
-rm -f  <vault>/"About me.md"
-rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
-       <vault>/_templates/area-note.md <vault>/_templates/journal-entry.md
-# these came with the processes overlay and belong to a PERSONAL work brain,
-# not to a shared one: in a company vault everything belongs to the company,
-# so there is no handover question and no personal contribution log
-rm -rf <vault>/60-contribution
-rm -f  <vault>/handover.md <vault>/_templates/contribution-entry.md \
-       <vault>/_templates/learning-note.md <vault>/_templates/meeting-note.md
+```
+<python> assemble.py <vault> <mode>
 ```
 
-The order matters: the company overlay deliberately OVERWRITES nine core
+It copies the core, applies the overlays the mode needs, leaves
+`modules/` out (kit scaffolding must never end up inside a vault), and
+removes the files a shared vault must not carry. It prints what it did.
+
+**Why a script rather than the eight commands it replaces.** One
+permission prompt instead of eight — and reading of warning dialogs drops
+off measurably from the SECOND one onwards, so a setup that asks eight
+times has trained the person to click through by the third. The one they
+stop reading is the one that matters. It also means no `rm -rf` on the
+path a first-time user walks: the scaffolding is never copied instead of
+being copied and then deleted. And it behaves identically on macOS,
+Linux and Windows, where `cp -R`, quoting and `rm -rf` do not.
+
+**It never overwrites.** Existing files are kept and listed at the end.
+That makes a wrong path a non-event rather than a catastrophe — but it is
+NOT the adopt path: for an existing vault, follow 3c, which has steps a
+copy tool cannot do (folding their `Home.md` into the new one by hand).
+
+Two things to check in its output before moving on: the mode it reports
+matches what they asked for, and the "existing files left untouched" list
+is empty on a fresh install. If it is not, you are not on a fresh
+install — stop and switch to 3c.
+
+The order it applies internally matters: the company overlay deliberately OVERWRITES nine core
 files — six `index.md` (root, `00-inbox/`, `30-knowledge/`,
 `40-decisions/`, `90-archive/`, `_templates/`), `Home.md`, `Deadlines.md`
 and **`CLAUDE.md`** — because they describe a vault that does not exist
@@ -648,7 +676,11 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    personal dossier, and decision records name the deciding **role**.
 5. **`{{DATE}}`:** replace it with today's date in the self page and
    `Deadlines.md`, and with the real date in every note you created from
-   a template. **Never fill the `{{DATE}}`/`{{NAME}}` tokens inside the
+   a template. **`company` mode: also `THIS-COPY.md`, which carries it
+   three times** (the copy's date, its `created:`, and the first line of
+   its changelog). That file is how a colleague tells a fresh copy from a
+   six-month-old one — left as `{{DATE}}`, it answers the one question it
+   exists for with a placeholder. **Never fill the `{{DATE}}`/`{{NAME}}` tokens inside the
    template files** (`_templates/`, `40-decisions/_template.md`) or
    anywhere in `.tools/` — the templates are filled per note, at creation
    time, forever, and `.tools/` is tooling, not content. Translating the
@@ -748,7 +780,7 @@ transcripts are personal, and a shared vault is the wrong place for them.
 **The rule that makes this safe: nothing is read without a yes, nothing is
 written without a second yes.**
 
-1. **Inventory, reading nothing.** `python3 <vault>/.tools/harvest.py`
+1. **Inventory, reading nothing.** `<python> <vault>/.tools/harvest.py`
    prints how many sessions exist, over what period, in which projects —
    file metadata only, no content. Show it and ask whether to go on.
 2. **State the expiry, once.** If `cleanupPeriodDays` is unset, the
@@ -756,7 +788,7 @@ written without a second yes.**
    raise it (`~/.claude/settings.json`) — their call, and a change to
    their configuration, so it needs an explicit yes.
 3. **Pre-filter with no model at all.**
-   `python3 <vault>/.tools/harvest.py --candidates --since <date>` drops
+   `<python> <vault>/.tools/harvest.py --candidates --since <date>` drops
    harness injections, system plumbing, acknowledgements, duplicates and
    anything without a decision/date/milestone/lesson word in it. Measured
    on a real machine: 1500 human turns in, 34 candidates out. This costs
@@ -808,28 +840,75 @@ Either way, if anything changed after Step 7's baseline commit:
 `cd <vault> && git add -A && git commit -m "onboarding"` — never hand over
 a dirty tree.
 
+### 8c. The safety net under capture (optional, mention it — do not install it)
+
+Capture is a habit, and habits lapse. Two days pass, decisions get made,
+a deadline is named, and none of it reaches the brain because nobody said
+"capture:". `hooks/` in the kit holds two optional Claude Code hooks for
+exactly that: one checks at the end of a turn whether anything has
+reached the inbox lately and, if not, makes Claude check the five capture
+triggers once; the other writes one line per session end so the weekly
+review can ask about sessions it never saw.
+
+**Say they exist, in one sentence, and point at `hooks/README.md`.** Do
+not install them as part of setup, and do not ask a yes/no question about
+them here. Two reasons: a hook edits their global `settings.json`, which
+is theirs and not part of a vault, and this is the twentieth-odd prompt
+of a setup — the point at which people click through anything. Someone
+who has felt capture lapse will come back for it; the file explains
+installing and removing in four lines each, and the check backs off by
+itself when it is not earning the interruption.
+
+If they ask right away, install it — but then read `hooks/README.md`
+first, and on Windows use the entry form from `TROUBLESHOOTING.md`
+(absolute path, doubled backslashes, and the python command that works
+there — `~` and `python3` both fail silently in `settings.json`).
+
 ## Step 9 — Verify, then hand over
 Run this checklist and show the results (fix anything that fails).
 Substitute `<vault>`, `<python>` and — for a second brain — the
 configuration directory in every command:
 
+Most of this list is one command. `hygiene.py` already measures the vault
+end to end, on every operating system, so run it FIRST and let it answer
+the questions it can — the checks below it are the ones no tool covers:
+
+```
+cd <vault> && <python> .tools/hygiene.py
+```
+
+Every rubric it prints must be `0`, and the `mode:` line must name this
+vault's mode with nothing in brackets after it. Two of them are worth
+naming, because they are what a hand-written check kept missing:
+- **`portability`** — a note saved in the wrong encoding (Windows Notepad
+  "ANSI", PowerShell 5.1 `>`), two file names differing only in case, or a
+  name Windows cannot create (`:` `?` `*` `"` `<` `>` `|`, or `aux`/`con`).
+  A German title like `KI: Schutz oder Überwachung.md` is fine on macOS and
+  makes `git clone` fail on Windows. Rename it now, not after the first
+  colleague cannot check the vault out.
+- **`mode:` followed by `(NOT SET — …)`** means `{{MODE}}` never got
+  replaced (5e). Everything is then measured against the loosest schema and
+  reports clean by accident. Fix 5e and re-run.
+
 - [ ] `ls <vault>` shows exactly the folders of this mode (3d) plus their
       own modules — and **no `modules/` folder** (that one is kit
-      scaffolding; if it is there, run `rm -rf <vault>/modules`)
-- [ ] every folder with notes has both waypoint files:
-      ```bash
-      cd <vault> && for d in [0-9]*/; do
-        [ -f "$d/index.md" ] && [ -f "$d/CLAUDE.md" ] || echo "missing waypoint: $d"
-      done
+      scaffolding; if it is there, delete it — `rm -rf <vault>/modules`,
+      PowerShell: `Remove-Item -Recurse -Force <vault>\modules`)
+- [ ] every folder with notes has both waypoint files. `hygiene.py` names
+      the folders missing an `index.md`; this finds the ones missing the
+      little `CLAUDE.md` next to it:
+      ```
+      cd <vault> && <python> -c "import os;[print('missing waypoint:',d) for d,_,f in os.walk('.') if 'index.md' in f and 'CLAUDE.md' not in f]"
       ```
 - [ ] `<vault>/Home.md` names their real first project (`company`: their
       real first process) in the `right-now` block — not the template
       placeholder line
 - [ ] `<vault>/Home.md` has a real entry in the `next-deadlines` block
       (or the explicit "no dates yet" line plus the open question from 5a)
-- [ ] all four marker pairs survived editing and translation:
-      ```bash
-      grep -o "<!-- /\?block:[a-z-]*  *-->" <vault>/Home.md | wc -l   # 8 = 4 pairs
+- [ ] all four marker pairs survived editing and translation — this must
+      print `8`:
+      ```
+      <python> -c "import re;print(len(re.findall(r'<!-- /?block:[a-z-]+ +-->', open('<vault>/Home.md', encoding='utf-8-sig').read())))"
       ```
 - [ ] `<python> <vault>/.tools/search.py test` runs without error, and
       `ls <vault>/.tools/` shows `search.py`, `hygiene.py` and
@@ -844,15 +923,14 @@ configuration directory in every command:
       unrelated line that happens to contain it and reports green on a
       rules file that has no block at all.
 - [ ] `cd <vault> && git log --oneline` shows the setup commit
-- [ ] `company` only: every note carries the company frontmatter —
-      ```bash
-      cd <vault> && grep -rL "^owner:" --include="*.md" 50-processes 60-roles 70-onboarding 80-partners 30-knowledge 40-decisions | grep -vE "(index|CLAUDE|_template)\.md"
-      ```
-      must be empty
-- [ ] No setup placeholders left OUTSIDE the templates and tooling:
-      ```bash
-      grep -rnE "\{\{(NAME|LANGUAGE|DATE|MODE|COMPANY)\}\}" <vault> --exclude-dir=_templates --exclude-dir=.tools --exclude-dir=.git | grep -v "_template.md"
-      ```
+- [ ] `company` only: every note carries the company frontmatter. The
+      `hygiene.py` run at the top of this list already measures it — in
+      `company` mode a note without `owner:`, `status:`, `audience:` or
+      `confidentiality:` lands under **frontmatter gaps**, which must be
+      `0`. (That is also the check that quietly passes when `{{MODE}}` was
+      never replaced, so confirm the `mode:` line says `company` first.)
+- [ ] No setup placeholders left OUTSIDE the templates and tooling — the
+      command below the list must print nothing.
       `_templates/`, `40-decisions/_template.md` and `.tools/` are
       excluded on purpose: the templates keep their tokens forever, and
       `.tools/` holds the search tool and the interview script — kit
@@ -865,9 +943,29 @@ configuration directory in every command:
       fill their `{{LANGUAGE}}`/`{{DATE}}` even when the "first win" was
       built from existing notes.
 
+The placeholder check. It must print nothing. (Keep this block flush left
+when you run it — a `<<'PY'` heredoc whose closing `PY` is indented never
+terminates, and the shell waits forever.)
+
+```bash
+cd <vault> && <python> - <<'PY'
+import pathlib, re
+SKIP = {"_templates", ".tools", ".git", ".obsidian"}
+token = re.compile(r"\{\{(NAME|LANGUAGE|DATE|MODE|COMPANY)\}\}")
+for p in sorted(pathlib.Path(".").rglob("*.md")):
+    if SKIP & set(p.parts) or p.name == "_template.md":
+        continue
+    for hit in sorted(set(token.findall(p.read_text(encoding="utf-8-sig",
+                                                    errors="ignore")))):
+        print(f"{p}: {{{{{hit}}}}}")
+PY
+```
+
 If anything above fails mid-setup and can't be fixed: a fresh install may
-simply be removed (`rm -rf <vault>`) and restarted — say so instead of
-leaving a half-built vault.
+simply be removed (`rm -rf <vault>`; PowerShell:
+`Remove-Item -Recurse -Force <vault>`) and restarted — say so instead of
+leaving a half-built vault. Only ever on a FRESH install: on an adopted
+vault that command deletes their own notes.
 
 Hand over with a 30-second demo of the five verbs, each one line:
 **capture** (dump a thought) · **ingest** (drop a PDF into raw/) ·
@@ -915,18 +1013,49 @@ KEYS — never note content:
    kit used `status: seed|growing|evergreen` for maturity; `status:` is
    now reserved for validity (`draft|stable|deprecated`). Only the KEY
    changes, never a value, never a line of note text:
-   - See what will change first:
-     ```bash
-     cd <vault> && grep -rn "^status: *\(seed\|growing\|evergreen\)" --include="*.md" .
-     ```
-   - Then rename in place (macOS: `sed -i ''`, Linux/Git-Bash: `sed -i`):
-     ```bash
-     cd <vault> && find . -name "*.md" -not -path "./.git/*" \
-       -exec sed -i '' -E 's/^status: (seed|growing|evergreen)$/maturity: \1/' {} +
-     ```
-   - Re-run the grep — it must come back empty — then `git diff --stat`
-     and commit this alone (`git commit -m "migrate status → maturity"`),
-     so it can be reverted on its own.
+   - See what will change first, and rename in one pass. **Do not use
+     `sed` for this.** The `find … -exec sed -i` form that used to stand
+     here is wrong twice over: `sed -i ''` is macOS-only (on GNU sed, which
+     is what Git Bash and Linux ship, the `''` is read as the SCRIPT and the
+     migration silently does nothing), and — measured — `$`-anchored
+     patterns do not match a line ending in CRLF, so on a vault written on
+     Windows every single note is skipped while the command reports success.
+     Python has neither problem and is already required. Run this block
+     **flush left** — an indented `PY` terminator never ends the heredoc:
+
+```bash
+cd <vault> && <python> - <<'PY'
+import pathlib, re
+old = re.compile(r"(?m)^status:[ \t]*(seed|growing|evergreen)[ \t]*(\r?)$")
+changed, skipped = [], []
+for p in sorted(pathlib.Path(".").rglob("*.md")):
+    if ".git" in p.parts:
+        continue
+    raw = p.read_bytes()
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        skipped.append(p); continue
+    new = old.sub(r"maturity: \1\2", text)
+    if new != text:
+        bom = b"\xef\xbb\xbf" if raw.startswith(b"\xef\xbb\xbf") else b""
+        p.write_bytes(bom + new.encode("utf-8"))   # keeps CRLF and the BOM
+        changed.append(p)
+print(f"{len(changed)} notes migrated")
+for p in changed: print("  ", p)
+for p in skipped: print("   NOT UTF-8, left alone:", p)
+PY
+```
+
+     It rewrites nothing but that one key: `status: draft|stable|deprecated`
+     is left alone, and a `status: seed | growing | evergreen` example inside
+     a sentence or a code block does not match (the line must be exactly the
+     field). Line endings and a byte-order mark survive unchanged, so the
+     diff is one line per note and nothing else.
+   - Then `git diff --stat` and commit this alone
+     (`git commit -m "migrate status → maturity"`), so it can be reverted on
+     its own. Anything listed as NOT UTF-8 is a separate problem — see the
+     `portability` rubric of `hygiene.py`.
    - A `status:` with any OTHER value (`draft`, `stable`, `deprecated`,
      or something they invented): leave it. List anything unclear and
      ask — never guess at a value.

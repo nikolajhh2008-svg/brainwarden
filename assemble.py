@@ -50,12 +50,16 @@ COMPANY_DROPS = [
 def copy_tree(src, dst, skipped, overwrite=False):
     """Copy contents of src into dst. Never overwrites unless told to."""
     for root, dirs, files in os.walk(src):
-        dirs[:] = [d for d in dirs if d != "modules"]      # kit scaffolding
+        # `modules/` is kit scaffolding; the rest is build litter. Git ignores
+        # bytecode caches, so a fresh clone has none — but anyone who ran the
+        # tools once and then assembled a second vault carried them along.
+        dirs[:] = [d for d in dirs
+                   if d not in ("modules", "__pycache__", ".git")]
         rel = os.path.relpath(root, src)
         target_dir = dst if rel == "." else os.path.join(dst, rel)
         os.makedirs(target_dir, exist_ok=True)
         for name in files:
-            if name == ".DS_Store":
+            if name == ".DS_Store" or name.endswith((".pyc", ".pyo", ".swp")):
                 continue
             target = os.path.join(target_dir, name)
             if os.path.exists(target) and not overwrite:

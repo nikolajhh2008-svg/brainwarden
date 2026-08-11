@@ -96,8 +96,10 @@ belongs there, what does not and where to start; the three-line
 automatically. Vaults built before those existed simply lack them — say
 *"backfill the missing index files in my brain"*. Folders you created by
 hand need the pair too; without it, agents guess, and guessing is what
-this system exists to prevent. `python3 .tools/hygiene.py` lists notes
-that no `index.md` mentions.
+this system exists to prevent. Run from inside your vault,
+`python3 .tools/hygiene.py` lists notes that no `index.md` mentions — and
+everything else the weekly review checks. **On Windows write `py -3`
+instead of `python3`**, here and everywhere else on this page.
 
 **Why do the folder numbers jump (…40, then 90)?** The gap is expansion
 space: optional modules (journal, media log, health, money …) slot in as
@@ -123,7 +125,8 @@ code projects (belongs in that repo's CLAUDE.md) and anything you call
 "private".
 
 **Setup died halfway?** A fresh install can simply be removed
-(`rm -rf ~/Brain`) and restarted — nothing else on your machine changed
+(`rm -rf ~/Brain`, PowerShell: `Remove-Item -Recurse -Force ~\Brain`) and
+restarted — nothing else on your machine changed
 except `~/.claude/skills/` and the rules block in `~/.claude/CLAUDE.md`,
 both safe to re-run. An adopted vault: ask Claude to undo its last
 changes via Git.
@@ -143,7 +146,8 @@ section in SETUP-FOR-CLAUDE.md."* Your notes are never touched; updates
 only replace skills, the search tool and the dashboard scaffolding.
 
 **How do I uninstall completely?** Three things and you're clean:
-`rm -rf ~/Brain` (or keep it — it's just Markdown), delete the five
+`rm -rf ~/Brain` (PowerShell: `Remove-Item -Recurse -Force ~\Brain`; or
+keep it — it's just Markdown), delete the five
 `brain-*` folders from `~/.claude/skills/`, and remove the "Brain" block
 from `~/.claude/CLAUDE.md`. Nothing else was touched. Have a second
 brain? Then also `rm -rf` its vault folder and its configuration
@@ -254,12 +258,113 @@ and `py`, not `python3`. Tell Claude: *"python3 doesn't exist here, use
 py -3"* — it will also fix the search command in your global CLAUDE.md
 so future sessions use the right one.
 
+Worse than "not recognized": on a machine **without** Python, typing
+`python3` opens the Microsoft Store instead of reporting an error. A
+command that seems to do nothing at all is usually this. Install Python
+from python.org with "Add python.exe to PATH" ticked, then check with
+`py -3 --version`.
+
+**Which terminal do I type these commands into?** Anything with `ls`,
+`grep`, `rm -rf`, `cp -R` or `~/Brain` in it is written for **Git Bash**
+(installed with Git for Windows) — that is also the shell Claude Code
+itself runs commands in on Windows. PowerShell does not understand those
+commands, and does not expand `~/Brain`. The handful you might type
+yourself, in both dialects:
+
+| Git Bash | PowerShell |
+|---|---|
+| `ls ~/Brain` | `dir ~\Brain` |
+| `rm -rf ~/Brain` | `Remove-Item -Recurse -Force ~\Brain` |
+| `grep "Brain vault:" ~/.claude/CLAUDE.md` | `Select-String "Brain vault:" ~\.claude\CLAUDE.md` |
+| `cd ~/Brain && git log --oneline` | `cd ~\Brain; git log --oneline` |
+| `py -3 .tools/hygiene.py` | `py -3 .tools\hygiene.py` |
+
+The Python tools (`search.py`, `hygiene.py`, `harvest.py`) are the
+exception: they behave identically in both, and in `cmd`.
+
+**Installing the optional hooks on Windows.** The install snippet in
+`hooks/README.md` reads
+`"command": "python3 ~/.claude/hooks/capture_check.py"`. **Both halves of
+that are wrong on Windows:** `python3` usually does not exist, and `~` is
+not expanded — the hook then fails silently every turn, because a hook
+that cannot start is indistinguishable from a hook with nothing to say.
+Use an absolute path and the Python command that works on your machine.
+In `settings.json` a backslash has to be doubled:
+
+```json
+{"hooks": {"Stop": [{"hooks": [
+  {"type": "command",
+   "command": "py -3 C:\\Users\\YourName\\.claude\\hooks\\capture_check.py"}
+]}]}}
+```
+
+Test it before trusting it — this must print a JSON line or nothing, never
+an error:
+`echo {} | py -3 C:\Users\YourName\.claude\hooks\capture_check.py`
+
+**A note in my vault shows as gibberish, and search never finds it.**
+Its encoding is wrong, and this is a Windows-made problem: PowerShell 5.1
+writes UTF-16 when you use `>`, and Notepad's old "ANSI" setting writes
+cp1252. Obsidian and the vault's tools both expect UTF-8. Run
+`py -3 .tools/hygiene.py` — such files are listed under **portability**.
+The fix is to open each one and save it as UTF-8; nothing in the kit
+rewrites your notes for you. To avoid making more of them, append with
+`Out-File -Encoding utf8` rather than `>`, or just let Claude write them.
+
+**Cloning the vault fails on Windows with an invalid-path error.** Some
+file names are legal on macOS and Linux and impossible on Windows: any of
+`: ? * " < > |` in a note title, a name ending in a space or a dot, and
+the reserved words `con`, `prn`, `aux`, `nul`, `com1`–`com9`, `lpt1`–`lpt9`.
+A German title like `KI: Schutz oder Überwachung.md` is the usual culprit.
+`hygiene.py` lists them under **portability** — rename them on the machine
+that can still see them, before the vault reaches a Windows colleague.
+
 **Using WSL and Obsidian can't open the vault (or is very slow)?**
 Obsidian is a Windows app and handles `\\wsl$` paths badly — known
 Obsidian limitation, not a kit bug. Put the vault on the Windows side
 (`C:\Users\You\Brain` = `/mnt/c/Users/You/Brain` from WSL): Obsidian
 opens it normally, and the speed difference is not noticeable at a few
 hundred Markdown files.
+
+## macOS quirks
+
+**A link works on my Mac and is dead on someone else's machine.** macOS
+formats disks case-*insensitively* by default: a link to `ZIEL.md` happily
+opens `Ziel.md`, and the same vault on Linux (a server, a colleague, a CI
+box) finds nothing. `hygiene.py` deliberately compares spellings exactly
+and, when only the case differs, says so:
+`→ (30-knowledge/ZIEL.md)  [the file is 30-knowledge/Ziel.md — only the
+spelling differs, which is a dead link on Linux]`. Fix the link, not the
+file name.
+
+**Two notes with almost the same name.** The mirror image of the same
+issue: on Linux `Klugoro.md` and `klugoro.md` are two files, on macOS and
+Windows they are one. Cloning such a vault onto a Mac loses one of them
+without a word. `hygiene.py` lists the pairs under **portability**; rename
+one before it travels.
+
+**Commands from the internet that end in `sed -i ''`.** macOS ships the
+BSD versions of `sed`, `find` and `date`, which take different arguments
+from the GNU ones on Linux and in Git Bash — `sed -i ''` is the classic:
+required on macOS, and on GNU sed it silently does nothing at all. Nothing
+in this kit asks you to run `sed`; the one place that used to (the
+`status:` → `maturity:` migration) now uses Python, which behaves the same
+everywhere and, unlike `sed`, does not skip files with Windows line
+endings.
+
+**Does Gatekeeper block the scripts?** No. Nothing in the kit is an app or
+a signed binary — they are text files run by `python3` and `sh`, which
+Gatekeeper does not gate. Files from `git clone` carry no quarantine flag
+at all; even a script unpacked from a downloaded ZIP (which does carry
+one) runs normally from the terminal. If a command fails, the cause is
+something else.
+
+**iCloud.** The rule from the top of this page is a macOS rule in
+practice: do not put the vault in iCloud Drive, and remember that
+"Desktop & Documents Folders" sync counts — a vault in `~/Documents` is in
+iCloud whether you meant it or not. `~/Brain` is outside it, which is why
+that is the default. Git plus any file-sync service on the same folder is
+how vaults corrupt.
 
 ## Capturing on the go (mobile)
 

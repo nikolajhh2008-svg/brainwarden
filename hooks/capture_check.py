@@ -208,12 +208,40 @@ def write_state(st):
         return False
 
 
+def read_stdin():
+    """The payload as text, whatever the shell hands us.
+
+    Two ways this used to fail. A closed stdin (`0<&-`) makes `sys.stdin`
+    None, and `None.isatty()` raised — the hook then did nothing at all.
+    And reading through the text layer uses the LOCALE encoding, so on a
+    cp1252 Windows console a vault path like `Größenwahn Brain` arrived as
+    `GrÃ¶ÃŸenwahn Brain`. The payload is JSON, which is utf-8 by
+    definition, so decode the raw bytes and say so.
+    """
+    stream = sys.stdin
+    if stream is None:
+        return ""
+    try:
+        if stream.isatty():                 # interactive: nothing is piped in
+            return ""
+    except (AttributeError, ValueError, OSError):
+        pass
+    try:
+        return stream.buffer.read().decode("utf-8", "replace")
+    except (AttributeError, ValueError, OSError):
+        pass
+    try:
+        return stream.read()
+    except (OSError, UnicodeDecodeError):
+        return ""
+
+
 def main():
     if os.environ.get("BRAINWARDEN_CAPTURE_CHECK", "").strip().lower() in (
             "off", "0", "false", "no"):
         return 0
 
-    raw = sys.stdin.read() if not sys.stdin.isatty() else ""
+    raw = read_stdin()
     try:
         payload = json.loads(raw) if raw.strip() else {}
     except ValueError:

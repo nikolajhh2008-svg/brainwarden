@@ -27,10 +27,16 @@ nothing ever comes out; the vault becomes storage, then guilt, then
 abandoned.
 → *Kit answer:* the success metric is **output** — study sheets, drafts,
 plans, decisions. `brain-ask` makes withdrawal as easy as deposit, and the
-weekly review pulls in the same direction: it surfaces stalled loops and
-open questions and offers to research them. What the review does *not* do
-is ask you what the brain should produce next. That would close the loop
-properly, and it belongs on the wish list, not in this description.
+weekly review ends on the same side: its last working step asks what the
+brain can do now that it could not last week, then what you are working on
+next — and offers to build the artifact that today's filing now supports,
+filed and linked, not just suggested. A review that ends in a filing report
+has taught you that the brain is a place where work goes to be stored.
+
+The honest limit: that pull exists once a week. Between reviews nothing
+forces the vault to produce anything, and a vault that only ever pays out
+on Sundays is still easier to abandon than one you reach for on a Tuesday.
+`brain-ask` is what has to carry those six days.
 
 **4. All setup, no payoff.** Beginners spend the first session choosing
 taxonomies and comparing methods, meet an empty vault, and never come

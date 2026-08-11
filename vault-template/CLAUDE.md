@@ -251,6 +251,12 @@ garden; it never replaces the plants.
   of duplicating.
 - Review hygiene: `python3 .tools/hygiene.py` reports orphan notes, dead
   links, empty files and notes missing from their folder's `index.md`.
+  If another program writes into this vault (an assistant's memory store, a
+  plugin's daily notes, an export), list those folders in `.hygieneignore`
+  in the vault root, one per line — they follow their own conventions and
+  will never match this schema. The report names what it skipped, so the
+  exemption stays visible. Everything else stays in: a report that is
+  permanently red gets ignored, and then the real findings go unread.
 - Cold start from past sessions: `python3 .tools/harvest.py` (inventory
   only) and `--candidates` (deterministic pre-filter). It never writes and
   never calls a model — see Step 8a of the setup runbook for the procedure

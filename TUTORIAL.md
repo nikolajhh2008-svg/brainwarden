@@ -62,7 +62,8 @@ differently, with one procedure written down and the role that owns it.
 `claude` and say: "Read SETUP-FOR-CLAUDE.md and set up my brain
 accordingly.")*
 
-✅ **Checkpoint:** `ls ~/Brain` (or whichever path Claude named) shows
+✅ **Checkpoint:** `ls ~/Brain` (or whichever path Claude named — on
+Windows in PowerShell: `dir ~\Brain`) shows
 numbered folders from `00-inbox` to `90-archive` — exactly which ones
 depends on your answer above — plus a `_templates` folder, where the note
 blueprints live. Every folder that holds notes also carries an `index.md`

@@ -172,7 +172,10 @@ def check_hooks(tmp):
                                 f"{r.stderr.strip()[:100]}")
     queue = os.path.join(cfg, "state", "brainwarden-session-queue.tsv")
     rows = [l for l in open(queue, encoding="utf-8").read().splitlines() if l.strip()]
-    if len(rows) != 1 or len(rows[0].split("\t")) != 5:
+    # when · project · session · why it ended, and possibly more later — the
+    # first four are what harvest.py --queue and the weekly review read.
+    fields = rows[0].split("\t") if rows else []
+    if len(rows) != 1 or len(fields) < 4 or not re.match(r"\d{4}-\d\d-\d\d ", fields[0]):
         return bad("hooks run", f"queue line malformed: {rows!r}")
     call("session_queue", {"reason": "resume", "cwd": vault, "session_id": "s2"})
     rows = [l for l in open(queue, encoding="utf-8").read().splitlines() if l.strip()]
@@ -314,8 +317,12 @@ REPORT = re.compile(r"^(?P<title>\S.*?): (?P<n>\d+)(?: \(.*\))?$")
 
 
 def hygiene_findings(vault):
-    """(mode line, {rubric: count}) — and a crash is a crash, not `0 findings`."""
-    r = run([tool("hygiene.py")], cwd=vault)
+    """(mode line, {rubric: count}) — and a crash is a crash, not `0 findings`.
+
+    Runs the vault's OWN copy of the tool: hygiene derives the vault root from
+    its own location, so calling the template's copy would measure the
+    template no matter which vault you point it at."""
+    r = run([os.path.join(vault, ".tools", "hygiene.py")], cwd=vault)
     if r.returncode or "Traceback" in r.stderr:
         raise RuntimeError(f"hygiene.py exit {r.returncode}: {r.stderr.strip()[:200]}")
     mode_line, counts = "", {}

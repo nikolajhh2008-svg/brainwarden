@@ -17,35 +17,21 @@ cannot pick it up.
 
 ## Applying an overlay (for SETUP-FOR-CLAUDE.md)
 
-```bash
-# 1 — core, every mode (as today)
-mkdir -p ~/Brain && cp -R vault-template/. ~/Brain/
-
-# 2 — modules/ is kit scaffolding; a vault must never contain it
-rm -rf ~/Brain/modules
-
-# 3 — professional AND company
-cp -R vault-template/modules/processes/. ~/Brain/
-
-# 4 — company only
-cp -R vault-template/modules/company/. ~/Brain/
-rm -rf ~/Brain/10-projects ~/Brain/20-areas ~/Brain/30-knowledge/people
-rm -f  ~/Brain/"About me.md"          # replaced by "About this vault.md"
-rm -f  ~/Brain/_templates/person-note.md \
-       ~/Brain/_templates/project-note.md \
-       ~/Brain/_templates/area-note.md \
-       ~/Brain/_templates/journal-entry.md   # their folders do not exist here
-# these arrived with the processes overlay and belong to a PERSONAL work
-# brain: in a shared vault everything belongs to the company, so there is
-# no handover question and no personal contribution log
-rm -rf ~/Brain/60-contribution
-rm -f  ~/Brain/handover.md \
-       ~/Brain/_templates/contribution-entry.md \
-       ~/Brain/_templates/learning-note.md \
-       ~/Brain/_templates/meeting-note.md
+```
+python3 assemble.py ~/Brain <personal|professional|company>
 ```
 
-Order matters: step 4 deliberately OVERWRITES nine core files that talk
+`assemble.py` (kit root) does the whole sequence: core, then the overlays
+the mode needs, leaving `modules/` behind, then removing the files a
+shared vault must not carry. It never overwrites and lists what it left
+alone. Keep the overlay folders shaped like a vault root — that is what
+makes applying them a plain copy, and the script relies on it. The list
+of files the company mode drops lives in `COMPANY_DROPS` at the top of
+that script; when an overlay gains a file that a shared vault must not
+have, that list is the one place to change.
+
+
+Order matters, and the script applies it: the company overlay deliberately OVERWRITES nine core files that talk
 about folders which do not exist in a company vault — six `index.md`
 (root, `00-inbox/`, `30-knowledge/`, `40-decisions/`, `90-archive/`,
 `_templates/`) plus `Home.md` (the core one links `[[About me]]`, which
@@ -76,12 +62,13 @@ where they merely override an `index.md`, the identical three-line
 | Overlay | Adds |
 |---|---|
 | `processes/` | `50-processes/` and `60-contribution/` (each index + CLAUDE.md), `handover.md`, `_templates/sop-note.md` + `meeting-note.md` + `contribution-entry.md` + `learning-note.md`, and two overriding files: `_templates/index.md` (lists the SOP template) and the root `index.md` (without it the folder that defines this mode is missing from the cold-entry signpost) |
-| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and nine overriding files: six `index.md` (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`), `Home.md`, `Deadlines.md` (the core one lacks this mode's required fields) and **`CLAUDE.md`** — the binding rules file. The core one describes projects, areas and person notes, none of which exist here; leaving it in place is the one override whose absence makes an agent create a personnel dossier. |
+| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `THIS-COPY.md` (a distributed copy ages silently — this file carries its date), `.tools/progress.py` (how much of the vault is verified, not just how much text exists), `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and nine overriding files: six `index.md` (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`), `Home.md`, `Deadlines.md` (the core one lacks this mode's required fields) and **`CLAUDE.md`** — the binding rules file. The core one describes projects, areas and person notes, none of which exist here; leaving it in place is the one override whose absence makes an agent create a personnel dossier. |
 
 ## Placeholders the setup still has to fill
 - `{{MODE}}` and `{{LANGUAGE}}` in the vault `CLAUDE.md`
 - `{{MODE}}` and `{{LANGUAGE}}` in the root `index.md` (both variants)
-- `{{DATE}}` in `About this vault.md`
+- `{{DATE}}` in `About this vault.md` and **three times in `THIS-COPY.md`**
+  (the date of the copy, its `created:` and its first changelog line)
 - `{{COMPANY}}` in `About this vault.md` and `70-onboarding/onboarding-path.md`
 
 ## Adding another module later
