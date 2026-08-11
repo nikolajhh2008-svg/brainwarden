@@ -20,8 +20,14 @@ status: stable
 - <option> — <why not>
 
 ## Status
-<In force. Delete this line and write the replacement in plain text once
-one exists: `Supersedes [40-decisions/<old-file>.md](<old-file>.md)` in
-the new record — and append `Superseded by [<path>](<path>)` plus
-`status: deprecated` to the OLD one. Both sides, always: an agent that
-lands in the outdated record has to find the pointer there.>
+In force.
+
+<!-- When this record is replaced, this section is REWRITTEN, not extended:
+     the line above is replaced by `Superseded by [<path>](<path>)`, and the
+     frontmatter gets `status: deprecated`. Two `## Status` sections, the
+     first still saying "In force", is the one failure this convention
+     exists to prevent — an agent greps the first hit and believes it.
+     The new record gets its own `## Status` with
+     `Supersedes [40-decisions/<old-file>.md](<old-file>.md)`.
+     Rewriting THIS section is the single exception to append-only;
+     everything else in a decision record stays untouched forever. -->

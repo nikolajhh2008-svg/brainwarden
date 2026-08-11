@@ -67,8 +67,8 @@ where they merely override an `index.md`, the identical three-line
 
 | Overlay | Adds |
 |---|---|
-| `processes/` | `50-processes/` (index + CLAUDE.md), `_templates/sop-note.md`, and an overriding `_templates/index.md` that lists it |
-| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and seven overriding files: six `index.md` (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`) + `Home.md` |
+| `processes/` | `50-processes/` (index + CLAUDE.md), `_templates/sop-note.md`, and two overriding files: `_templates/index.md` (lists the SOP template) and the root `index.md` (without it the folder that defines this mode is missing from the cold-entry signpost) |
+| `company/` | `60-roles/`, `70-onboarding/` (incl. `onboarding-path.md`), `80-partners/`, `00-inbox/suggestions/`, `About this vault.md`, `_templates/role-note.md` + `partner-note.md` + `onboarding-plan.md`, and nine overriding files: six `index.md` (root, `00-inbox`, `30-knowledge`, `40-decisions`, `90-archive`, `_templates`), `Home.md`, `Deadlines.md` (the core one lacks this mode's required fields) and **`CLAUDE.md`** — the binding rules file. The core one describes projects, areas and person notes, none of which exist here; leaving it in place is the one override whose absence makes an agent create a personnel dossier. |
 
 ## Placeholders the setup still has to fill
 - `{{MODE}}` and `{{LANGUAGE}}` in the vault `CLAUDE.md`

@@ -34,6 +34,10 @@ INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md", "About me.md"
 # Orphans there are not a finding: captures are unlinked by definition
 # (the review empties the inbox) and the archive is cold storage.
 UNLINKED_OK = ("00-inbox", "90-archive")
+# Superseded records are deliberately dropped from their folder's index.md
+# (the signpost lists what applies, not what applied). Flagging them forever
+# would make "0 unreachable" impossible from the first replacement onwards.
+SUPERSEDED = re.compile(r"^\s*(superseded by|status:\s*deprecated)", re.M | re.I)
 EXTERNAL = ("http://", "https://", "mailto:", "tel:", "obsidian://", "ftp://", "//")
 
 def norm(text):
@@ -125,12 +129,21 @@ class Vault:
 
     def resolve(self, target, source):
         """Obsidian-style: by path (relative to the note, then to the vault
-        root), otherwise by file name anywhere. Returns a rel path or None."""
+        root), otherwise by file name anywhere. Returns a rel path or None.
+
+        The name fallback applies ONLY to bare names (`[[Some note]]`), never
+        to targets that carry a path. A path says where the file is; falling
+        back to "some file with that name, somewhere" would make every broken
+        relative link resolve — `../gone/index.md` would silently land on any
+        of the ten `index.md` files in the vault, and the dead-link check
+        would report zero on a vault whose signpost chain is broken."""
         for base in (os.path.dirname(source), ""):
             for suffix in ("", ".md"):
                 cand = os.path.normpath(os.path.join(base, target + suffix))
                 if cand in self.files or os.path.exists(os.path.join(self.root, cand)):
                     return cand
+        if "/" in target or target.startswith("."):
+            return None
         return self.by_name.get(norm(os.path.basename(target)))
 
     def is_signpost(self, rel):
@@ -212,7 +225,8 @@ def main():
         if not real:
             continue
         if os.path.join(folder, "index.md") in v.notes:
-            unreachable += [r for r in real if r not in signposted]
+            unreachable += [r for r in real if r not in signposted
+                            and not SUPERSEDED.search(v.notes[r])]
         else:
             no_index.append((len(real), f"{folder or '(root)'} ({len(real)} notes)"))
     no_index = [line for _, line in sorted(no_index, reverse=True)]

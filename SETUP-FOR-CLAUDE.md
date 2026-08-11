@@ -208,13 +208,21 @@ rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
        <vault>/_templates/area-note.md <vault>/_templates/journal-entry.md
 ```
 
-The order matters: the company overlay deliberately OVERWRITES seven core
+The order matters: the company overlay deliberately OVERWRITES nine core
 files — six `index.md` (root, `00-inbox/`, `30-knowledge/`,
-`40-decisions/`, `90-archive/`, `_templates/`) **and `Home.md`** —
-because they describe folders a company vault does not have; a signpost
-pointing at a missing folder makes the whole navigation lie. The company
+`40-decisions/`, `90-archive/`, `_templates/`), `Home.md`, `Deadlines.md`
+and **`CLAUDE.md`** — because they describe a vault that does not exist
+here; a signpost pointing at a missing folder makes the whole navigation
+lie. `CLAUDE.md` is the one that matters most: the core version calls
+itself a *personal* vault, maps `10-projects/`, `20-areas/` and
+`30-knowledge/people/`, and states "one person = one note" as a thinking
+rule. Left in place, an agent follows it and writes a personnel dossier
+into a shared vault — the exact thing `60-roles/` forbids. The company
 `Home.md` carries the SAME four block markers, so the review treats it
-identically. On a FRESH install that overwrite is what you want. On the
+identically; the company `Deadlines.md` adds the four fields this mode
+requires (`owner`, `audience`, `confidentiality`, `review_due`).
+The `processes/` overlay likewise brings its own root `index.md`, so that
+`50-processes/` appears in the cold-entry signpost. On a FRESH install that overwrite is what you want. On the
 ADOPT path it is not: never run the overlay over someone's existing
 `Home.md` — copy the company one aside, fold their content into it by
 hand, one OK per change (3c). The four deleted templates are deleted on purpose,
@@ -646,7 +654,7 @@ the wrong vault:
 
 Check yourself before moving on — this must return nothing:
 ```bash
-grep -nE "<(vault|python|first name|mode)>" ~/.claude/CLAUDE.md
+grep -nE "<(vault|python|first name|personal\|professional\|company)>|^- Mode: *$" ~/.claude/CLAUDE.md
 ```
 
 Re-running the setup? `grep -n "Brain vault:" ~/.claude/CLAUDE.md` first —
@@ -719,7 +727,7 @@ configuration directory in every command:
       (or the explicit "no dates yet" line plus the open question from 5a)
 - [ ] all four marker pairs survived editing and translation:
       ```bash
-      grep -c "block:" <vault>/Home.md    # 8 markers = 4 pairs
+      grep -o "<!-- /\?block:[a-z-]*  *-->" <vault>/Home.md | wc -l   # 8 = 4 pairs
       ```
 - [ ] `<python> <vault>/.tools/search.py test` runs without error, and
       `ls <vault>/.tools/` shows `search.py`, `hygiene.py` and
@@ -784,8 +792,8 @@ KEYS — never note content:
    Check `grep "Kit version" <vault>/CLAUDE.md` to see what you're
    upgrading from (vaults older than 1.0.0 have no marker — treat them as
    pre-1.0). After the update, set the marker to the version this clone
-   actually is — read it from `.claude-plugin/plugin.json`
-   (`metadata.version`), never from `CHANGELOG.md`'s top heading, which
+   actually is — read it from `.claude-plugin/plugin.json` (top-level
+   `version`), never from `CHANGELOG.md`'s top heading, which
    says `[Unreleased]` between releases. Its canonical place is an own
    line directly under the vault CLAUDE.md's intro paragraph, format
    `Kit version: X.Y.Z (…)`; add it there if missing.

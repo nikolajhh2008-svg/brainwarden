@@ -3,8 +3,9 @@
 Standing responsibilities WITHOUT an end date — the parts of life that
 are never "done", only kept at a standard.
 
-**Rules here:** one subfolder per area, holding one seed note named like
-the folder (`studies/studies.md`). An area note states the standard to
+**Rules here:** one file per area (`studies.md`) — a folder only once an
+area actually holds several notes, and then named like the note. An area
+note states the standard to
 hold, the current state and what is being watched — it does not collect
 tasks. An area that has genuinely ended (job left, sport stopped) moves
 to [../90-archive/](../90-archive/index.md); areas are not deleted.

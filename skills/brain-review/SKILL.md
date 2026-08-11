@@ -19,9 +19,11 @@ command (on most Windows machines `py -3`; the global rules name it).
    produces wrong-language, wrong-schema notes. No `CLAUDE.md`? Wrong path
    or unfinished setup — say so and stop.
 1. **Inbox to ZERO** (hard rule): process every file DIRECTLY in
-   `<vault>/00-inbox/` — except `Inbox rule.md` and except the `raw/`
-   subfolder (raw/ is `brain-ingest`'s queue; a PDF waiting there is not
-   review work). Each file leaves through exactly ONE of three exits:
+   `<vault>/00-inbox/` — except the kit's own files (`Inbox rule.md`,
+   `index.md`, `CLAUDE.md`) and except the `raw/` subfolder (raw/ is
+   `brain-ingest`'s queue; a PDF waiting there is not review work). The
+   signposts are infrastructure, not captures — never process or delete
+   them, not even when the empty-file rule below would seem to apply. Each file leaves through exactly ONE of three exits:
    - **(a) it becomes a note:** paraphrase it (frontmatter, vault language,
      matching template from `_templates/`; fill `{{DATE}}`/`{{NAME}}` with
      real values) and file by ACTIONABILITY: project → `10-projects/` ·
@@ -64,8 +66,13 @@ command (on most Windows machines `py -3`; the global rules name it).
    comply?"). A reversal is a NEW record, never an edit of the old one, and
    it is written on BOTH sides:
    - new file: `## Status` + `Supersedes [40-decisions/<old>.md](40-decisions/<old>.md)`
-   - old file: `## Status` + `Superseded by [40-decisions/<new>.md](…)`,
-     APPENDED at the end, everything else untouched (still append-only).
+   - old file: its `## Status` BODY is replaced by
+     `Superseded by [40-decisions/<new>.md](…)` (append the section if it
+     has none) and its frontmatter gets `status: deprecated`. Never leave
+     an "in force" line standing above a supersede notice — an agent greps
+     the first `## Status` and believes it. Everything else in the old
+     record stays untouched; this one section is the only exception to
+     append-only.
      Without it, an agent landing there by search believes the old version.
 5. **Open loops:** list 3–5 things that look stalled (projects without
    recent notes, "open → ask" markers) and ask about them — and offer:
