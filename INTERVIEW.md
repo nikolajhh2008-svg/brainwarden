@@ -16,8 +16,17 @@ that reason. If a check ever flags this file, fix the check, not the file.
 
 ## Which track — decide this before the first question
 
-Read the `Mode:` line in the global rules block (or the root `index.md` of
-the vault). Then:
+Read the mode, in this order — the first one that answers wins:
+
+1. the `Mode:` line in the global rules block, if there is one
+2. `**Vault mode: …**` in the vault's own `CLAUDE.md` — this is the reliable
+   one, because a shared company vault has no global rules block at all
+3. the root `index.md`
+
+The LABEL may be translated (`Betriebsart:`, `Modus:`); the VALUE never is —
+it is always `personal`, `professional` or `company`. Key off the value.
+Found nothing? Ask, in one sentence, and write the answer into the vault's
+`CLAUDE.md` so nobody has to ask twice. Then:
 
 | Mode | Track | What the interview is about |
 |---|---|---|
