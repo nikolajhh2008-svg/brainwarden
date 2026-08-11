@@ -55,6 +55,11 @@ win, and only if you want it.
 
 <br/>
 
+- **No terminal, and you want none?** Claude Code also comes as a desktop
+  app for Mac and Windows — no black screen involved. And a finished vault
+  can be read in [Claude Cowork](COWORK.md), where you just point at the
+  folder: that is the way to hand a company vault to people who look things
+  up rather than maintain them.
 - **Never used Obsidian or Claude Code?** [TUTORIAL.md](TUTORIAL.md) walks
   you from zero, with a checkpoint after every stage.
 - **Terminal not your thing?** [Claudian](https://github.com/YishenTu/claudian)
@@ -205,6 +210,7 @@ deliberately five skills and three small scripts.
 | [`hooks/`](hooks/) | Optional: a net that catches what you forgot to capture |
 | [`SETUP-FOR-CLAUDE.md`](SETUP-FOR-CLAUDE.md) | The setup runbook Claude executes itself, all three modes in one |
 | [`TUTORIAL.md`](TUTORIAL.md) · [`PHILOSOPHY.md`](PHILOSOPHY.md) | The human-side guide, and why it's built this way |
+| [`COWORK.md`](COWORK.md) | Reading the vault in Claude Cowork — what carries over, what does not |
 
 The folder numbering (`00-inbox` … `90-archive`) leaves gaps on purpose. In
 a private brain `50–80` are yours for optional modules like journaling,
