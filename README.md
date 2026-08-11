@@ -1,69 +1,68 @@
+<div align="center">
+
 # 🧠 Brainwarden
+
+**The easiest way to start a second brain.**<br/>
+You talk, Claude does the filing.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Made for Obsidian](https://img.shields.io/badge/Made%20for-Obsidian-7C3AED.svg)](https://obsidian.md)
 [![Works with Claude Code](https://img.shields.io/badge/Works%20with-Claude%20Code-D97706.svg)](https://claude.com/claude-code)
 [![checks](https://github.com/nikolajhh2008-svg/brainwarden/actions/workflows/checks.yml/badge.svg)](https://github.com/nikolajhh2008-svg/brainwarden/actions/workflows/checks.yml)
 
-![Brainwarden, an Obsidian vault Claude Code sets up and maintains](.github/assets/hero.jpg)
+[Quickstart](#quickstart) · [Three kinds of brain](#three-kinds-of-brain) · [Built for agents](#built-for-agents-first) · [Tutorial](TUTORIAL.md) · [Deutsch](LIESMICH.md)
 
-**The easiest way to start a second brain. You talk, Claude does the
-maintenance.**
+</div>
+
+![Brainwarden, an Obsidian vault Claude Code sets up and maintains](.github/assets/hero.jpg)
 
 A second brain is a folder of notes that remembers your life so you don't
 have to: projects, deadlines, people, ideas. Most attempts die because the
-filing and upkeep never happen. This kit hands that part to Claude Code: it
-asks which brain you want, then four short questions, then builds your
-first real notes itself. You never meet an empty vault.
+filing and upkeep never happen. This kit hands that part to Claude Code. It
+asks which brain you want, then four short questions, then writes your
+first real notes itself. **You never meet an empty vault.**
 
-No plugins, no cloud service, no telemetry. Just Markdown files, Git,
-five small Claude skills and two Python scripts. Works with a brand-new
-vault or with the one you already have, wherever it lives.
+No plugins, no cloud service, no telemetry. Markdown files, Git, five small
+Claude skills and two Python scripts. Works with a brand-new vault or with
+the one you already have, wherever it lives.
+
+---
 
 ## Quickstart
 
-> Deutsch? Kurzanleitung in [LIESMICH.md](LIESMICH.md).
-
-You need [Obsidian](https://obsidian.md) (free), a Claude subscription
-with [Claude Code](https://claude.com/claude-code), and about 20 minutes.
-Open Claude Code (`claude` in your terminal) and say one sentence:
+You need [Obsidian](https://obsidian.md) (free), a Claude subscription with
+[Claude Code](https://claude.com/claude-code), and about 20 minutes. Open
+Claude Code (`claude` in your terminal) and say one sentence:
 
 > Set up the second brain from this GitHub repo for me:
-> https://github.com/nikolajhh2008-svg/brainwarden — clone it and
-> follow SETUP-FOR-CLAUDE.md step by step.
+> https://github.com/nikolajhh2008-svg/brainwarden — clone it and follow
+> SETUP-FOR-CLAUDE.md step by step.
 
 Claude clones the kit, checks your prerequisites, asks its questions, and
 minutes later you open Obsidian to a brain that already holds your first
 project and your dates. The onboarding interview comes after that first
-win, and only if you want it. What you land in, from a real run:
+win, and only if you want it.
+
+<div align="center">
 
 ![The Home dashboard minutes after setup: first project, deadlines and open questions already filled](.github/assets/home-after-setup.png)
 
-## Three kinds of brain
+*What you land in, from a real run.*
 
-The first setup question decides the shape. A brain for yourself is the
-main road; the rest are marked branches off it.
+</div>
 
-| You answer | You get |
-|---|---|
-| **for me** | your life: projects, areas, knowledge, decisions, people |
-| **for my work** | the same without the private half, plus `50-processes/` for the workflows you repeat |
-| **both, kept separate** | two vaults, two start commands (`claude` and `workbrain`), nothing crossing over |
-| **for a company** | shared knowledge for several people: processes, roles, onboarding, partners. No projects or areas, and roles instead of dossiers on colleagues |
+<details>
+<summary><b>Other ways in</b> — no terminal, existing vault, or just the skills</summary>
 
-The first win follows the same split: your first project and your dates,
-plus the first workflow you wrote down in a work brain, or, after a few
-extra questions, one procedure and the role that owns it in a company
-brain (always its own vault, never a folder inside a private one).
+<br/>
 
-## Pick your path
-
-- **Never used Obsidian or Claude Code?** [TUTORIAL.md](TUTORIAL.md)
-  walks you from zero, with a checkpoint after every stage.
+- **Never used Obsidian or Claude Code?** [TUTORIAL.md](TUTORIAL.md) walks
+  you from zero, with a checkpoint after every stage.
 - **Terminal not your thing?** [Claudian](https://github.com/YishenTu/claudian)
   puts Claude Code inside Obsidian (its defaults give the agent broad
   permissions; tighten them for a personal vault), or use the
-  [Claude Code extension for VS Code](https://code.claude.com/docs/en/vs-code). Paste the same Quickstart sentence there.
+  [Claude Code extension for VS Code](https://code.claude.com/docs/en/vs-code).
+  Paste the same Quickstart sentence there.
 - **Comfortable with Claude Code?** The fast lane:
   ```bash
   git clone https://github.com/nikolajhh2008-svg/brainwarden
@@ -80,6 +79,29 @@ brain (always its own vault, never a folder inside a private one).
 Just browsing? [`examples/`](examples/) shows what finished notes look
 like. Stuck anywhere? [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
 
+</details>
+
+---
+
+## Three kinds of brain
+
+The first setup question decides the shape. A brain for yourself is the
+main road; the rest are marked branches off it.
+
+| You answer | You get |
+|---|---|
+| 🏠 **for me** | your life: projects, areas, knowledge, decisions, people |
+| 💼 **for my work** | the same without the private half, plus `50-processes/` for the workflows you repeat |
+| 🔀 **both, kept separate** | two vaults, two start commands (`claude` and `workbrain`), nothing crossing over |
+| 🏢 **for a company** | shared knowledge for several people: processes, roles, onboarding, partners. No projects or areas, and roles instead of dossiers on colleagues |
+
+The first win follows the same split: your first project and your dates,
+plus the first workflow you wrote down in a work brain, or, after a few
+extra questions, one procedure and the role that owns it in a company
+brain (always its own vault, never a folder inside a private one).
+
+---
+
 ## What actually happens
 
 - You say *"capture: dentist Thursday 3pm, and Lena recommended that sleep
@@ -87,8 +109,8 @@ like. Stuck anywhere? [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
   on `Home`, and at the weekly review the book becomes a small reference
   note while Lena's people note gets a line.
 - You drop a 40-page PDF into the inbox and say *"ingest"*. Material you
-  build on comes back as small, linked notes; a manual becomes one
-  findable reference note. Claude always reports what went where.
+  build on comes back as small, linked notes; a manual becomes one findable
+  reference note. Claude always reports what went where.
 - You ask *"what does my brain know about my thesis?"* and get an answer
   built only from your own notes, every claim a clickable link, plus an
   honest "here's what your brain doesn't know yet".
@@ -107,37 +129,35 @@ flowchart LR
     G --> J["❓ open questions"] -- "&quot;research my brain&quot;" --> G
 ```
 
+---
+
 ## Built for agents first
 
-The vault is a navigation system for AI agents before it is a note system
-for you. Every folder that holds notes carries an `index.md`: what belongs
-there, what does not, and the two or three notes worth starting from. Next
-to it, a three-line `CLAUDE.md` pulls that signpost into Claude's context
-the moment it reads any file in that folder. An agent that lands deep in
-your vault through a search knows where it is without guessing, and a tool
-that never heard of Claude still finds `index.md`. Same idea, three more
-places:
+> The vault is a navigation system for AI agents before it is a note system
+> for you.
 
-- **Two fields, two questions.** `maturity:` (`seed`, `growing`,
-  `evergreen`) says how worked out a note is, `status:` (`draft`,
-  `stable`, `deprecated`) whether it still holds. A note can be
-  beautifully worked out and no longer true.
-- **`verified:` against `generated:`.** A human confirmed this, or a
-  machine wrote it. Claude never sets `verified:` on its own work. In a
-  company vault that field is the line between "this applies" and "this
-  is a proposal".
-- **A replacement is written on both files.** The new note says
-  `Supersedes …`, the old one gets `Superseded by …` appended, so an agent
-  landing in the outdated version finds the pointer instead of believing
-  it.
+Every folder that holds notes carries an `index.md`: what belongs there,
+what does not, and the two or three notes worth starting from. Next to it,
+a three-line `CLAUDE.md` pulls that signpost into Claude's context the
+moment it reads any file in that folder. An agent that lands deep in your
+vault through a search knows where it is without guessing, and a tool that
+never heard of Claude still finds `index.md`. Same idea, three more places:
+
+| | |
+|---|---|
+| **Two fields, two questions** | `maturity:` (`seed`, `growing`, `evergreen`) says how worked out a note is, `status:` (`draft`, `stable`, `deprecated`) whether it still holds. A note can be beautifully worked out and no longer true. |
+| **`verified:` against `generated:`** | A human confirmed this, or a machine wrote it. Claude never sets `verified:` on its own work. In a company vault that field is the line between "this applies" and "this is a proposal". |
+| **Replacements are written twice** | The new note says `Supersedes …`, the old one gets `Superseded by …` appended, so an agent landing in the outdated version finds the pointer instead of believing it. |
 
 `.tools/hygiene.py` measures all of it: orphans, dead links, near-empty
-notes, notes no signpost mentions, frontmatter gaps and one-sided
-supersede chains. The weekly review runs it and fixes what it lists.
+notes, notes no signpost mentions, frontmatter gaps and one-sided supersede
+chains. The weekly review runs it and fixes what it lists.
+
+---
 
 ## The one habit
 
-You need exactly one habit: dump things into the brain. A sentence to
+You need exactly one habit: **dump things into the brain.** A sentence to
 Claude, a file into the inbox, done. Filing, linking, deadline tracking,
 weekly cleanup: Claude's job. Skip a few weeks and nothing breaks; the next
 review catches up in batches, without guilt. Knowledge notes carry an
@@ -147,6 +167,8 @@ One firm rule protects all of it: **Claude gardens, it does not author.**
 It files, links, reminds and researches; the notes stay in your words. The
 reasoning, including the four documented ways second brains die, is in
 [PHILOSOPHY.md](PHILOSOPHY.md).
+
+---
 
 ## Who this is for
 
@@ -163,38 +185,53 @@ inside one company vault, this kit has none: separation means a separate
 vault. And if you want maximum features, look elsewhere; this is
 deliberately five skills and two small scripts.
 
-## What's inside
+<details>
+<summary><b>What's inside</b> — the repo, folder by folder</summary>
+
+<br/>
 
 | Path | Contents |
 |---|---|
 | [`vault-template/`](vault-template/) | The vault core: folders, signposts, rules, `Home` dashboard, note templates, `.tools/` (search and hygiene) |
 | [`vault-template/modules/`](vault-template/modules/) | Overlays copied on top for a work or company vault |
 | [`skills/`](skills/) | The five skills: capture · ingest · ask · review · research |
+| [`hooks/`](hooks/) | Optional: a net that catches what you forgot to capture |
 | [`SETUP-FOR-CLAUDE.md`](SETUP-FOR-CLAUDE.md) | The setup runbook Claude executes itself, all three modes in one |
-| [`TUTORIAL.md`](TUTORIAL.md) · [`PHILOSOPHY.md`](PHILOSOPHY.md) | The human-side guide, zero to running brain, and why it's built this way |
+| [`TUTORIAL.md`](TUTORIAL.md) · [`PHILOSOPHY.md`](PHILOSOPHY.md) | The human-side guide, and why it's built this way |
 
 The folder numbering (`00-inbox` … `90-archive`) leaves gaps on purpose. In
 a private brain `50–80` are yours for optional modules like journaling,
 media logs, health or money; a work brain has `50-processes/` in the first
 gap; a company vault uses all four.
 
-## Privacy
+</details>
+
+<details>
+<summary><b>Privacy</b> — what stays on your machine, and what a second brain changes</summary>
+
+<br/>
 
 Everything stays on your machine: notes in your vault, skills in
 `~/.claude/skills/`, one opt-in block in `~/.claude/CLAUDE.md`. A second
 brain gets its own configuration directory (`~/.claude-work`, with its own
 copy of skills and rules), which is what keeps work or company content out
-of your private sessions. The kit makes no network calls, has no telemetry,
-and logs nobody's searches. What Claude sends to Anthropic is governed by
-your Claude Code settings, not by this kit. Web research and the setup's
-optional computer scan run only with your explicit consent. In a company
-vault, `confidentiality:` is a label and not access control. Uninstalling
-is three deletions, a few more with a second brain: [SECURITY.md](SECURITY.md).
+of your private sessions.
 
-## Contributing
+The kit makes no network calls, has no telemetry, and logs nobody's
+searches. What Claude sends to Anthropic is governed by your Claude Code
+settings, not by this kit. Web research and the setup's optional computer
+scan run only with your explicit consent. In a company vault,
+`confidentiality:` is a label and not access control. Uninstalling is three
+deletions, a few more with a second brain: [SECURITY.md](SECURITY.md).
 
-Issues and pull requests welcome: [CONTRIBUTING.md](CONTRIBUTING.md).
-Changes: [CHANGELOG.md](CHANGELOG.md). License: [MIT](LICENSE).
+</details>
 
-*Distilled from a real, daily-used setup and tested from zero before every
-release.*
+---
+
+<div align="center">
+
+Issues and pull requests welcome: [CONTRIBUTING.md](CONTRIBUTING.md) · [CHANGELOG.md](CHANGELOG.md) · [MIT](LICENSE)
+
+*Distilled from a real, daily-used setup, and tested from zero before it ships.*
+
+</div>
