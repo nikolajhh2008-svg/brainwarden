@@ -23,7 +23,10 @@ the global rules name it).
    - **(a) a note:** paraphrase it (frontmatter, vault language, matching `_templates/` file, real
      values for placeholders); file by ACTIONABILITY: project → `10-projects/` · area → `20-areas/`
      · **settled question → `40-decisions/YYYY-MM-DD-slug.md`**, append-only · keeper knowledge → `30-knowledge/`
-     · person → `30-knowledge/people/` · **recurring task you will do again → `50-processes/`** ·
+     · person → `30-knowledge/people/` (facts only, in EVERY mode — role, what was agreed, what they
+     are working on; never a judgement of character, mood or motive. Test: *could I show this to them
+     if they asked?* It holds for a private vault too — people read their own note eventually)
+     · **recurring task you will do again → `50-processes/`** ·
      **something you did, with evidence → `60-contribution/`** (last two: work brains only). Meeting
      notes file with what they are ABOUT.
    - **(b) a date:** one line in `Deadlines.md` (date first) + one in the log of whatever it belongs
@@ -31,12 +34,18 @@ the global rules name it).
      `Deadlines.md` alone is the complete answer, not half a job. Then delete the file. No knowledge
      note for a date.
    - **(c) deleted** — say so; deleting is a feature. A TASK, not knowledge ("call the insurer"),
-     goes where tasks live (Home's `block:open-questions` or its project's log), then the file goes.
+     goes where tasks live (Home's `block:open-questions` **prefixed `TODO:`**, or its project's log),
+     then the file goes. The prefix matters because that block also holds open questions and
+     research leads — without it nobody can tell what is actionable from what is merely unanswered.
    - **dedup:** `python3 <vault>/.tools/search.py <name/topic>` before writing — extend, never twin.
      **Triage:** reference material (links, clippings) = one note, tags, done; atomize only what the
      person builds on.
    **Empty-file rule, wins everywhere here:** no body — 0 bytes, whitespace, or a title line only →
    DELETE and name it in the report; never file it, never guess. Kit files excepted.
+   **Contentless but not empty** (one word, a bare keyword, a link with no context — every capture
+   carries a footer, so the empty rule can never catch these): do not guess and do not quietly file
+   it. Ask in one line — *"'Zettelkasten' from the 13th — was there something behind that?"* No
+   answer: delete it and say so.
    **Over ~20 files?** Prioritized batches (dates → decisions → people → rest); report what remains,
    never half-process silently.
 2. **Sweep the week (the guarantee):** four tracks, then compare with the vault.
@@ -123,7 +132,12 @@ the global rules name it).
    - **Offer the artifact** that material now supports (summary, draft, plan, checklist, study
      sheet) and BUILD it on their go: file it with its project, link it from the project note, add
      it to that folder's `index.md` entry points, and record it under its project in Home's `block:right-now`.
-9. **Commit and report:** `cd <vault> && git add -A && git commit -m "review YYYY-MM-DD"`, then
+9. **Commit and report.** Check WHERE you would be committing first:
+   `cd <vault> && git rev-parse --show-toplevel`. Prints the vault path → commit. Prints a folder
+   ABOVE the vault → **do not commit**, say so: the vault sits inside somebody else's repository and
+   the commit would land there. Errors ("not a git repository") → `git init` first and say that
+   versioning starts now (a vault built by `assemble.py` alone has no repo; only the setup runbook
+   creates one). Then `git add -A && git commit -m "review YYYY-MM-DD"`, then
    report what was filed where, what was deleted, what needs their input, which "not every week"
    items ran, and what the brain produces next — every filing decision visible, all reversible via
    Git.

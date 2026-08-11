@@ -4,7 +4,7 @@ title: <role name — a function, never a person>
 created: {{DATE}}
 tags: [role]
 owner: <team or role that maintains this description>
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 valid_from: {{DATE}}
 review_due: <YYYY-MM-DD>
 verified:

@@ -4,7 +4,7 @@ title: <company name>
 created: {{DATE}}
 tags: [partner]
 owner: <role that owns this relationship>
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 review_due: <YYYY-MM-DD>
 verified:
 confidentiality: internal

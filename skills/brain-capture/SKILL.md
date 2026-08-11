@@ -56,6 +56,16 @@ command (on most Windows machines `py -3`; the global rules name it).
   standing above a supersede notice — an agent greps the first `## Status`
   and believes it. Nothing else in the old record changes; this one section
   is the only exception to append-only.
+  **Only NARROWS an earlier decision?** An exception, a special case, a
+  one-off rate is not a supersede — the old rule still holds everywhere
+  else, and marking it `deprecated` would be a lie. New record gets
+  `Exception to [<path>](<path>)`, and the old one's status line becomes
+  `In force. Exception: [<path>](<path>)`. That is the only other change
+  ever made to an old record.
+  **Either way, add the new record to `40-decisions/index.md` under entry
+  points** and reset its `<!-- generated: -->` marker. Otherwise no
+  signpost leads to it until the next review, and a decision nobody can
+  find is a decision nobody made.
 - **Dates:** a capture with a concrete date/deadline ALSO gets a one-liner
   in `<vault>/Deadlines.md` right away (date first) — dates never wait for
   the weekly review. If it lands in the next ~3 dates, refresh the "Next

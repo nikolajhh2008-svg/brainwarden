@@ -1,10 +1,12 @@
 ---
 type: person
 title: <Full name>
+aliases: [<Full name>]    # how you write it in a sentence — the file name is kebab-case,
+                          # so without this `[[Full Name]]` is a dead link
 created: {{DATE}}
 ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: [people]
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 ---
 
 # <Full name>

@@ -139,6 +139,31 @@ def body(text):
     m = FRONTMATTER.match(text)
     return text[m.end():] if m else text
 
+def aliases(fm):
+    """`aliases:` from frontmatter, both YAML spellings.
+
+        aliases: [Jonas Reuter, J. Reuter]
+        aliases:
+          - Jonas Reuter
+    """
+    m = re.search(r"^aliases:[ \t]*(.*)$", fm, re.M)
+    if not m:
+        return []
+    inline = m.group(1).strip()
+    if inline.startswith("["):
+        return [a.strip().strip("\"'") for a in inline[1:].rstrip("]").split(",")
+                if a.strip()]
+    if inline:
+        return [inline.strip("\"'")]
+    out = []
+    for line in fm[m.end():].splitlines():
+        if re.match(r"^[ \t]+-[ \t]*\S", line):
+            out.append(line.split("-", 1)[1].strip().strip("\"'"))
+        elif line.strip():
+            break
+    return [a for a in out if a]
+
+
 def is_infra(rel):
     return os.path.basename(rel) in INFRA_FILES
 
@@ -147,6 +172,14 @@ def top_folder(rel):
 
 def unlinked_ok(rel):
     return top_folder(rel) in UNLINKED_OK
+
+
+def is_material(rel):
+    """`90-archive/raw/` holds the SOURCES an ingest was made from — a PDF,
+    an article, a transcript. They are material, not notes: no frontmatter,
+    any length, nobody links to them. Every note-shaped check has to skip
+    them, or ordinary use makes the report grow a finding per source."""
+    return rel.replace(os.sep, "/").split("/")[:2] == ["90-archive", "raw"]
 
 
 def read_ignores(root):
@@ -230,6 +263,13 @@ class Vault:
                     self.masked[rel], fence_line = mask_code(text)
                     if fence_line:
                         self.unterminated.append(f"{rel}:{fence_line}")
+                    # `aliases:` resolves in Obsidian, so a link written
+                    # against one is LIVE. Without this the tool reported
+                    # every alias link as dead — while the vault's own rules
+                    # tell people to put spelling variants there. The tool
+                    # contradicted the rule, and the rule was right.
+                    for alias in aliases(frontmatter(text)):
+                        self.by_name.setdefault(norm(alias), rel)
 
     def links(self, rel, only_lines_matching=None):
         """Internal links of a note as (target, line number, raw form).
@@ -452,10 +492,17 @@ def main():
         # and someone coming back after three weeks would read "six notes too
         # thin" instead of "six things you remembered".
         if not is_infra(rel) and words < NEAR_EMPTY_WORDS \
-                and top_folder(rel) != "00-inbox":
+                and top_folder(rel) != "00-inbox" and not is_material(rel):
             near_empty.append(f"{rel} ({words} words)")
-        if is_infra(rel) or top_folder(rel) == "00-inbox":
-            continue                     # inbox captures need no frontmatter
+        # Inbox captures need no frontmatter, and neither do the raw sources
+        # `brain-ingest` files away: a PDF, an article, a transcript is
+        # MATERIAL, not a note. Measured on a four-week test run, every
+        # ingested source left a permanent finding here — one per source,
+        # forever. At one source a week the report reaches fifty findings in
+        # a year, and a report that is always red stops being read. The one
+        # tool that finds the real problems then drowns in its own noise.
+        if is_infra(rel) or top_folder(rel) == "00-inbox" or is_material(rel):
+            continue
         fm, missing = frontmatter(text), []
         if not re.search(r"^type:\s*\S", fm, re.M):
             missing.append("no type:")

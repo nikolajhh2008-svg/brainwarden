@@ -4,7 +4,7 @@ title: <Area name>
 created: {{DATE}}
 ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: []
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 ---
 
 # <Area name>

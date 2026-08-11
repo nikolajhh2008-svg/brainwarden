@@ -29,6 +29,13 @@ command (on most Windows machines `py -3`; the global rules name it).
 2. **Research:** web search for public facts (institutions, rules,
    deadlines, people in public roles); local files only within what the
    discovery consent covered. Prefer official sources.
+   **No web tool in this session?** Then research means what is already in
+   the vault and in `90-archive/raw/` — nothing else. Do NOT fill the gap
+   from your own model knowledge: it has no source anyone can check, which
+   is the one thing this skill exists to prevent. What stays open goes
+   into the note as `unverified → confirm` and into Home's
+   `block:open-questions`, and the report says plainly: researched without
+   web access.
 3. **Verify before writing:** two independent sources for anything
    surprising; if it stays uncertain, write it as "unverified → confirm"
    instead of fact.

@@ -7,7 +7,7 @@ last_verified: {{DATE}}   # the day you last actually ran this
 handover_relevant: true   # a stand-in would need this to run it without you
 tags: []
 owner: <team or role that answers for this content — never a private person's name>
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 version: 1.0
 valid_from: {{DATE}}
 review_due: <YYYY-MM-DD — at the latest one year out>

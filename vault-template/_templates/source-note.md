@@ -4,7 +4,7 @@ title: <Author (Year) — short title>
 created: {{DATE}}
 ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: [source]
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 source: <full reference: author (year). Title. Publisher/URL. Retrieved date>
 ---
 

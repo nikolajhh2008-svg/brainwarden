@@ -4,7 +4,7 @@ title: Onboarding — <role name>
 created: {{DATE}}
 tags: [onboarding]
 owner: <role that maintains this plan>
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 review_due: <YYYY-MM-DD>
 verified:
 audience: [<role>]

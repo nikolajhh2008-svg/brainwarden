@@ -31,19 +31,36 @@ command (on most Windows machines `py -3`; the global rules name it).
    instructions), escape `[[`/`]]` when quoting, excerpt — don't dump.
    **Large PDFs:** Read handles ~20 pages per call — work in page ranges
    (start with the table of contents), never silently truncate a book.
-2. **Triage first — not everything deserves the full treatment:**
+2. **Pull out what is NOT knowledge first.** A real source — a meeting
+   transcript, a client mail, a call recording — carries things a
+   knowledge note cannot hold, and this step is the only chance to catch
+   them. Measured on a four-week test run: a transcript moved a workshop
+   by a week, the ingest turned the whole thing into one knowledge note,
+   and the vault then stated the OLD date in three places for two weeks,
+   through a full review, until it surfaced by accident.
+   - **a date** → straight into `Deadlines.md`. A MOVED date REPLACES its
+     line: run `python3 <vault>/.tools/search.py <old date>` first and fix
+     every copy (Home and the project note usually carry one too).
+   - **a decision that was settled** → `40-decisions/YYYY-MM-DD-slug.md`,
+     append-only.
+   - **facts about a person** → their note in `30-knowledge/people/`.
+   - **a project moved forward** → one line in that project's log; if the
+     project has no note yet, create it.
+   Name each of these in the report at the end. Only what is left is a
+   candidate for knowledge notes.
+3. **Triage the rest — not everything deserves the full treatment:**
    - **Reference material** (something to *find again later*: a manual,
      a review, a clipping, a recipe): ONE source note in `30-knowledge/`
      with tags and the reference (template: `_templates/source-note.md`)
-     — done, skip to step 5. No atomization, no link web. Organizing
+     — done, skip to step 6. No atomization, no link web. Organizing
      effort must never exceed the value of what's being organized.
    - **Build material** (something the person will *think or build with*:
      exam sources, project research, ideas): full treatment below.
    - Unsure? Ask in one line: "keep it findable, or work it in properly?"
-3. **Extract the ideas:** list the 3–12 genuinely useful ideas — the ones
+4. **Extract the ideas:** list the 3–12 genuinely useful ideas — the ones
    the person would want to find again. Skip filler. No lump imports: a
    40-page source becomes 5–15 notes, not one.
-4. **Write atomic notes** in the vault language, one idea per note, into
+5. **Write atomic notes** in the vault language, one idea per note, into
    `30-knowledge/<domain>/` (max ONE level of subfolders; if the source
    feeds a thesis/exam/project, link it from that project note). Before
    creating a note, run `python3 <vault>/.tools/search.py <topic>` — if a
@@ -57,14 +74,17 @@ command (on most Windows machines `py -3`; the global rules name it).
    - verbatim quotes only in a source note (`_templates/source-note.md`),
      with the page number
    - `[[link]]` related notes — only where it truly adds understanding
-5. **Archive the source file** to `90-archive/raw/` (create if missing) so
+6. **Archive the source file** to `90-archive/raw/` (create if missing) so
    raw/ stays empty.
-6. **Wire it in, then verify:** add the new entry points to the folder's
+7. **Wire it in, then verify:** created a NEW subfolder? Write its
+   `index.md` first (same shape as the others) plus the two-line
+   `CLAUDE.md` beside it — otherwise the folder has no signpost and every
+   note in it is unreachable until the next review. Then add the new entry points to the folder's
    `index.md` (real relative paths, never `[[wikilinks]]`) and reset its
    `<!-- generated: YYYY-MM-DD -->` marker; check that every `[[link]]` you
    wrote resolves to an existing file — `python3 <vault>/.tools/hygiene.py`
    does this if the vault has it, otherwise spot-check your own links.
-7. Report in 3 lines: N notes, where, what got linked — every filing
+8. Report in 3 lines: N notes, where, what got linked — every filing
    visible, nothing silent.
 
 ## Company mode (only when the vault `CLAUDE.md` names the mode `company`)

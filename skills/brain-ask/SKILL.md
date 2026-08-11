@@ -36,10 +36,17 @@ command (on most Windows machines `py -3`; the global rules name it).
    that's exactly what the append-only log is for. A record marked
    `Superseded by …` is history: answer from the one that superseded it and
    name both.
-4. **Say what's missing, plainly:** "your brain has nothing on X" is a
+4. **Two hits that contradict each other? Do not pick one.** Give both,
+   with their dates, say which is newer and where each comes from — a
+   moved date usually leaves the old one standing somewhere. Then offer to
+   capture the correction. Answering confidently from one of two
+   conflicting notes is the worst thing this skill can do: it sounds
+   certain and sends the person to last month's appointment. A vault that
+   contradicts itself is a finding, not a malfunction.
+5. **Say what's missing, plainly:** "your brain has nothing on X" is a
    correct and useful answer — name the closest note you did find so they
    can judge the gap. Never fill gaps with invented vault content.
-5. **Offer the next step** when a gap is researchable: "want me to
+6. **Offer the next step** when a gap is researchable: "want me to
    research that and work it in?" (→ skill `brain-research`) — or capture
    the open question to the inbox if they answer it themselves on the spot.
 

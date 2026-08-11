@@ -5,7 +5,7 @@ created: {{DATE}}
 ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: []
 maturity: seed
-status: draft
+status: draft           # work brains: does it still hold? — delete this line in a personal brain
 source:
 ---
 
