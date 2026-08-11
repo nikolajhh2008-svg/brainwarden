@@ -122,11 +122,22 @@ genuinely private records exempt, and that copies must be deleted too
 day a note is written and leaving takes minutes. Draw it on the last day
 and it cannot be drawn at all.
 
-A third field follows from it: `ai_release: local | external_ok`. Company
-AI policies typically forbid putting contracts, customer data, financial
-reports or source code into an external model. With this field an agent
-decides that for itself instead of the human having to remember every
-time. Rule for the weekly review: **nothing stays `mixed` for more than a
+A third field follows from it: `ai_release: local | external_ok`. Be precise
+about what it can and cannot do, because it is easy to believe more of it
+than is true: **by the time an agent reads this line, the note is already in
+its context.** The field cannot stop that and does not pretend to.
+
+What it governs is the step AFTER reading: whether this content may leave
+the conversation. `local` means it must not end up in a summary sent
+outside, an email draft, a ticket, a support request, a web search query or
+a file put somewhere shared — the places where company AI policies
+typically draw the line (contracts, customer data, financial figures,
+source code). An agent honours it by keeping such a note out of anything it
+produces for the outside, and by saying so instead of quietly complying.
+
+If content genuinely must never reach a model at all, no field achieves
+that. That is what a second, separate vault is for — the same answer as for
+`confidentiality:`. Rule for the weekly review: **nothing stays `mixed` for more than a
 week** — split it or reclassify it.
 
 **Notes about colleagues are facts only.** Role, responsibility, how to

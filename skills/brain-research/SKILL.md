@@ -62,6 +62,11 @@ Researched content never becomes company truth on its own: write it with
 company facts, never private details about employees.
 
 ## Rules
+- **Before a note's content goes into a web query or any outside request:**
+  check `ai_release:`. `local` means the content stays in this conversation —
+  research the topic in general terms instead, and say that you narrowed the
+  question on purpose. `confidentiality: restricted` is treated the same way.
+
 - The human's own words always outrank researched claims.
 - Never research beyond the vault's purpose — this enriches THEIR brain,
   it is not surveillance of others.
