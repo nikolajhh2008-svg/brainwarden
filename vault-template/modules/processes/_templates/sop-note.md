@@ -3,8 +3,8 @@ type: sop
 title: <what this procedure produces, as a task: "Approve an incoming invoice">
 created: {{DATE}}
 ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
-last_verified: {{DATE}}
-handover_relevant: true   # a stand-in would need this to run it without you   # the day you last actually ran this
+last_verified: {{DATE}}   # the day you last actually ran this
+handover_relevant: true   # a stand-in would need this to run it without you
 tags: []
 owner: <team or role that answers for this content — never a private person's name>
 status: draft

@@ -113,7 +113,11 @@ command (on most Windows machines `py -3`; the global rules name it).
 8. **Hygiene — run the tool, don't guess:**
    `python3 <vault>/.tools/hygiene.py` reports orphans, dead `[[links]]`,
    empty files, notes missing from their folder's `index.md`, frontmatter
-   gaps and one-sided supersede chains. Fix what it lists; hand the human
+   gaps, notes past their own `stale_after`/`review_due`, and one-sided
+   supersede chains. **Expired notes are not a formality:** each one is
+   either still true (push the date out and say why) or it is not (mark it
+   `status: deprecated`, or fix it). Leaving it expired is the one answer
+   that is always wrong — an agent that meets it cannot tell which. Fix what it lists; hand the human
    only what needs a decision. No `hygiene.py` (older vault)? Cheap manual
    pass — `find <vault> -name '*.md' -size -1c` for empty files, spot-check
    this week's `[[links]]` — and report that the vault should be updated to

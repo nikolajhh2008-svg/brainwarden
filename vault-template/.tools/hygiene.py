@@ -15,6 +15,7 @@ measured here instead:
     unreachable    notes no index.md and no map of content points to (spec 3)
     folders        folders that carry notes but no index.md signpost
     frontmatter    missing type:/created:, or `status:` still used for maturity
+    expired        notes past their own stale_after / review_due date
     supersede      "Supersedes X" without X saying "Superseded by" (spec 4.2)
 
 Read-only, standard library only, exit code 0 even with findings — this
@@ -23,7 +24,7 @@ is a report, not a test. Code is masked before links are read, so the
 Hidden folders (`.git`, `.obsidian`, `.private` …) are not scanned, but
 links pointing INTO them still resolve if the file is there.
 """
-import collections, os, re, sys, unicodedata
+import collections, datetime, os, re, sys, unicodedata
 from urllib.parse import unquote
 
 SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates", "node_modules",
@@ -216,8 +217,9 @@ def main():
                 if rel in signposts and hit in v.notes:
                     signposted.add(hit)
 
-    orphans, near_empty, gaps = [], [], []
+    orphans, near_empty, gaps, expired = [], [], [], []
     mode = vault_mode(root)
+    today = datetime.date.today().isoformat()
     gap_counts = collections.Counter()
     for rel, text in sorted(v.notes.items()):
         if not is_infra(rel) and not unlinked_ok(rel) and not inbound[rel]:
@@ -247,6 +249,13 @@ def main():
         if missing:
             gap_counts.update(missing)
             gaps.append(f"{rel} — {', '.join(missing)}")
+        # A date that expires and nobody notices is decoration. These two
+        # fields promise "distrust me after this day" — so somebody has to
+        # say when that day has passed.
+        for field in ("stale_after", "review_due"):
+            m = re.search(rf"^{field}:\s*(\d{{4}}-\d{{2}}-\d{{2}})", fm, re.M)
+            if m and m.group(1) < today:
+                expired.append(f"{rel} — {field}: {m.group(1)}")
 
     # Reachability only means something where a folder HAS a signpost —
     # otherwise the missing index.md is the finding, not the notes.
@@ -289,6 +298,7 @@ def main():
     report("frontmatter gaps", gaps, limit,
            note=" (" + " · ".join(f"{k} {n}" for k, n in sorted(gap_counts.items())) + ")"
            if gap_counts else "")
+    report("past their own expiry date (stale_after / review_due)", expired, limit)
     report("supersede chains without a back-reference (spec 4.2)", chains, limit)
     return 0
 
