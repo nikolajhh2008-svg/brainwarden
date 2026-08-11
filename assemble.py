@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble a vault from the template — one command instead of four.
+"""Assemble a vault from the template — one command instead of up to nine.
 
     python3 assemble.py ~/Brain personal
     python3 assemble.py ~/Brain-work professional
@@ -7,11 +7,12 @@
 
 Why this exists rather than a sequence of `cp` and `rm` commands:
 
-  - **One permission prompt instead of four.** Visual processing of warning
-    dialogs drops off measurably from the SECOND one onward (Anderson et
-    al., CHI 2015). A setup that asks twenty times has trained the person
-    to click through by dialog three — and the one they stop reading first
-    is the one that matters.
+  - **One permission prompt instead of up to nine.** The sequence this
+    replaces was two commands for `personal` and nine for `company`.
+    Visual processing of warning dialogs drops off measurably from the
+    SECOND one onward (Anderson et al., CHI 2015). A setup that asks
+    twenty times has trained the person to click through by dialog three
+    — and the one they stop reading first is the one that matters.
   - **No `rm -rf` on the path a first-time user walks.** The old sequence
     copied everything and then deleted the scaffolding, which meant the
     scariest-looking command in the whole setup arrived while the human was
@@ -149,9 +150,26 @@ def main():
         # the runbook walks that case by hand.
         copy_tree(os.path.join(template, "modules", "company"), vault, skipped,
                   overwrite=not existing)
-        removed = [r for r in COMPANY_DROPS if drop(vault, r)]
-        if removed:
-            print(f"removed (not part of a shared vault): {len(removed)} items")
+        if existing:
+            # NEVER delete inside a folder that already held something. The
+            # drop list exists to remove scaffolding this script just copied
+            # — run against a populated folder it deleted the person's own
+            # `10-projects/` while the header promised nothing would be
+            # overwritten. A tool that says "nothing will be lost" and then
+            # loses something is worse than one that refuses.
+            present = [r for r in COMPANY_DROPS
+                       if os.path.exists(os.path.join(vault, *r.split("/")))]
+            if present:
+                print("\nNOT removed, because this folder already had content:")
+                for r in present:
+                    print(f"    {r}")
+                print("  These do not belong in a shared vault. Move what you")
+                print("  need out of them, delete them yourself, and check the")
+                print("  adopt path in the setup runbook (step 3c) first.")
+        else:
+            removed = [r for r in COMPANY_DROPS if drop(vault, r)]
+            if removed:
+                print(f"removed (not part of a shared vault): {len(removed)} items")
 
     kept = keep_kit_extras(here, vault)
 

@@ -211,7 +211,7 @@ installs. From here on, `<vault>` means the path you actually used.
 The template has ONE core plus mode overlays in `vault-template/modules/`
 (`processes/` for `professional` and `company`, `company/` for `company`;
 `personal` gets no overlay). Apply them in exactly this order —
-`personal` stops after command 2:
+`personal` gets no overlay at all. The script applies the order for you:
 
 One command does all of it, from the kit folder:
 
@@ -223,10 +223,11 @@ It copies the core, applies the overlays the mode needs, leaves
 `modules/` out (kit scaffolding must never end up inside a vault), and
 removes the files a shared vault must not carry. It prints what it did.
 
-**Why a script rather than the eight commands it replaces.** One
-permission prompt instead of eight — and reading of warning dialogs drops
-off measurably from the SECOND one onwards, so a setup that asks eight
-times has trained the person to click through by the third. The one they
+**Why a script rather than the sequence it replaces** (two commands for
+`personal`, nine for `company`). One permission prompt instead of up to
+nine — and reading of warning dialogs drops off measurably from the
+SECOND one onwards, so a setup that asks nine times has trained the
+person to click through by the third one. The one they
 stop reading is the one that matters. It also means no `rm -rf` on the
 path a first-time user walks: the scaffolding is never copied instead of
 being copied and then deleted. And it behaves identically on macOS,
@@ -259,7 +260,7 @@ The `processes/` overlay likewise brings its own root `index.md`, so that
 `50-processes/` appears in the cold-entry signpost. On a FRESH install that overwrite is what you want. On the
 ADOPT path it is not: never run the overlay over someone's existing
 `Home.md` — copy the company one aside, fold their content into it by
-hand, one OK per change (3c). The six deleted templates are deleted on purpose,
+hand, one OK per change (3c). The seven deleted templates are deleted on purpose,
 not merely left unused: a person-dossier template in a vault whose rule
 is "roles, never people" is a trap.
 
@@ -281,7 +282,7 @@ non-zero status when it skips. That is the safety net doing its job:
   if it is a Git repo, otherwise spot-check their `Home.md` and one of
   their own notes) before going on.
 
-The mode overlays (3b, commands 3 and 4) are kit infrastructure, not
+The mode overlays (`modules/processes/`, `modules/company/`) are kit infrastructure, not
 their content — apply them with plain `cp -R` even here, with one
 precaution: the company overlay also carries the two CONTENT files
 `Home.md` and `About this vault.md`. If either already exists in their
@@ -289,7 +290,7 @@ vault, move it aside first (`mv "<vault>/Home.md" "<vault>/Home.mine.md"`),
 apply the overlay, then restore theirs and fold the template's parts into
 it by hand (see the Home bullet below) — a `cp -R` would otherwise
 overwrite a page they wrote. `rm -rf <vault>/modules` still applies; the
-deletions in command 4 do NOT (see the last bullet below).
+deletions from the company drop list do NOT (see the last bullet below) — `assemble.py` refuses to delete anything in a folder that already had content, and prints what it left standing.
 
 The rest of adopting:
 - Scan their existing folder structure and map it onto the rules of this
@@ -323,10 +324,13 @@ The rest of adopting:
 | `professional` | the same **+ `50-processes/` + `60-contribution/`** |
 | `company` | `00-inbox/` (+`raw/`, +`suggestions/`), `30-knowledge/`, `40-decisions/`, `50-processes/`, `60-roles/`, `70-onboarding/`, `80-partners/`, `90-archive/` — no `10-projects/`, no `20-areas/`, no `30-knowledge/people/` |
 
-Plus, in every mode: `_templates/`, `.tools/`, `Home.md`, `Deadlines.md`,
-`CLAUDE.md`, `index.md`, and the self page (`About me.md`, or
-`About this vault.md` in `company`). `modules/` must NOT exist inside the
-vault — if it does, command 2 of 3b was skipped.
+Plus, in every mode: `_templates/`, `.tools/` (with `search.py`,
+`hygiene.py`, `harvest.py`, `INTERVIEW.md` and `hooks/`), `Home.md`,
+`Deadlines.md`, `CLAUDE.md`, `index.md`, and the self page
+(`About me.md`, or `About this vault.md` in `company`). **`company` adds
+two files of its own:** `THIS-COPY.md` in the root and
+`.tools/progress.py`. `modules/` must NOT exist inside the
+vault — if it does, the copy was made by hand instead of with `assemble.py`.
 
 A folder is missing? You skipped an overlay — apply it (3b). Never
 hand-create a module folder: the overlay brings its `index.md`, its
@@ -624,17 +628,25 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    the language, e.g. `German`) and `{{MODE}}` (`personal`,
    `professional` or `company`) in `<vault>/CLAUDE.md` and in the root
    `index.md`. In `company` mode additionally: `{{COMPANY}}` in
-   `About this vault.md` and `70-onboarding/onboarding-path.md`, plus the
-   `<…>` angle-bracket fields in `About this vault.md` (owner, purpose,
-   who may read, who may release) from the answers in 1b.
+   `About this vault.md` and `70-onboarding/onboarding-path.md`, plus
+   **every** `<…>` angle-bracket field — they sit in three files, not
+   one: `About this vault.md` (owner, purpose, who may read, who may
+   release, and `review_due:`), `Deadlines.md` (`owner:`, `review_due:`)
+   and `70-onboarding/onboarding-path.md` (`owner:`, `review_due:`).
+   `review_due:` gets today + 12 months. **No check catches these** — the
+   placeholder scan looks for `{{…}}`, and `hygiene.py` accepts any
+   non-empty value — so find them by looking:
+   `grep -rn "owner: <\|review_due: <" <vault> --exclude-dir=_templates`.
 2. If the language is not English, translation happens in TWO waves.
    Measured: a full pass is 23–25 files, which does not fit inside "the
    first win within minutes" — and most of those files the human never
    opens.
    **Now, before you hand over (what they will actually look at):**
    `Home.md`, `Inbox rule.md`, the self page (`About me.md` /
-   `About this vault.md`), `Deadlines.md`, and the notes you wrote in
-   Step 5b. That is the vault they see.
+   `About this vault.md`), `Deadlines.md`, the notes you wrote in
+   Step 5b — and in `company` mode `THIS-COPY.md`, which is addressed to
+   every colleague who receives a copy and would otherwise be the one
+   English page they are asked to read. That is the vault they see.
    **After the handover, in the same session, and say that you are doing
    it:** the `_templates/`, `40-decisions/_template.md`,
    `00-inbox/raw/README.md` and every `index.md` waypoint. Waypoints are
@@ -680,10 +692,16 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
 5. **`{{DATE}}`:** replace it with today's date in the self page and
    `Deadlines.md`, and with the real date in every note you created from
    a template. **`company` mode: also `THIS-COPY.md`, which carries it
-   three times** (the copy's date, its `created:`, and the first line of
-   its changelog). That file is how a colleague tells a fresh copy from a
-   six-month-old one — left as `{{DATE}}`, it answers the one question it
-   exists for with a placeholder. **Never fill the `{{DATE}}`/`{{NAME}}` tokens inside the
+   FOUR times** — the copy's date, `created:`, the first changelog line,
+   and `review_due:`. The first three get today. **`review_due:` gets
+   today + 12 months**: set to today, the vault reports itself expired the
+   very next morning. That file is how a colleague tells a fresh copy from
+   a six-month-old one — left as `{{DATE}}`, it answers the one question
+   it exists for with a placeholder.
+   That file also carries one `TO FILL IN (IT / knowledge owner)` line —
+   how copies are actually distributed. Leave it standing if that is not
+   decided yet, say so out loud, and put it under Home's open questions;
+   `progress.py` counts it as an open gap until someone answers it. **Never fill the `{{DATE}}`/`{{NAME}}` tokens inside the
    template files** (`_templates/`, `40-decisions/_template.md`) or
    anywhere in `.tools/` — the templates are filled per note, at creation
    time, forever, and `.tools/` is tooling, not content. Translating the
@@ -884,7 +902,16 @@ cd <vault> && <python> .tools/hygiene.py
 ```
 
 Every rubric it prints must be `0`, and the `mode:` line must name this
-vault's mode with nothing in brackets after it. Two of them are worth
+vault's mode with nothing in brackets after it.
+
+**`company` also:** `cd <vault> && <python> .tools/progress.py`. It
+reports how many notes carry `verified:` and how many gaps are still
+open. Both numbers are EXPECTED to look bad at handover — a fresh shared
+vault has nothing released yet, and that is the honest starting point,
+not a defect. What matters is that the human sees the number and knows
+where it comes from: say it out loud, and put the open gaps under Home's
+open questions. A vault whose scaffolding is mistaken for finished
+content is the one failure mode this mode has. Two of them are worth
 naming, because they are what a hand-written check kept missing:
 - **`portability`** — a note saved in the wrong encoding (Windows Notepad
   "ANSI", PowerShell 5.1 `>`), two file names differing only in case, or a
@@ -917,14 +944,21 @@ naming, because they are what a hand-written check kept missing:
       <python> -c "import re;print(len(re.findall(r'<!-- /?block:[a-z-]+ +-->', open('<vault>/Home.md', encoding='utf-8-sig').read())))"
       ```
 - [ ] `<python> <vault>/.tools/search.py test` runs without error, and
-      `ls <vault>/.tools/` shows `search.py`, `hygiene.py` and
-      `INTERVIEW.md`
-- [ ] `ls ~/.claude/skills/` shows the five brain-* skills — with two
-      brains, check the second configuration directory too
+      `ls <vault>/.tools/` shows `search.py`, `hygiene.py`,
+      `INTERVIEW.md` and `hooks/` (`company` also: `progress.py`)
+- [ ] The five brain-* skills are where THIS mode puts them:
+      `ls <vault>/.claude/skills/` in `company` (Step 4a keeps company
+      skills inside the vault), otherwise `ls ~/.claude/skills/` — with
+      two brains check the second configuration directory too
       (`ls ~/.claude-work/skills/`)
-- [ ] `grep -n "Brain vault:" ~/.claude/CLAUDE.md` (resp.
-      `~/.claude-work/CLAUDE.md`) shows the block from Step 6 with the
-      REAL path — not `<vault>`, and not `~/Brain` unless that is the
+- [ ] `grep -n "Brain vault:"` in **the configuration file Step 6 actually
+      wrote to** — `~/.claude/CLAUDE.md` for the ambient brain,
+      `~/.claude-work/CLAUDE.md` for a second one. **In `company` mode
+      there is deliberately no such line anywhere**: the vault has no
+      global entry, its skills travel inside it, and grepping
+      `~/.claude/CLAUDE.md` there correctly finds nothing — skip this
+      check instead of "fixing" it. Where it does apply, it shows the
+      block from Step 6 with the REAL path — not `<vault>`, and not `~/Brain` unless that is the
       real path. Do NOT grep for the word "Brain": it matches any
       unrelated line that happens to contain it and reports green on a
       rules file that has no block at all.
@@ -953,10 +987,15 @@ The placeholder check. It must print nothing. (Keep this block flush left
 when you run it — a `<<'PY'` heredoc whose closing `PY` is indented never
 terminates, and the shell waits forever.)
 
+(`.claude/` is skipped for the same reason as `_templates/`: in
+`company` mode the skills live there, and two of them carry `{{DATE}}`
+and `{{NAME}}` in their instructions — forever, by design. Reporting them
+would invite "fixing" a freshly installed skill by editing it.)
+
 ```bash
 cd <vault> && <python> - <<'PY'
 import pathlib, re
-SKIP = {"_templates", ".tools", ".git", ".obsidian"}
+SKIP = {"_templates", ".tools", ".git", ".obsidian", ".claude"}
 token = re.compile(r"\{\{(NAME|LANGUAGE|DATE|MODE|COMPANY)\}\}")
 for p in sorted(pathlib.Path(".").rglob("*.md")):
     if SKIP & set(p.parts) or p.name == "_template.md":

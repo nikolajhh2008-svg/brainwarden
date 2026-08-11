@@ -19,7 +19,7 @@ reads the folder you give it:
   loading mechanism for Claude Code. In Cowork the loading mechanism is
   gone; the signpost is still there, still says what belongs in that folder
   and what does not, and an agent that opens it gets the same orientation.
-- **The frontmatter.** `status`, `verified`, `ownership`, `stale_after` are
+- **The frontmatter.** `status`, `verified`, `owner`, `review_due` are
   text in a file. Any agent can read them and apply the rules.
 - **The vault's `CLAUDE.md`.** Not loaded automatically — but it is a file
   in the root, and a one-line project instruction makes Cowork read it.
@@ -66,19 +66,27 @@ everyone else Cowork.
    ```
 
 4. **Optional, for people who want the five verbs:** package each skill as
-   a zip and enable it under Customize → Skills on claude.ai. They then
-   work in Cowork too. Skip this for read-only users — they do not need it.
+   a zip and enable it under Customize → Skills on claude.ai. What carries
+   over is the procedure, not the tooling: every skill's retrieval step is
+   `python3 .tools/search.py`, and `brain-review` also calls `hygiene.py`,
+   `harvest.py --queue` and `git commit` — the last row of the table above
+   applies to those lines. Asking and capturing survive it (they are file
+   reads and file writes); the weekly review is the one that really wants
+   Claude Code. Skip this for read-only users — they do not need it.
 
 ## Which one for whom
 
 - **Cowork** — everyone who reads: sales, marketing, accounting, branches.
   No terminal, no install beyond the app, folder-scoped access.
 - **Claude Code** — whoever maintains the vault: runs the weekly review,
-  uses `hygiene.py` and `harvest.py`, wants the capture net. One person per
-  company is enough.
+  uses `hygiene.py`, `harvest.py --queue` and — in a company vault —
+  `progress.py`, wants the capture net. One person per company is enough.
 
 Both work on the same folder. Nothing has to be converted, and a vault
-maintained in Claude Code is read correctly in Cowork the same day.
+maintained in Claude Code is read correctly in Cowork the same day. Someone
+working from a *copy* rather than the shared folder should read
+`THIS-COPY.md` in the vault root first: it carries the date that copy was
+cut, which is the one thing the notes themselves cannot tell them.
 
 *Sources: Cowork overview and help pages on claude.com and
 support.claude.com; the hooks gap is tracked as an open issue in the

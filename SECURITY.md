@@ -1,7 +1,11 @@
 # Security
 
 Brainwarden is a local-only kit: Markdown files, five Claude Code skills
-and three Python scripts (`search.py`, `hygiene.py`, `harvest.py`). There is no server, no
+and a few Python scripts: `search.py`, `hygiene.py` and `harvest.py` in
+every vault, `progress.py` additionally in a company one, plus two
+OPT-IN hooks (`capture_check.py`, `session_queue.py`) that are copied
+into `<vault>/.tools/hooks/` but never run until you add an entry to your
+own `settings.json` yourself. There is no server, no
 telemetry, no network call of its own — the only things it writes are your
 vault, your skills folder (`~/.claude/skills/`) and one opt-in block in
 `~/.claude/CLAUDE.md`. Run a second brain alongside the first and it adds

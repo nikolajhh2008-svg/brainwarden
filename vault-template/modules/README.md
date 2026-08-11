@@ -52,7 +52,7 @@ template for dossiers about people is a trap in a vault whose rule is
 "roles, not people".
 
 Overlays only ship a folder's `CLAUDE.md` when they CREATE that folder —
-where they merely override an `index.md`, the identical three-line
+where they merely override an `index.md`, the identical two-line
 `CLAUDE.md` is already there from step 1.
 
 `personal` gets no overlay at all.
@@ -74,4 +74,4 @@ where they merely override an `index.md`, the identical three-line
 ## Adding another module later
 New folder here, shaped like a vault root, one line in the table above,
 and every content folder it introduces brings its own `index.md` +
-three-line `CLAUDE.md` — same rule as the core.
+two-line `CLAUDE.md` — same rule as the core.

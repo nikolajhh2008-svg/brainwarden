@@ -67,7 +67,7 @@ Windows in PowerShell: `dir ~\Brain`) shows
 numbered folders from `00-inbox` to `90-archive` — exactly which ones
 depends on your answer above — plus a `_templates` folder, where the note
 blueprints live. Every folder that holds notes also carries an `index.md`
-and a three-line `CLAUDE.md`: the signposts Claude navigates by, safe for
+and a two-line `CLAUDE.md`: the signposts Claude navigates by, safe for
 you to ignore. And Claude tells you your first project (in a company
 brain, your first procedure) is already in there. (If "capture:" isn't
 recognized right away, restart Claude Code once — fresh skills load with

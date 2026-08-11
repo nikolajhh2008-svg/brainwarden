@@ -40,8 +40,10 @@ Zwei Stellen lohnt es sich zu kennen:
   nur die Teile, die zu deiner Antwort auf die erste Frage passen, und
   lässt Gerüstmaterial aus dem Bausatz weg. Es überschreibt **nie** etwas,
   was schon da ist – zeigt dir am Ende sogar, was es stehen gelassen hat.
-- **Ein Eintrag in `~/.claude/CLAUDE.md`** ist die eine Zeile, mit der jede
-  spätere Claude-Sitzung weiß, wo dein Brain liegt. Claude fragt vorher.
+- **Ein kurzer Regelblock in `~/.claude/CLAUDE.md`** ist das, woran jede
+  spätere Claude-Sitzung dein Brain erkennt: die Zeile mit dem Pfad zu
+  deinem Ordner, dazu ein paar Zeilen, wann Claude hineinschauen und wann
+  es etwas festhalten soll. Claude fragt vorher.
 
 Du kannst bei den Nachfragen „für diese Sitzung erlauben" wählen, dann ist
 Ruhe. Und wenn dir etwas nicht geheuer ist: frag einfach nach, bevor du

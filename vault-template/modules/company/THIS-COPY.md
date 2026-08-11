@@ -7,7 +7,7 @@ owner: knowledge-owner
 status: stable
 audience: [all]
 confidentiality: internal
-review_due: {{DATE}}
+review_due: {{DATE}}   # setup: today + 12 months — NOT today, or this page expires tomorrow
 ---
 
 # About this copy

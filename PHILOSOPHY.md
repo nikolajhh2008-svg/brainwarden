@@ -61,7 +61,7 @@ that.
 model that reads three hits out of four hundred notes has no idea what
 the folder is for, what does not belong in it, or which note the others
 hang off. So every folder that holds notes carries an `index.md` that
-says exactly that in about 25 lines, plus a three-line `CLAUDE.md` that
+says exactly that in about 25 lines, plus a two-line `CLAUDE.md` that
 pulls the signpost into Claude's context on the first read in that
 folder. `index.md` is the canonical one because it is a plain file any
 tool can open, Claude or not; the `CLAUDE.md` is only the delivery

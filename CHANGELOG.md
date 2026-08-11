@@ -44,7 +44,7 @@ line of your note content.
 
 - **A signpost in every folder.** `index.md` states what belongs there,
   what does not, and the two or three notes worth starting from, in
-  about 25 lines. Next to it, a three-line `CLAUDE.md` pulls that
+  about 25 lines. Next to it, a two-line `CLAUDE.md` pulls that
   signpost into Claude's context the moment a file in that folder is
   read, so it costs nothing until it is needed. `index.md` is the
   canonical half, because any tool can read a plain file.

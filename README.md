@@ -22,7 +22,7 @@ asks which brain you want, then four short questions, then writes your
 first real notes itself. **You never meet an empty vault.**
 
 No plugins, no cloud service, no telemetry. Markdown files, Git, five small
-Claude skills and three Python scripts. Works with a brand-new vault or with
+Claude skills and three small Python scripts. Works with a brand-new vault or with
 the one you already have, wherever it lives.
 
 ---
@@ -150,7 +150,7 @@ flowchart LR
 
 Every folder that holds notes carries an `index.md`: what belongs there,
 what does not, and the two or three notes worth starting from. Next to it,
-a three-line `CLAUDE.md` pulls that signpost into Claude's context the
+a two-line `CLAUDE.md` pulls that signpost into Claude's context the
 moment it reads any file in that folder. An agent that lands deep in your
 vault through a search knows where it is without guessing, and a tool that
 never heard of Claude still finds `index.md`. Same idea, three more places:
@@ -162,7 +162,7 @@ never heard of Claude still finds `index.md`. Same idea, three more places:
 | **Replacements are written twice** | The new note says `Supersedes …`, the old one gets `Superseded by …` appended, so an agent landing in the outdated version finds the pointer instead of believing it. |
 
 `.tools/hygiene.py` measures all of it: orphans, dead links, near-empty
-notes, notes no signpost mentions, frontmatter gaps and one-sided supersede
+notes, notes no signpost leads to, frontmatter gaps and one-sided supersede
 chains. The weekly review runs it and fixes what it lists.
 
 ---

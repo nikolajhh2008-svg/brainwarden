@@ -91,7 +91,7 @@ already correct and stay untouched.
 
 **A folder has no `index.md` (or no tiny `CLAUDE.md`) in it.** Those two
 are the signposts every folder with notes carries: `index.md` says what
-belongs there, what does not and where to start; the three-line
+belongs there, what does not and where to start; the two-line
 `CLAUDE.md` next to it just pulls that signpost into Claude's context
 automatically. Vaults built before those existed simply lack them — say
 *"backfill the missing index files in my brain"*. Folders you created by
