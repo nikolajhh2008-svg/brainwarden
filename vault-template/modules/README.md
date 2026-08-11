@@ -35,9 +35,17 @@ rm -f  ~/Brain/_templates/person-note.md \
        ~/Brain/_templates/project-note.md \
        ~/Brain/_templates/area-note.md \
        ~/Brain/_templates/journal-entry.md   # their folders do not exist here
+# these arrived with the processes overlay and belong to a PERSONAL work
+# brain: in a shared vault everything belongs to the company, so there is
+# no handover question and no personal contribution log
+rm -rf ~/Brain/60-contribution
+rm -f  ~/Brain/handover.md \
+       ~/Brain/_templates/contribution-entry.md \
+       ~/Brain/_templates/learning-note.md \
+       ~/Brain/_templates/meeting-note.md
 ```
 
-Order matters: step 4 deliberately OVERWRITES seven core files that talk
+Order matters: step 4 deliberately OVERWRITES nine core files that talk
 about folders which do not exist in a company vault — six `index.md`
 (root, `00-inbox/`, `30-knowledge/`, `40-decisions/`, `90-archive/`,
 `_templates/`) plus `Home.md` (the core one links `[[About me]]`, which

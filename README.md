@@ -22,7 +22,7 @@ asks which brain you want, then four short questions, then writes your
 first real notes itself. **You never meet an empty vault.**
 
 No plugins, no cloud service, no telemetry. Markdown files, Git, five small
-Claude skills and two Python scripts. Works with a brand-new vault or with
+Claude skills and three Python scripts. Works with a brand-new vault or with
 the one you already have, wherever it lives.
 
 ---
@@ -90,9 +90,17 @@ main road; the rest are marked branches off it.
 | You answer | You get |
 |---|---|
 | 🏠 **for me** | your life: projects, areas, knowledge, decisions, people |
-| 💼 **for my work** | the same without the private half, plus `50-processes/` for the workflows you repeat |
+| 💼 **for my work** | the same without the private half, plus your own runbooks, a log of what you actually did, and one field on every note: does this belong to you or to the employer |
 | 🔀 **both, kept separate** | two vaults, two start commands (`claude` and `workbrain`), nothing crossing over |
 | 🏢 **for a company** | shared knowledge for several people: processes, roles, onboarding, partners. No projects or areas, and roles instead of dossiers on colleagues |
+
+**Why the work brain carries that one extra field.** In Germany and Austria
+an employee has to hand over everything obtained from the employment when
+they leave — courts count notes they wrote themselves about customer calls
+and project work, copies included, with only genuinely private records
+exempt. Mark each note as `private` or `company` while writing it and
+leaving takes minutes. Sort it out on the last day and you cannot. The same
+field decides what an agent may put into an external model.
 
 The first win follows the same split: your first project and your dates,
 plus the first workflow you wrote down in a work brain, or, after a few
@@ -182,7 +190,7 @@ your vault alive, you don't need this. If you want an AI to write your
 thinking for you, this kit will refuse. If you need real access control
 inside one company vault, this kit has none: separation means a separate
 vault. And if you want maximum features, look elsewhere; this is
-deliberately five skills and two small scripts.
+deliberately five skills and three small scripts.
 
 <details>
 <summary><b>What's inside</b> — the repo, folder by folder</summary>
@@ -191,7 +199,7 @@ deliberately five skills and two small scripts.
 
 | Path | Contents |
 |---|---|
-| [`vault-template/`](vault-template/) | The vault core: folders, signposts, rules, `Home` dashboard, note templates, `.tools/` (search and hygiene) |
+| [`vault-template/`](vault-template/) | The vault core: folders, signposts, rules, `Home` dashboard, note templates, `.tools/` (search, hygiene, harvest) |
 | [`vault-template/modules/`](vault-template/modules/) | Overlays copied on top for a work or company vault |
 | [`skills/`](skills/) | The five skills: capture · ingest · ask · review · research |
 | [`hooks/`](hooks/) | Optional: a net that catches what you forgot to capture |
@@ -200,8 +208,7 @@ deliberately five skills and two small scripts.
 
 The folder numbering (`00-inbox` … `90-archive`) leaves gaps on purpose. In
 a private brain `50–80` are yours for optional modules like journaling,
-media logs, health or money; a work brain has `50-processes/` in the first
-gap; a company vault uses all four.
+media logs, health or money; a work brain takes the first two (`50-processes/`, `60-contribution/`); a company vault uses all four.
 
 </details>
 

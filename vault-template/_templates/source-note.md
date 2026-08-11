@@ -2,6 +2,7 @@
 type: source
 title: <Author (Year) — short title>
 created: {{DATE}}
+ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: [source]
 status: draft
 source: <full reference: author (year). Title. Publisher/URL. Retrieved date>

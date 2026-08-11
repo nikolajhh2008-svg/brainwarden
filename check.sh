@@ -46,8 +46,12 @@ for mode in personal professional company; do
           "$V/_templates/area-note.md" "$V/_templates/journal-entry.md"
     rm -rf "$V/60-contribution"
     rm -f "$V/handover.md" "$V/_templates/contribution-entry.md" \
-          "$V/_templates/learning-note.md"
+          "$V/_templates/learning-note.md" "$V/_templates/meeting-note.md"
   fi
+  # the mode line drives hygiene.py's required-field check — without it a
+  # work vault would be measured against the personal schema and pass by
+  # accident
+  sed -i.bak "s/{{MODE}}/$mode/" "$V/CLAUDE.md" && rm -f "$V/CLAUDE.md.bak"
   if ( cd "$V" && python3 .tools/hygiene.py | grep -qE "^(dead links|orphans|folders with notes but no index\.md|frontmatter gaps).*: [1-9]" ); then
     bad "$mode vault clean" "hygiene has findings"
     ( cd "$V" && python3 .tools/hygiene.py | grep -E ".*: [1-9]" | sed 's/^/    /' )

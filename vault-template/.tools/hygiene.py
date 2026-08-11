@@ -165,6 +165,24 @@ def report(title, items, limit, note=""):
     if len(items) > limit:
         print(f"  … and {len(items) - limit} more")
 
+def vault_mode(root):
+    """personal | professional | company — read from the vault's CLAUDE.md.
+
+    The mode decides which frontmatter fields are required. Guessing it from
+    the folder layout would be fragile; the rules file states it outright."""
+    try:
+        text = open(os.path.join(root, "CLAUDE.md"), encoding="utf-8-sig",
+                    errors="ignore").read()
+    except OSError:
+        return "personal"
+    m = re.search(r"^\*\*Vault mode:\s*([a-z]+)", text, re.M | re.I)
+    if m and m.group(1).lower() in ("personal", "professional", "company"):
+        return m.group(1).lower()
+    # A company overlay says so in its heading even before setup fills the line
+    if re.search(r"^#.*company knowledge vault", text, re.M | re.I):
+        return "company"
+    return "personal"
+
 def main():
     argv = sys.argv[1:]
     limit, root = 10, os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -199,6 +217,7 @@ def main():
                     signposted.add(hit)
 
     orphans, near_empty, gaps = [], [], []
+    mode = vault_mode(root)
     gap_counts = collections.Counter()
     for rel, text in sorted(v.notes.items()):
         if not is_infra(rel) and not unlinked_ok(rel) and not inbound[rel]:
@@ -216,6 +235,15 @@ def main():
         s = re.search(r"^status:\s*([\w-]+)", fm, re.M)
         if s and s.group(1) in MATURITY:
             missing.append("`status:` still used for maturity")
+        # Mode-dependent required fields. In a work brain `ownership:` is the
+        # one field with a legal consequence — it decides what has to be handed
+        # over when the job ends. A rule nothing measures is a wish.
+        if mode == "professional" and not re.search(r"^ownership:\s*\S", fm, re.M):
+            missing.append("no ownership:")
+        if mode == "company":
+            for field in ("owner", "status", "audience", "confidentiality"):
+                if not re.search(rf"^{field}:\s*\S", fm, re.M):
+                    missing.append(f"no {field}:")
         if missing:
             gap_counts.update(missing)
             gaps.append(f"{rel} — {', '.join(missing)}")
@@ -250,6 +278,7 @@ def main():
                     chains.append(f'{rel}:{line} → {hit}, but {hit} has no "{phrase}" back to it')
 
     print(f"hygiene — {root}")
+    print(f"mode: {mode}")
     print(f"{len(v.notes)} notes scanned ({len([r for r in v.notes if is_infra(r)])} kit files, "
           f"{len(signposts)} signposts)")
     report(f"orphans — nothing links here (excl. {', '.join(UNLINKED_OK)})", orphans, limit)

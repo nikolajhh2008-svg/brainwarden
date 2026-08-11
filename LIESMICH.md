@@ -25,7 +25,7 @@ entscheidet, welche Ordner entstehen und womit das Brain startet.
 | Deine Antwort | Was du bekommst |
 |---|---|
 | **für mich** | dein Leben: Projekte, Bereiche, Wissen, Entscheidungen, Personen |
-| **für die Arbeit** | dasselbe ohne den privaten Teil, dazu `50-processes/` für wiederkehrende Abläufe |
+| **für die Arbeit** | dasselbe ohne den privaten Teil, dazu eigene Abläufe, ein Protokoll dessen, was du geschafft hast, und ein Feld auf jeder Notiz: gehört das dir oder dem Arbeitgeber |
 | **beides, getrennt** | zwei Vaults, zwei Startbefehle (`claude` und `workbrain`), nichts vermischt sich |
 | **für eine Firma** | geteiltes Firmenwissen: Abläufe, Rollen, Einarbeitung, Partner. Keine Projekte und Bereiche, und Rollen statt Dossiers über Kolleginnen und Kollegen |
 
@@ -35,6 +35,15 @@ Termin). Daraus baut Claude sofort die ersten echten Notizen. Im
 Firmenmodus sind es ein paar Fragen mehr, und der erste Gewinn ist ein
 aufgeschriebener Ablauf statt eines Projekts. Das ausführliche
 Interview kommt erst danach, und nur wenn du willst.
+
+
+**Warum das eine Feld beim Arbeits-Brain:** Wer kündigt, muss in Österreich
+und Deutschland herausgeben, was er aus dem Arbeitsverhältnis hat – Gerichte
+zählen selbst geschriebene Notizen über Kundengespräche und Projektarbeit
+dazu, Kopien inklusive. Nur echte private Aufzeichnungen sind ausgenommen.
+Wer beim Schreiben eine Zeile setzt, ist in Minuten fertig. Wer es am letzten
+Tag sortieren will, kann es nicht mehr. Dasselbe Feld entscheidet, was die KI
+an ein externes Modell schicken darf.
 
 ## Die fünf Worte für den Alltag
 - **„capture: …"** – Gedanken sofort festhalten (landet in der Inbox)

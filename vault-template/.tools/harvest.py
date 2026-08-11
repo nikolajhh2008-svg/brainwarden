@@ -4,6 +4,7 @@
     python3 .tools/harvest.py                 # inventory only — reads nothing
     python3 .tools/harvest.py --candidates    # deterministic pre-filter
     python3 .tools/harvest.py --candidates --since 2026-07-01 --max 20
+    python3 .tools/harvest.py --root ~/.claude-work/projects   # a second brain
 
 A new vault is empty, and an empty vault is useless. But the machine has
 been listening for months: Claude Code keeps session transcripts in
@@ -30,7 +31,12 @@ happens afterwards, on a small sample first, and only with consent.
 import argparse, collections, json, os, re, sys, unicodedata
 from datetime import datetime, timezone
 
-SESSIONS = os.path.expanduser("~/.claude/projects")
+# Follow CLAUDE_CONFIG_DIR: a second brain runs under its own config
+# directory, and its transcripts live there too. Reading ~/.claude from a
+# work vault would harvest the PRIVATE sessions into it — the exact
+# crossover the two-brain setup exists to prevent.
+SESSIONS = os.path.join(
+    os.path.expanduser(os.environ.get("CLAUDE_CONFIG_DIR", "~/.claude")), "projects")
 
 # --- what is obviously not worth keeping, recognisable by shape alone ---
 NOISE = [

@@ -53,8 +53,8 @@ top-level modules slot in as `50-journal/`, `60-media/` etc. without ever
 re-sorting the core. Ask Claude to add a module and it lands in a gap —
 the core six folders and their English names stay fixed (the skills
 depend on them). Which gaps are still free depends on the mode: in
-`personal` all of 50–80; in `professional` everything except 50
-(`50-processes/` sits there); in `company` none — 50–80 are all taken,
+`personal` all of 50–80; in `professional` everything except 50 and 60
+(`50-processes/` and `60-contribution/` sit there); in `company` none — 50–80 are all taken,
 so user modules are not offered there.
 
 **Core sorting principle:** file by ACTIONABILITY (which project/area
@@ -65,7 +65,8 @@ needs this NOW?), never by topic taxonomy. Findability comes from
 Required on every note OUTSIDE the inbox:
 ```yaml
 ---
-type: knowledge | source | decision | project | area | person | sop | role | partner
+type: knowledge | source | decision | project | area | person
+      | meeting | contribution | sop | role | partner
 title: <human readable>
 created: YYYY-MM-DD
 tags: [kebab-case, lowercase, few]
@@ -82,6 +83,7 @@ ownership: private | company | mixed    # who it belongs to (work brains: requir
 confidentiality: public | internal | strict
 ai_release: local | external_ok         # may this leave the machine?
 last_verified: YYYY-MM-DD               # runbooks: when you last actually ran it
+handover_relevant: true                 # would a stand-in need this? (work brains)
 verified: {by: human:<name>, at: YYYY-MM-DD}     # a human confirmed it
 generated: {by: <agent>/<model>, at: YYYY-MM-DD} # an AI produced it
 ```
@@ -210,9 +212,16 @@ garden; it never replaces the plants.
 - Template per note type: knowledge → `_templates/knowledge-note.md` ·
   source → `source-note.md` · person → `person-note.md` · project →
   `project-note.md` · area → `area-note.md` · journal → `journal-entry.md`
-  · SOP → `sop-note.md` · role → `role-note.md` · partner →
-  `partner-note.md` (the last three only exist in the modes that have
-  those folders) · decision → `40-decisions/_template.md`. When instantiating, fill the
+  · SOP → `sop-note.md` · meeting → `meeting-note.md` · learning →
+  `learning-note.md` · contribution → `contribution-entry.md` · role →
+  `role-note.md` · partner → `partner-note.md` (each only exists in the
+  modes that have the matching folder) · decision →
+  `40-decisions/_template.md`.
+  **Where meeting and learning notes go:** a meeting note is filed with
+  what it is ABOUT — the project in `10-projects/`, or `40-decisions/` if
+  its only lasting content is one decision (then keep it terse and drop
+  the raw notes). A learning note goes to `30-knowledge/`. Neither gets
+  its own folder: one meeting is an event, not a category. When instantiating, fill the
   DATE/NAME placeholders with real values; the template files themselves
   keep their placeholder tokens forever (their prose may be translated —
   the tokens stay).

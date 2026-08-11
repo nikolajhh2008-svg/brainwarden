@@ -211,7 +211,7 @@ rm -f  <vault>/_templates/person-note.md <vault>/_templates/project-note.md \
 # so there is no handover question and no personal contribution log
 rm -rf <vault>/60-contribution
 rm -f  <vault>/handover.md <vault>/_templates/contribution-entry.md \
-       <vault>/_templates/learning-note.md
+       <vault>/_templates/learning-note.md <vault>/_templates/meeting-note.md
 ```
 
 The order matters: the company overlay deliberately OVERWRITES nine core
@@ -231,7 +231,7 @@ The `processes/` overlay likewise brings its own root `index.md`, so that
 `50-processes/` appears in the cold-entry signpost. On a FRESH install that overwrite is what you want. On the
 ADOPT path it is not: never run the overlay over someone's existing
 `Home.md` — copy the company one aside, fold their content into it by
-hand, one OK per change (3c). The four deleted templates are deleted on purpose,
+hand, one OK per change (3c). The six deleted templates are deleted on purpose,
 not merely left unused: a person-dossier template in a vault whose rule
 is "roles, never people" is a trap.
 

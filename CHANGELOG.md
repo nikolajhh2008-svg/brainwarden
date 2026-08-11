@@ -7,6 +7,20 @@ without guessing. Existing vaults are updated in place: the update path
 replaces kit infrastructure and renames one frontmatter key, never a
 line of your note content.
 
+### A cold start from what the machine already recorded
+
+- **`.tools/harvest.py`** turns past Claude Code sessions into vault
+  material. It inventories without reading anything, then pre-filters
+  deterministically — no model call, no cost: harness injections, system
+  plumbing, acknowledgements, duplicates and anything without a
+  decision/date/milestone/lesson word. Measured on a real machine: 1500
+  human turns in, 34 candidates out. Step 8a of the setup runbook is the
+  procedure around it: nothing is read without a yes, nothing written
+  without a second one, a sample of twenty is judged before the archive,
+  every harvested note carries its origin, at most three per session.
+  The reason it is that strict: an audit of 10,134 auto-captured memories
+  in another system found 97.8% of them worthless.
+
 ### Two things change in existing vaults
 
 - **`status:` no longer means maturity — that field is now `maturity:`.**

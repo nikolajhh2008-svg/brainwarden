@@ -114,7 +114,7 @@ their signpost.
   leaves 50–80 for later, so growth never forces a re-sort — the useful
   half of Johnny Decimal without its rigidity. In a private brain those
   four numbers are yours (journal, media, health, money, or your own); a
-  work brain spends one on `50-processes/`; a company vault spends all
+  work brain spends two on `50-processes/` and `60-contribution/`; a company vault spends all
   four on processes, roles, onboarding and partners.
 - **The interview is a starting point, not a cage.** Reviews are
   explicitly allowed to propose structure changes as your life changes.

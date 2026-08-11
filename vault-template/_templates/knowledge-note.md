@@ -2,6 +2,7 @@
 type: knowledge
 title: <one idea, stated as a claim>
 created: {{DATE}}
+ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: []
 maturity: seed
 status: draft

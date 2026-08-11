@@ -1,7 +1,7 @@
 # Security
 
 Brainwarden is a local-only kit: Markdown files, five Claude Code skills
-and two Python scripts (`search.py`, `hygiene.py`). There is no server, no
+and three Python scripts (`search.py`, `hygiene.py`, `harvest.py`). There is no server, no
 telemetry, no network call of its own — the only things it writes are your
 vault, your skills folder (`~/.claude/skills/`) and one opt-in block in
 `~/.claude/CLAUDE.md`. Run a second brain alongside the first and it adds

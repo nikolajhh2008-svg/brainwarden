@@ -23,14 +23,22 @@ command (on most Windows machines `py -3`; the global rules name it).
    `index.md`, `CLAUDE.md`) and except the `raw/` subfolder (raw/ is
    `brain-ingest`'s queue; a PDF waiting there is not review work). The
    signposts are infrastructure, not captures — never process or delete
-   them, not even when the empty-file rule below would seem to apply. Each file leaves through exactly ONE of three exits:
+   them, not even when the empty-file rule below would seem to apply. Each file leaves through one of three exits — **or through several, if it
+   genuinely contains several things.** A meeting capture with a decision,
+   two dates and an open question becomes a decision record AND two lines
+   in `Deadlines.md` AND one open question. Forcing it through one exit
+   loses the rest. What must not happen is a file that survives the review.
    - **(a) it becomes a note:** paraphrase it (frontmatter, vault language,
      matching template from `_templates/`; fill `{{DATE}}`/`{{NAME}}` with
      real values) and file by ACTIONABILITY: project → `10-projects/` ·
      area → `20-areas/` · **a settled question →
      `40-decisions/YYYY-MM-DD-slug.md`** (decision record, append-only,
      template `40-decisions/_template.md`) · keeper knowledge →
-     `30-knowledge/` · person → `30-knowledge/people/`.
+     `30-knowledge/` · person → `30-knowledge/people/` · **a recurring
+     task you will do again → `50-processes/`** · **something you did,
+     with evidence → `60-contribution/`** (the last two only exist in a
+     work brain). A meeting note goes with what it is ABOUT — its project,
+     or `40-decisions/` if the only lasting content is one decision.
    - **(b) it becomes a date:** an appointment or deadline → one line in
      `Deadlines.md` (date first) plus one line in the running log of its
      project — then delete the inbox file. A date needs no knowledge note.

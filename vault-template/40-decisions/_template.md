@@ -2,6 +2,7 @@
 type: decision
 title: <title>
 created: {{DATE}}
+ownership: private        # work brains: private | company | mixed — delete this line in a personal brain
 tags: []
 status: stable
 ---
