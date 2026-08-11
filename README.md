@@ -190,6 +190,10 @@ procedures live in one person's head. Anyone using Claude Code who wants
 their AI to know them across sessions. And Obsidian-curious beginners who
 never got past the empty vault.
 
+Wondering whether a shared folder of Word files would do the same job?
+[PHILOSOPHY.md](PHILOSOPHY.md) answers that one head-on — including the
+cases where the answer is yes.
+
 **Who it is NOT for:** if tags, search and relaxed standards already keep
 your vault alive, you don't need this. If you want an AI to write your
 thinking for you, this kit will refuse. If you need real access control

@@ -25,14 +25,15 @@ ends with a checkpoint ("how you know it worked").
    [TROUBLESHOOTING.md](TROUBLESHOOTING.md) has the fixes.
 3. Type `claude`, sign in with your account.
 
-*(Would rather never touch a terminal? Install
-[VS Code](https://code.visualstudio.com) and its
-[Claude Code extension](https://code.claude.com/docs/en/vs-code) instead —
-you get a graphical chat panel, and every later step works the same by
-pasting into that panel.)*
+*(Would rather never touch a terminal? **Claude Code also ships as a normal
+desktop app for Mac and Windows** — install it like any other program, open
+it, type into it. No black screen anywhere, and every later step works the
+same. That is the simplest route and the one to take if the terminal is not
+your world. Developers who live in an editor can instead use the
+[Claude Code extension for VS Code](https://code.claude.com/docs/en/vs-code).)*
 
-✅ **Checkpoint:** Claude greets you with a prompt in the terminal (or in
-the VS Code chat panel).
+✅ **Checkpoint:** Claude greets you with a prompt — in the terminal, in the
+desktop app, or in the editor panel, whichever you chose.
 
 ---
 
@@ -129,8 +130,8 @@ under `60-roles/`; there are no notes about people there, on purpose.)
 > research my brain
 
 ✅ **Checkpoint:** After the review, the only things still sitting in
-`00-inbox/` are `Inbox rule.md` and the `raw/` folder. **Those two always
-stay** — the rule page is a permanent instruction sheet, and `raw/` is
+`00-inbox/` are `Inbox rule.md`, `index.md`, `CLAUDE.md` and the `raw/`
+folder. **Those always stay** — the rule page is a permanent instruction sheet, and `raw/` is
 the drop zone for the next PDF. "Inbox to zero" means every *capture* is
 gone: yours has become a linked note somewhere else, and `Home` lists it
 under "New this week". The review also runs a check for orphaned notes

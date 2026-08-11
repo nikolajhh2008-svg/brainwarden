@@ -127,6 +127,40 @@ their signpost.
   "extract everything" memory tools. Here every filing is reported, every
   change is a Git commit, and deleting is a first-class feature.
 
+## Why not just a folder of Word files on the server?
+
+The honest answer is: for a while, that works. If one person writes, fewer
+than about fifty documents exist, and the file names are self-explanatory,
+a shared folder is the right amount of machinery and this kit is overkill.
+Four things break it, and each maps to one part of the design.
+
+**A Word file cannot say whether it still applies.** Opened in 2029, a
+document written in 2019 looks exactly the same. `status: stable` plus a
+filled `verified:` says who confirmed it and when; `review_due` and
+`stale_after` say when to stop trusting it, and `hygiene.py` lists what has
+expired. That question — *does this still hold?* — is the one a shared drive
+structurally cannot answer, and the one people actually have.
+
+**People leave, roles stay.** A folder named after a colleague dies with
+their departure. A role note survives every hire and every handover, which
+is why a company vault has `60-roles/` and no personal dossiers at all.
+
+**Full-text search on a file server misses the German half of the words.**
+Windows search for `Vertrag` does not find `Rahmenvertrag`. `search.py`
+does, because German glues words together and a search that misses that is
+simply broken.
+
+**And the maintenance is the point.** A shared folder needs a volunteer who
+tidies it, and that volunteer does not exist — that is the documented reason
+most company wikis rot. Here the filing, linking, deadline tracking and
+weekly cleanup are the agent's job. The human has one habit: say what
+happened.
+
+What a wiki still does better: real access rights, and distribution to
+people who never clone anything. If knowledge genuinely must be invisible to
+part of the team, this kit is the wrong tool inside one vault — separation
+means a second vault, and it says so in four places rather than pretending.
+
 ## Why an AI-maintained vault at all — instead of just chatting with AI?
 
 Because chats evaporate. Every conversation you have about a thought
