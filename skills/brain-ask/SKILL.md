@@ -10,7 +10,12 @@ the human's OWN notes, shows where every claim comes from, and is honest
 about what the brain does not know.
 
 **Conventions:** `<vault>` = the vault path from the `Brain vault:` line in
-your global rules (none set → `~/Brain`). `python3` = your working python
+your global rules — **or, if there is no such line, the folder this
+session was started in**, when that folder holds a `CLAUDE.md` naming a
+vault mode. A shared company vault has no global line on purpose (its
+skills travel inside it), so falling back to `~/Brain` there would write
+into somebody's private vault. Only when neither exists does `~/Brain`
+apply. `python3` = your working python
 command (on most Windows machines `py -3`; the global rules name it).
 
 ## Steps
