@@ -103,7 +103,9 @@ andere sprichst du auf Deutsch.
   zurechtfindet. Du kannst sie beim Lesen überspringen.
 - **Oben in jeder Notiz stehen ein paar Zeilen Verwaltungskram** zwischen
   zwei Strichen (`---`) – Datum, Art, Schlagwörter. Der eigentliche Text
-  fängt darunter an. In Obsidian siehst du diesen Block gar nicht erst.
+  fängt darunter an. Obsidian zeigt ihn nicht als Rohtext, sondern oben
+  als aufgeräumte Eigenschaften-Liste – du musst dort nichts eintragen,
+  das macht Claude.
   Zwei Angaben davon lohnen sich zu kennen: `maturity:` sagt, wie
   ausgearbeitet eine Notiz ist, `status:` sagt, ob sie noch gilt. Und
   `verified:` heißt „ein Mensch hat das bestätigt" – das setzt Claude nie
