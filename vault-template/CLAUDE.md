@@ -94,8 +94,11 @@ delete a thin note.
 vault.** `verified` means a human being read this and said "yes, that is
 right". `generated` means a machine wrote it and nobody has checked it
 yet. Rule for Claude: never set `verified` yourself — that field belongs
-to the human; anything you write or fill in carries `generated` until a
-human replaces it. Old field name: what used to be
+to the human. `generated:` marks notes whose CONTENT you produced —
+researched facts, a summary you wrote, a draft procedure. Filing what the
+human said, in their words, is not authorship: a capture you paraphrase
+into a note does NOT get `generated:`, or the marker would sit on
+everything and mean nothing. Old field name: what used to be
 `status: seed|growing|evergreen` is now `maturity:` — if you meet the
 old spelling in a note, rename it.
 

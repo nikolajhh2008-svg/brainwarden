@@ -379,6 +379,27 @@ Loading note: if `~/.claude/skills/` already existed, new skills load live
 in the current session; if the directory was just created, one restart of
 Claude Code is needed before the first "capture:".
 
+**`company` mode — put the skills INSIDE the vault instead.** Copy the
+five folders to `<vault>/.claude/skills/` and skip `~/.claude/` entirely:
+
+```bash
+mkdir -p <vault>/.claude/skills && cp -R skills/. <vault>/.claude/skills/
+```
+
+Three reasons, and they all matter more than the one line of convenience
+you lose. A shared vault is *handed to people* — as a clone, a zip, a
+folder on a drive — and skills that travel with it need no install step,
+no admin, no instructions. They load only when Claude Code is started in
+that folder, so company content never surfaces in someone's private
+session. And when the vault is deleted, the skills go with it; nothing
+stays behind on a leaver's machine. The trade-off is real: `capture:`
+then works only inside the vault, not from any session. In a shared
+vault that is the correct behaviour — a company brain should not be
+ambient in someone's private work.
+
+For `personal` and `professional`, keep them in `~/.claude/skills/`: an
+ambient brain is exactly the point there.
+
 ### 4b. Two brains — separate configuration directories
 The first brain keeps the normal setup (`~/.claude`), so its capture
 triggers work in every session — that ambient reach is the point of the
@@ -569,13 +590,24 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    `About this vault.md` and `70-onboarding/onboarding-path.md`, plus the
    `<…>` angle-bracket fields in `About this vault.md` (owner, purpose,
    who may read, who may release) from the answers in 1b.
-2. If the language is not English, translate `Home.md`, `Inbox rule.md`,
-   the self page (`About me.md` / `About this vault.md`), `Deadlines.md`,
-   `00-inbox/raw/README.md`, the decision template
-   `40-decisions/_template.md`, the `_templates/` and every `index.md`
-   waypoint into it (keep the `{{…}}` placeholder tokens). The vault's
-   `CLAUDE.md` stays English by design — it is read by Claude, not by
-   them.
+2. If the language is not English, translation happens in TWO waves.
+   Measured: a full pass is 23–25 files, which does not fit inside "the
+   first win within minutes" — and most of those files the human never
+   opens.
+   **Now, before you hand over (what they will actually look at):**
+   `Home.md`, `Inbox rule.md`, the self page (`About me.md` /
+   `About this vault.md`), `Deadlines.md`, and the notes you wrote in
+   Step 5b. That is the vault they see.
+   **After the handover, in the same session, and say that you are doing
+   it:** the `_templates/`, `40-decisions/_template.md`,
+   `00-inbox/raw/README.md` and every `index.md` waypoint. Waypoints are
+   read by agents, and an agent reads English fine — so an untranslated
+   waypoint costs nothing for an hour, while a delayed first win costs
+   the whole setup. Keep the `{{…}}` placeholder tokens in all of them.
+   The vault's `CLAUDE.md` stays English by design — it is read by
+   Claude, not by them. (A shared company vault is the exception worth
+   making: there a human owner does open the rules file, so translate it
+   too if they ask.)
    Keep untranslated: the kit FILE NAMES, every HTML marker comment,
    frontmatter keys and values (`type:`, `maturity: seed/growing/
    evergreen`, `status: draft/stable/deprecated`) and command words

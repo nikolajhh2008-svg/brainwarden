@@ -34,7 +34,12 @@ command (on most Windows machines `py -3`; the global rules name it).
    - **(b) it becomes a date:** an appointment or deadline → one line in
      `Deadlines.md` (date first) plus one line in the running log of its
      project — then delete the inbox file. A date needs no knowledge note.
-   - **(c) it gets deleted** — say so; deleting is a feature.
+   - **(c) it gets deleted** — say so; deleting is a feature. A capture
+     that is a TASK rather than knowledge ("run the onboarding interview",
+     "call the insurer") leaves through here too: put the task where tasks
+     live for this person — Home's `block:open-questions`, or the log of
+     the project it belongs to — then delete the inbox file. A task is not
+     a note.
    - **dedup before writing:** `python3 <vault>/.tools/search.py <name/topic>`
      — extend an existing note rather than creating a twin.
    - **triage:** reference material (links, clippings, recommendations)
@@ -60,6 +65,11 @@ command (on most Windows machines `py -3`; the global rules name it).
    Also: what came of last week's dates in `Deadlines.md`? Anything
    brain-worthy that never got captured → inbox now, then through step 1.
 3. **Deadlines:** new dates from the week → `Deadlines.md`; past dates out.
+   **A moved date REPLACES its line, never appends** — two entries for one
+   appointment is worse than none. Hunt the old one down first:
+   `python3 <vault>/.tools/search.py <old-date> <topic>` and correct every
+   hit (`Deadlines.md`, the project note's log, `Home.md`, any `index.md`
+   that carries it). Say which files you corrected.
 4. **Contradiction check:** hold this week's new/changed notes against
    `40-decisions/` — flag anything that quietly contradicts a recorded
    decision ("clashes with [[2026-05-10-x]], decided because Y — revisit or
@@ -104,8 +114,11 @@ command (on most Windows machines `py -3`; the global rules name it).
    - **Past ~150 notes** (`python3 <vault>/.tools/search.py --stats`):
      propose building or refreshing maps of content — one per strand, 2–3
      sentences of framing each, never a bare list of links.
-9. **Signposts (`index.md`):** for every folder you wrote into today, add
-   the new ENTRY POINTS (notes someone would start from) to its `index.md`
+9. **Signposts (`index.md`):** check every entry point you touched this
+   week for staleness FIRST — a date or next step quoted in an `index.md`
+   is a second copy and rots silently; if the note behind it changed, fix
+   the line or drop the detail. Then, for every folder you wrote into
+   today, add the new ENTRY POINTS (notes someone would start from) to its `index.md`
    as real relative paths — never `[[wikilinks]]`, they carry no path an
    agent can resolve — keep it under ~25 lines and set the trailing
    `<!-- generated: YYYY-MM-DD -->` to today. Routine notes stay out of the
@@ -155,9 +168,12 @@ command (on most Windows machines `py -3`; the global rules name it).
 
 ## Company mode (only when the vault `CLAUDE.md` names the mode `company`)
 - People become ROLES in `60-roles/` — never personal dossiers.
-- Nothing becomes company truth unattended: notes you create or change land
-  in `00-inbox/suggestions/`, or keep `status: draft` until a human sets
-  `verified: {by: human:<name>, at: YYYY-MM-DD}`.
+- Nothing becomes company truth unattended, and the two places are not
+  interchangeable: a NEW note you write goes to `00-inbox/suggestions/`
+  (it does not belong in the folders yet). A note that already lives in a
+  folder is edited in place and drops to `status: draft` — moving it out
+  would break every link pointing at it. Either way the human sets
+  `verified: {by: human:<name>, at: YYYY-MM-DD}`, never you.
 - Never invent an owner, a number or a field value. Missing stays missing.
 
 ## Rules
