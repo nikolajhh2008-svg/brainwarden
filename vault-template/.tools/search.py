@@ -71,7 +71,10 @@ def parse_args(argv):
 def walk_notes(root):
     """Every .md file in the vault, minus tooling folders. Yields (path, relpath)."""
     for dirpath, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+        # Hidden folders are skipped like in hygiene.py: a vault that ships
+        # its own `.claude/skills/` would otherwise count five SKILL.md files
+        # as notes, and `.private/` would surface in every search.
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
         for f in sorted(files):
             if not f.endswith(".md") or f.startswith("_"):
                 continue

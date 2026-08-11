@@ -26,7 +26,12 @@ links pointing INTO them still resolve if the file is there.
 import collections, os, re, sys, unicodedata
 from urllib.parse import unquote
 
-SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates", "node_modules"}
+SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates", "node_modules",
+             # Only present in the KIT, never in a vault: overlays are
+             # half-vaults whose links only resolve once they are copied on
+             # top of a core. Scanning them reports links as dead that are
+             # correct in every real vault.
+             "modules"}
 NEAR_EMPTY_WORDS = 15
 MATURITY = ("seed", "growing", "evergreen")
 INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md", "About me.md",

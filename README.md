@@ -8,7 +8,6 @@ You talk, Claude does the filing.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Made for Obsidian](https://img.shields.io/badge/Made%20for-Obsidian-7C3AED.svg)](https://obsidian.md)
 [![Works with Claude Code](https://img.shields.io/badge/Works%20with-Claude%20Code-D97706.svg)](https://claude.com/claude-code)
-[![checks](https://github.com/nikolajhh2008-svg/brainwarden/actions/workflows/checks.yml/badge.svg)](https://github.com/nikolajhh2008-svg/brainwarden/actions/workflows/checks.yml)
 
 [Quickstart](#quickstart) · [Three kinds of brain](#three-kinds-of-brain) · [Built for agents](#built-for-agents-first) · [Tutorial](TUTORIAL.md) · [Deutsch](LIESMICH.md)
 

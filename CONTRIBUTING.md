@@ -19,3 +19,11 @@ Thanks for making the kit better! The ground rules:
 - Markdown, ~80-char feel, no HTML tricks.
 - Examples follow `examples/` (frontmatter + "Related:" links, marked as
   demo content).
+
+## Before you open a pull request
+
+Run `./check.sh`. It assembles all three vault modes from the template
+and measures them — dead links, orphans, missing signposts, dashboard
+markers, version agreement. Takes a couple of seconds and no account.
+There is no CI service on this repo on purpose: a check nobody can run
+locally is a check nobody fixes.

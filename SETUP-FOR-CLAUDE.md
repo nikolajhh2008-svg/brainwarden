@@ -625,12 +625,22 @@ does not exist.
 - Brain vault: <vault>   ← the actual path; every brain-* skill uses this
 - Mode: <personal|professional|company> — <one line: what belongs in here>
 - Human: <first name>
+- **This vault is my context. Consult it BEFORE answering from general
+  knowledge** whenever a question touches my life, my work, my projects,
+  my people, my past decisions, or "what did we say about X". Do not
+  guess and do not ask me things the vault already knows.
+- **On a conflict, the vault wins.** If a note and your training data
+  disagree about my situation, the note is right and you say so.
+- Cold start in the vault: read `<vault>/index.md` (the folder map, one
+  line each) — then `<vault>/CLAUDE.md` before writing anything.
 - Retrieval: run `<python> <vault>/.tools/search.py <terms>` first, then
-  read only the hits — never the whole vault. "What do I know about X?"
-  → skill brain-ask.
+  read only the hits — never the whole vault. Landed in a folder? Its
+  `index.md` says what belongs there and what does not. "What do I know
+  about X?" → skill brain-ask.
 - Capture triggers: whenever a session produces (a) a decision, (b) a
   deadline, (c) a milestone, (d) a new person, (e) a hard-won lesson →
-  file it to <vault>/00-inbox/ immediately (brain-capture).
+  file it to <vault>/00-inbox/ immediately (brain-capture). One line of
+  confirmation is enough; never let it interrupt what we were doing.
 - Weekly ritual: "brain review" (inbox to zero, hygiene, refresh Home.md,
   git commit).
 ```
