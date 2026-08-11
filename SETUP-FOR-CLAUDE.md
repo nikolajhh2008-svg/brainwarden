@@ -384,15 +384,18 @@ own variant. Check that its folder map matches the folders that actually
 exist — an index that lists a folder the mode does not have is exactly
 the lie this system exists to prevent.
 
-### 3f. Keep the interview script
-Copy the interview into the vault before the cloned repo folder is
-deleted, so the deep interview still has its script weeks later:
-
-    cp INTERVIEW.md <vault>/.tools/
+### 3f. What survives deleting the repo
+`assemble.py` already put three things into `<vault>/.tools/` that are
+needed AFTER the setup, when the cloned repo is usually gone:
+`INTERVIEW.md` (the deep interview is meant to happen weeks later) and
+`hooks/` (offered in Step 8c as something to come back for, not to
+install now). It prints them under "kept for later" — no command of your
+own needed here.
 
 `.tools/` is kit infrastructure, not vault content: it is excluded from
-search and from the placeholder check in Step 9. Never edit the copy, and
-never "fill in" anything inside it.
+search and from the placeholder check in Step 9. Never edit those copies,
+and never "fill in" anything inside them. The hooks sit there inactive —
+nothing runs until a human adds an entry to their own `settings.json`.
 
 **Verify this step:** `<vault>/CLAUDE.md`, `<vault>/index.md`,
 `<vault>/.tools/search.py` and `<vault>/.tools/INTERVIEW.md` exist. You
@@ -826,7 +829,8 @@ not about them:
 > processes (10–15 minutes): what runs how, who owns it, and the terms
 > your company uses. Now or later?"
 
-- **Now:** run `INTERVIEW.md` (this kit) — start with its Phase-0 consent
+- **Now:** run `<vault>/.tools/INTERVIEW.md` (the copy, not the repo's — it
+  is the one that still exists later) — start with its Phase-0 consent
   question, then follow the track for this mode (person track for
   `personal`/`professional`, process track for `company`), in the vault
   language. Style models: `examples/`. Afterwards refresh `Home.md` and
@@ -844,13 +848,15 @@ a dirty tree.
 
 Capture is a habit, and habits lapse. Two days pass, decisions get made,
 a deadline is named, and none of it reaches the brain because nobody said
-"capture:". `hooks/` in the kit holds two optional Claude Code hooks for
-exactly that: one checks at the end of a turn whether anything has
+"capture:". `<vault>/.tools/hooks/` holds two optional Claude Code hooks for
+exactly that (`assemble.py` put them there, so they are still around when
+the cloned repo is not): one checks at the end of a turn whether anything has
 reached the inbox lately and, if not, makes Claude check the five capture
 triggers once; the other writes one line per session end so the weekly
 review can ask about sessions it never saw.
 
-**Say they exist, in one sentence, and point at `hooks/README.md`.** Do
+**Say they exist, in one sentence, and point at
+`<vault>/.tools/hooks/README.md`.** Do
 not install them as part of setup, and do not ask a yes/no question about
 them here. Two reasons: a hook edits their global `settings.json`, which
 is theirs and not part of a vault, and this is the twentieth-odd prompt
@@ -859,8 +865,8 @@ who has felt capture lapse will come back for it; the file explains
 installing and removing in four lines each, and the check backs off by
 itself when it is not earning the interruption.
 
-If they ask right away, install it — but then read `hooks/README.md`
-first, and on Windows use the entry form from `TROUBLESHOOTING.md`
+If they ask right away, install it — but then read
+`<vault>/.tools/hooks/README.md` first, and on Windows use the entry form from `TROUBLESHOOTING.md`
 (absolute path, doubled backslashes, and the python command that works
 there — `~` and `python3` both fail silently in `settings.json`).
 

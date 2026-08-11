@@ -68,6 +68,41 @@ def copy_tree(src, dst, skipped, overwrite=False):
             shutil.copy2(os.path.join(root, name), target)
 
 
+def keep_kit_extras(here, vault):
+    """Copy the two kit files a vault still needs after the repo is gone.
+
+    The setup tells the human they may delete the cloned repo afterwards,
+    and they should — but the deep interview is meant to happen weeks
+    later, and the capture hooks are offered as something to come back
+    for. Both used to live only in the repo, so both pointed at a folder
+    that no longer existed by the time anyone wanted them.
+
+    `.tools/` is kit infrastructure: excluded from search and from the
+    placeholder check. The hooks land there inactive; nothing runs until
+    a human puts an entry in their own settings.json.
+    """
+    kept = []
+    src = os.path.join(here, "INTERVIEW.md")
+    dst = os.path.join(vault, ".tools", "INTERVIEW.md")
+    if os.path.isfile(src) and not os.path.exists(dst):
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.copy2(src, dst)
+        kept.append(".tools/INTERVIEW.md")
+
+    hooks = os.path.join(here, "hooks")
+    if os.path.isdir(hooks):
+        target = os.path.join(vault, ".tools", "hooks")
+        os.makedirs(target, exist_ok=True)
+        for name in sorted(os.listdir(hooks)):
+            s = os.path.join(hooks, name)
+            d = os.path.join(target, name)
+            if os.path.isfile(s) and not name.endswith((".pyc", ".pyo")) \
+                    and not os.path.exists(d):
+                shutil.copy2(s, d)
+                kept.append(f".tools/hooks/{name}")
+    return kept
+
+
 def drop(vault, rel):
     path = os.path.join(vault, *rel.split("/"))
     if os.path.isdir(path):
@@ -118,10 +153,14 @@ def main():
         if removed:
             print(f"removed (not part of a shared vault): {len(removed)} items")
 
+    kept = keep_kit_extras(here, vault)
+
     folders = sum(1 for n in os.listdir(vault)
                   if os.path.isdir(os.path.join(vault, n)) and not n.startswith("."))
     print(f"\n{a.mode} vault assembled at {vault}")
     print(f"  {folders} folders · template: {os.path.relpath(template, here)}")
+    if kept:
+        print(f"  kept for later (survives deleting this repo): {', '.join(kept)}")
     if skipped:
         print(f"\n  {len(skipped)} existing files left untouched:")
         for s in skipped[:10]:
