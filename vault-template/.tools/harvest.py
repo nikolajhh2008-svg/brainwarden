@@ -349,6 +349,35 @@ def show_queue(root_cfg):
         return 0
     rows = [l.split("\t") for l in
             open(path, encoding="utf-8", errors="ignore").read().splitlines() if l.strip()]
+    # An EMPTY queue file is not the same story as a queue with nothing new in
+    # it, and printing "sessions in queue: 0" told both stories in the same
+    # calm voice. Measured on a live machine: the file existed, the hook was
+    # installed and registered, sessions had been ending all day, and the
+    # queue was zero bytes — the review would have read that as a quiet week.
+    # A track that has died has to say so, or it is worse than no track.
+    if not rows:
+        print(f"sessions in queue: 0 — but the queue file EXISTS ({path})")
+        try:
+            age = (datetime.now() - datetime.fromtimestamp(
+                os.path.getmtime(path))).days
+            print(f"  last written {age} day(s) ago, and it is empty.")
+        except OSError:
+            pass
+        stray = path + ".tmp"
+        if os.path.exists(stray):
+            print(f"  a half-finished trim is still lying next to it: {stray}")
+        print("  So either no session has ended since it was emptied, or this")
+        print("  track is broken. Check it before believing the zero:")
+        print("    · is the SessionEnd hook still in settings.json?")
+        print("      (hooks/README.md has the entry)")
+        print("    · does it run? end a session and look at the file again")
+        print("    · is CLAUDE_CONFIG_DIR the same for the hook and for this")
+        print("      tool? A second brain writes its queue somewhere else.")
+        print("  Until that is answered, treat the session track as MISSING and")
+        print("  ask the cued questions instead (day by day · by counterpart ·")
+        print("  by open deadline).")
+        capture_check_state()
+        return 0
     print(f"sessions in queue: {len(rows)}")
     by_project = collections.Counter(r[1] for r in rows if len(r) > 1)
     print("\nby project:")

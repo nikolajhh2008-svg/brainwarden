@@ -22,7 +22,11 @@ Why this exists rather than a sequence of `cp` and `rm` commands:
     behaves differently under PowerShell.
   - **It refuses to overwrite.** Existing files are never touched, and the
     script says which ones it skipped. Adopting an existing vault stays a
-    deliberate act, not an accident.
+    deliberate act, not an accident. That is the one sentence here a human
+    reads while deciding whether to trust this, so it is not left to the
+    code being right: `check.py` fills a folder with its own notes, runs all
+    three modes over it, and fails if a single byte moved
+    (`check_promise_not_to_overwrite`).
 
 It does exactly one job: put the right files in the right place. Filling
 them in — the questions, the first notes, the language — is the setup

@@ -89,7 +89,8 @@ def schema_scales(root):
 # their code examples ("status: seed | growing | evergreen" in CLAUDE.md)
 # used to be counted as real frontmatter.
 INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md",
-               "About me.md", "About this vault.md", "Inbox rule.md", "README.md"}
+               "About me.md", "About this vault.md", "Inbox rule.md",
+               "README.md", "THIS-COPY.md"}
 
 def plural(n, word):
     return f"{n} {word}" + ("" if n == 1 else "s")
@@ -167,9 +168,27 @@ def fm_value(fm, key):
         return None
     return (m.group(1).split(" #")[0].strip().strip("\"'").lower() or None)
 
-def is_infra(rel):
-    """Kit scaffolding: root/folder signposts and the raw/ readme."""
-    return os.path.basename(rel) in INFRA_FILES
+KIT_PAGE = "<!-- kit-page"
+
+def is_infra(rel, text=""):
+    """Kit scaffolding: root/folder signposts and the raw/ readme.
+
+    Three rules, in order of how well they survive a translation. The
+    `<!-- kit-page -->` marker is the reliable one — an HTML comment is an
+    exact token that renaming and translating cannot break, the same reason
+    `Home.md` addresses its blocks by marker and not by heading. Then the
+    structural rule, then the English name list for vaults built before the
+    marker existed.
+
+    The name list only holds in an ENGLISH vault — a German one carries
+    `Termine.md`, `Über mich.md`, `Inbox-Regel.md`. Those then counted as
+    notes in `--stats` and, worse, were not halved in the ranking: a
+    deadline page mentions every project in the vault at least once, so it
+    outranked the note actually about the project. The structural rule
+    survives every translation: a vault's own pages sit in its ROOT, its
+    notes sit in a numbered folder."""
+    return (KIT_PAGE in text[:2000] or os.sep not in rel
+            or os.path.basename(rel) in INFRA_FILES)
 
 def git_reviews(root):
     """Review history — only if the vault IS a git repo, not if it sits in one.
@@ -205,11 +224,11 @@ def stats(root):
     maturity_ok, validity_ok = schema_scales(root)
     words, infra, legacy = [], 0, []
     for path, rel in walk_notes(root):
-        if is_infra(rel):
+        text = read(path)
+        if is_infra(rel, text or ""):
             infra += 1
             continue
         folders[rel.split(os.sep)[0] if os.sep in rel else "(root)"] += 1
-        text = read(path)
         if text is None:
             continue
         words.append(len(text.split()))
@@ -313,7 +332,7 @@ def main():
             # duplicate check misses the twin it was looking for. Halving
             # keeps "where is X filed?" answerable while a real note on the
             # subject always wins.
-            scored.append((score * (0.5 if is_infra(rel) else 1.0), rel, lines))
+            scored.append((score * (0.5 if is_infra(rel, text) else 1.0), rel, lines))
     scored.sort(key=lambda s: (-s[0], s[1]))
     if not scored:
         print("No hits."); return 0

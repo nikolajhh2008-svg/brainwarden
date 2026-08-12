@@ -76,6 +76,13 @@ def trim(path):
     place, so an interrupted trim leaves the old queue intact."""
     tmp = path + ".tmp"
     try:
+        # A trim that was killed at the 1.5-second mark leaves an empty `.tmp`
+        # lying next to the queue forever. It is harmless, but it is the only
+        # visible trace that something went wrong here, and left in place it
+        # reads as evidence long after the run it belonged to. Clear it on
+        # the way in; `harvest.py --queue` reports one if it finds it.
+        if os.path.exists(tmp):
+            os.remove(tmp)
         with open(path, encoding="utf-8", errors="ignore") as fh:
             lines = fh.read().splitlines()
         if len(lines) <= MAX_LINES:

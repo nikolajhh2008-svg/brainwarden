@@ -8,8 +8,12 @@ Kit version: 1.3.0 (brainwarden — updates read this line to know what
 they're upgrading from, and set it to the new version afterwards)
 
 **Vault language: {{LANGUAGE}}** — write all notes, titles and links in
-this language (set during setup; the folder names stay English so the
-skills keep working).
+this language (set during setup). Folder names and kit page names may be
+translated with everything else: the tools find the inbox, the decisions
+folder and the archive by their NUMBER (`00-`, `40-`, `90-`) and a kit page
+by its `<!-- kit-page -->` marker, never by an English word. Only
+`CLAUDE.md`, `index.md` and `Home.md` keep their names — those three are
+loaded by name.
 
 **Vault mode: {{MODE}}** — one of `personal`, `professional`, `company`
 (set during setup). The mode decides which folders exist; `index.md` in
@@ -51,8 +55,9 @@ those folders explains its own extra rules in its `index.md`.
 **Why the number gaps?** They are deliberate expansion space: new
 top-level modules slot in as `50-journal/`, `60-media/` etc. without ever
 re-sorting the core. Ask Claude to add a module and it lands in a gap —
-the core six folders and their English names stay fixed (the skills
-depend on them). Which gaps are still free depends on the mode: in
+the core six folders stay, and so do their NUMBERS — the words in front
+of them may be translated, the numbers are what the tools read. Which
+gaps are still free depends on the mode: in
 `personal` all of 50–80; in `professional` everything except 50 and 60
 (`50-processes/` and `60-contribution/` sit there); in `company` none — 50–80 are all taken,
 so user modules are not offered there.
@@ -87,6 +92,16 @@ handover_relevant: true                 # would a stand-in need this? (work brai
 verified: {by: human:<name>, at: YYYY-MM-DD}     # a human confirmed it
 generated: {by: <agent>/<model>, at: YYYY-MM-DD} # an AI produced it
 ```
+
+**The two scales above are this vault's authority.** `hygiene.py`,
+`search.py --stats` and `progress.py` read the `maturity:` and `status:`
+lines out of THIS file and compare notes against what they find here. So the
+words may be translated (`status: entwurf | gültig | überholt`) — but then
+they must be translated HERE too, and each scale must keep its order:
+`maturity` runs unfinished → worked out, `status` runs draft → released →
+retired. Translate the values in the notes and not in this file and every
+one of those checks quietly stops matching, which reads exactly like a vault
+with nothing wrong.
 
 **`maturity` vs `status` — two different questions.** `maturity` (knowledge
 notes) asks how worked out a note is: `seed` = a thin first capture ·
@@ -159,11 +174,13 @@ old file: its `## Status` body is REPLACED by
   its frontmatter gets `status: deprecated`. Never leave an "in force" line
   standing above a supersede notice — an agent greps the first `## Status`
   and believes it. Nothing else in the old record changes; this one section
-  is the only exception to append-only. **Both keywords
-stay English even in a translated vault** — like the frontmatter values, and
-for a hard reason: `ersetzt` is an ordinary German verb, so a tool matching
-the translated word would flag normal prose as a broken chain — real relative
-paths, rest of the old file untouched.
+  is the only exception to append-only. Real relative paths, rest of the
+  old file untouched. **Write both keywords in English even in a translated
+  vault.** A translated form (`Ersetzt durch`, `remplacé par`) is still
+  recognised, but only at the START of a line, and only there — `ersetzt` is
+  an ordinary German verb, so a tool matching it in running prose would call
+  "this folder replaces no system" a broken chain. The English keyword has
+  no such twin and is safe anywhere.
 
 - Inbox captures need NO frontmatter (zero friction) — added at review time.
 - File names: descriptive, kebab-case; date-prefixed only for episodic notes.

@@ -682,14 +682,41 @@ processes, roles, onboarding and partners. Something is missing there? It
 belongs into one of those four, or it is a decision (`40-decisions/`).
 
 ### 5d. What is fixed vs. free (tell them this!)
-- **Fixed (the skills depend on it):** the English top-level folder names
-  of this mode (3d), the numbered-prefix scheme, the kit file names
-  (`Home.md`, `Deadlines.md`, `About me.md` / `About this vault.md`,
-  `Inbox rule.md`, `index.md`, `CLAUDE.md`) and the four `<!-- block:… -->`
-  markers in `Home.md` (their headings and content are free — see 5e.3).
-- **Free:** everything else — area names, module folders, all content
-  language, templates (delete what they won't use), even the weekly
-  review day.
+Only three things are genuinely fixed, and each one is fixed because a tool
+reads it as an exact token rather than as a word:
+- **The numbered prefixes** (`00-`, `10-` … `90-`). The tools find the
+  inbox, the decisions folder and the archive by NUMBER. That is the whole
+  reason the numbering exists, and it is what lets everything else move.
+- **The four `<!-- block:… -->` markers in `Home.md`**, every other
+  `<!-- … -->` marker (`<!-- keep:… -->`, `<!-- short-notes-ok -->`,
+  `<!-- kit-page -->`), and the `Kit version:` and `Mode:` labels, which the
+  update path and the interview grep literally.
+- **The ORDER of the two frontmatter scales** — `maturity:` runs unfinished
+  → worked out, `status:` runs draft → released → retired. The tools read
+  the words themselves out of this vault's own `CLAUDE.md`, so the words may
+  be translated; the positions may not be reordered.
+- **Three file names, and only three:** `CLAUDE.md` (Claude Code loads it by
+  that name — nothing else will do), `index.md` and `Home.md` (the tools
+  find a folder's signpost and the dashboard by those names). Their CONTENT
+  and headings are free.
+
+**Everything else is free, including the other names** — folder names, the
+remaining kit pages (`Deadlines.md`, `About me.md` / `About this vault.md`,
+`Inbox rule.md`), headings, area names, modules, templates, the review day.
+A German vault really does end up with `40-entscheidungen/`, `90-archiv/`,
+`Termine.md`, `Über mich.md`, `Inbox-Regel.md`, and that is correct, not a
+deviation. A renamed kit page keeps its `<!-- kit-page -->` marker, which is
+how the tools go on knowing it is a page and not a note. This used to say the opposite ("the skills depend on the English
+names"), and the tools were written to match: they looked for `90-archive`,
+`40-decisions`, `Deadlines.md`, `stable`. Every one of those checks then
+stopped finding anything in a translated vault, silently, and a check that
+finds nothing reads exactly like a vault with nothing wrong. `check.py`
+assembles a fully translated vault and requires it to measure identically to
+the English one, so this promise is now enforced rather than asserted.
+- **Translating an existing vault later?** Keep the numbers and the markers,
+  move everything else, and run `python3 <vault>/.tools/hygiene.py`
+  afterwards: the links inside `index.md` and `Home.md` are real relative
+  paths and a rename breaks them. Zero dead links is the proof it worked.
 
 ### 5e. Language, name, and the remaining placeholders
 1. **Set language and mode:** replace `{{LANGUAGE}}` (the ENGLISH name of
@@ -755,14 +782,26 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    Claude, not by them. (A shared company vault is the exception worth
    making: there a human owner does open the rules file, so translate it
    too if they ask.)
-   Keep untranslated: the kit FILE NAMES, every HTML marker comment,
-   the two supersede keywords (`Supersedes` / `Superseded by`), the
-   `Kit version:` and `Mode:` labels (the update path and the interview
-   grep for them literally — a translated label makes an existing vault
-   look like a pre-1.0 one),
-   frontmatter keys and values (`type:`, `maturity: seed/growing/
-   evergreen`, `status: draft/stable/deprecated`) and command words
-   (`capture:`, `brain review`) — only prose translates.
+   Keep untranslated (see 5d — these are read as exact tokens, not as
+   words): every HTML marker comment, the `Kit version:` and `Mode:` labels
+   (the update path and the interview grep for them literally — a translated
+   label makes an existing vault look like a pre-1.0 one), the three MODE
+   values themselves (`personal` / `professional` / `company`), the
+   frontmatter KEYS (`type:`, `status:`, `maturity:`, `owner:` …) and the
+   command words (`capture:`, `brain review`).
+   **May be translated, and usually should be:** file names, folder names,
+   headings, prose — and the frontmatter VALUES, as long as you translate
+   them in the vault's `CLAUDE.md` schema block too and keep each scale in
+   its order. That block is where the tools read them from: write
+   `status: entwurf | gültig | überholt` there and `hygiene.py`,
+   `search.py --stats` and `progress.py` all follow. Translate the values in
+   the notes but not in `CLAUDE.md` and they stop following — which looks
+   like a clean vault, not like a broken one.
+   The two supersede keywords (`Supersedes` / `Superseded by`) are the one
+   awkward case: the tools also accept `Ersetzt durch` / `remplacé par` at
+   the start of a line, but only there, because `ersetzt` is an ordinary
+   verb in running prose. Writing the English keywords is still the safe
+   choice, and it is what the note templates do.
 3. **Translate the four Home headings too — the markers do the work.**
    `Home.md` delimits its four blocks with marker pairs
    (`<!-- block:right-now -->` … `<!-- /block:right-now -->`, likewise

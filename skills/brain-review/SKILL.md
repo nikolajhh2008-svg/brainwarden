@@ -50,7 +50,9 @@ the global rules name it).
    never half-process silently.
 2. **Sweep the week (the guarantee):** four tracks, then compare with the vault.
    - **files:** `find <work folder> -type f -mtime -7 -not -path '*/.*' | head -40` — work folders
-     come from `About me.md`, `Home.md` or project notes; ask once, then record them in `About me.md`.
+     come from the self page (`About me.md`, or `About this vault.md` in `company`, where there is
+     no `About me.md` and no project notes), `Home.md` or project notes; ask once, then record them
+     on that same self page.
    - **repos, if they have any:** `git log --oneline --since="7 days ago"`.
    - **the session queue, if it exists:** `python3 <vault>/.tools/harvest.py --queue` lists finished
      sessions; ask what came out of those since the last review. No queue → name the SessionEnd hook

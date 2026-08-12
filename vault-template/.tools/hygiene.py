@@ -48,9 +48,16 @@ SKIP_DIRS = {".git", ".obsidian", ".tools", "_templates", "node_modules",
              # correct in every real vault.
              "modules"}
 NEAR_EMPTY_WORDS = 15
+# Fallbacks only. The vault's own CLAUDE.md is the authority — see
+# schema_scale(). A German vault writes `roh | wachsend | ausgearbeitet` and
+# `entwurf | gültig | überholt`, and comparing against the English words made
+# every one of these checks quietly stop working in exactly the vault that
+# had followed its own rules.
 MATURITY = ("seed", "growing", "evergreen")
+VALIDITY = ("draft", "stable", "deprecated")
 INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md", "About me.md",
-               "About this vault.md", "Inbox rule.md", "README.md"}
+               "About this vault.md", "Inbox rule.md", "README.md",
+               "THIS-COPY.md"}
 # Orphans there are not a finding: captures are unlinked by definition
 # (the review empties the inbox) and the archive is cold storage.
 # Recognised by NUMBER, not by name. The setup asks people to keep folder
@@ -60,10 +67,6 @@ INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md", "About me.md"
 # vaults that had followed the rest of the advice. The numeric prefix is
 # what the numbering scheme exists for, and it survives every translation.
 UNLINKED_PREFIXES = ("00-", "90-")
-# Superseded records are deliberately dropped from their folder's index.md
-# (the signpost lists what applies, not what applied). Flagging them forever
-# would make "0 unreachable" impossible from the first replacement onwards.
-SUPERSEDED = re.compile(r"^\s*(superseded by|status:\s*deprecated)", re.M | re.I)
 EXTERNAL = ("http://", "https://", "mailto:", "tel:", "obsidian://", "ftp://", "//")
 
 # `[text](target)` in the two forms a vault actually contains. Splitting the
@@ -136,6 +139,12 @@ def mask_code(text):
         return "\n".join(out), opened_at + 1
     return "\n".join(out), None
 
+# A field the setup has not filled in yet: `<YYYY-MM-DD>`, `{{DATE}}`,
+# `TO FILL IN (role)`. Not a defect of this file — the kit ships them on
+# purpose and `progress.py` is what counts them down.
+PLACEHOLDER = re.compile(r"^(?:<[^>]*>|\{\{[^}]*\}\}|TO FILL IN\b|AUSFÜLLEN\b)",
+                         re.I)
+
 FRONTMATTER = re.compile(r"---[ \t]*\r?\n(.*?)\r?\n---[ \t]*(?:\r?\n|$)", re.S)
 
 def frontmatter(text):
@@ -171,8 +180,78 @@ def aliases(fm):
     return [a for a in out if a]
 
 
-def is_infra(rel):
-    return os.path.basename(rel) in INFRA_FILES
+# Both directions of a supersede chain, in every language a translated vault
+# might use. The English keywords are frozen by the kit, but a vault whose
+# rules file was translated writes "Ersetzt durch" anyway — matching only the
+# English would report "0 one-sided chains" on a vault full of them, which is
+# worse than not checking at all. Everything is anchored at the START of a
+# line: `ersetzt` is an ordinary German verb ("this folder replaces no
+# system"), and a signpost entry like `* [x.md](x.md) - supersedes the old
+# flow` DESCRIBES a replacement rather than declaring one. A real status note
+# stands at the start of its line, which is what spec 4.2 prescribes.
+LEAD = r"^[ \t]*(?:[-*>][ \t]*)?\**[ \t]*"
+SUP = re.compile(LEAD + r"(supersedes\b|ersetzt(?! durch)\b|remplace\b)", re.I | re.M)
+SUPBY = re.compile(LEAD + r"(superseded by\b|ersetzt durch\b|remplacé par\b)", re.I | re.M)
+
+
+def schema_scale(root, key, fallback):
+    """The values THIS vault uses for `maturity:` / `status:`, in the order
+    its own CLAUDE.md declares them.
+
+    A translated vault writes `status: entwurf | gültig | überholt` in its
+    rules file and in every note. Comparing against the English words made
+    the legacy-schema check and the superseded exemption silently stop
+    working — a check that cannot fire is indistinguishable from a clean
+    vault. The rules file is the authority; English is only the fallback.
+    The ORDER is what the kit freezes, not the words: position 0 is the
+    unfinished state, the last position is the retired one.
+    """
+    try:
+        with open(os.path.join(root, "CLAUDE.md"), encoding="utf-8-sig",
+                  errors="ignore") as fh:
+            rules = fh.read()
+    except OSError:
+        return list(fallback)
+    # The value ends at the line comment: the schema line almost always
+    # carries an explanation behind `#`.
+    hit = re.search(rf"^{key}:[ \t]*([^\n#]*\|[^\n#]*?)[ \t]*(?:#.*)?$", rules, re.M)
+    if not hit:
+        return list(fallback)
+    values = [w.strip().lower() for w in hit.group(1).split("|") if w.strip()]
+    return values or list(fallback)
+
+
+def superseded_pattern(retired):
+    """A note that has been replaced. Dropped from its folder's index.md on
+    purpose (the signpost lists what applies, not what applied), so flagging
+    it forever would make "0 unreachable" impossible from the first
+    replacement onwards."""
+    words = "|".join(re.escape(v) for v in dict.fromkeys(list(retired) + ["deprecated"]))
+    return re.compile(SUPBY.pattern + rf"|^[ \t]*status:[ \t]*(?:{words})\b",
+                      re.M | re.I)
+
+
+KIT_PAGE = "<!-- kit-page"
+
+
+def is_infra(rel, text=""):
+    """Kit scaffolding rather than a note.
+
+    Three rules, in order of how well they survive a translation. The
+    `<!-- kit-page -->` marker is the reliable one — an HTML comment is an
+    exact token that renaming and translating cannot break, the same reason
+    `Home.md` addresses its blocks by marker and not by heading. Then the
+    structural rule, then the English name list, which only holds where
+    nobody translated anything. The
+    name list only holds in an English vault: a German one carries
+    `Termine.md`, `Über mich.md`, `Inbox-Regel.md`, and those were then
+    measured as ordinary notes — counted in `--stats`, checked for
+    frontmatter, ranked in search against the notes they point at. The
+    structural rule is that a vault's own pages live in its ROOT and its
+    notes live in a numbered folder; that is true in every language, and it
+    is what the folder map has said all along."""
+    return (KIT_PAGE in text[:2000] or os.sep not in rel
+            or os.path.basename(rel) in INFRA_FILES)
 
 def top_folder(rel):
     return rel.split(os.sep)[0] if os.sep in rel else "(root)"
@@ -238,8 +317,23 @@ class Vault:
         self.mojibake = []      # files that are not valid UTF-8
         self.case_clash = []    # names that differ only in case
         self.odd_names = []     # names that cannot exist on Windows
-        for dirpath, dirs, files in os.walk(root):
+        # A path the walk cannot enter is not a clean path — it is an
+        # UNMEASURED one. os.walk swallows the error by default, so a folder
+        # without read permission simply vanished: every rubric reported zero
+        # and the report was indistinguishable from a healthy vault. Anything
+        # that could not be read is named in the header instead.
+        self.unreadable = []
+        for dirpath, dirs, files in os.walk(root, onerror=self.unreadable.append):
             dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not d.startswith("."))
+            # Folder names travel too. The rubric promises "names Windows
+            # refuses", and only file names were ever checked — so a folder
+            # called `Q&A: 2026` or `Notizen ` passed, and the clone that
+            # broke on it broke on Windows, not here.
+            for d in dirs:
+                bad = windows_unsafe(d)
+                if bad:
+                    self.odd_names.append(
+                        os.path.relpath(os.path.join(dirpath, d), root) + f"/ — {bad}")
             for f in sorted(files):
                 rel = os.path.relpath(os.path.join(dirpath, f), root)
                 self.files.add(rel)
@@ -260,7 +354,10 @@ class Vault:
                 if f.endswith(".md") and not f.startswith("_"):
                     try:
                         raw = open(os.path.join(dirpath, f), "rb").read()
-                    except OSError:
+                    except OSError as e:
+                        # Silently dropping it meant the note was in no rubric
+                        # at all — not an orphan, not near-empty, not anything.
+                        self.unreadable.append(e)
                         continue
                     # utf-8-sig: a byte-order mark would hide the frontmatter.
                     # A note saved as cp1252 or UTF-16 (Windows Notepad "ANSI",
@@ -326,6 +423,15 @@ class Vault:
         # systems: untouched, `unterordner\note.md` counts as a bare name on
         # macOS/Linux (dead) and as a path on Windows (alive).
         tgt = target.replace("\\", "/")
+        # A leading `/` means "from the vault root" — never "from the root of
+        # this disk". Untouched, os.path.join throws away everything before an
+        # absolute component, so `[boot](/etc/passwd)` resolved against the
+        # real filesystem and was reported as a HEALTHY link: the one rubric
+        # that exists to find links pointing nowhere said the link pointing
+        # clean out of the vault was fine.
+        tgt = tgt.lstrip("/")
+        if not tgt:
+            return None
         for base in (os.path.dirname(source), ""):
             for suffix in ("", ".md"):
                 cand = os.path.normpath(os.path.join(base, tgt + suffix))
@@ -407,9 +513,21 @@ def vault_mode(root):
                   text, re.M | re.I)
     if m and m.group(1).lower() in ("personal", "professional", "company"):
         return m.group(1).lower(), ""
-    # A company overlay says so in its heading even before setup fills the line
+    # A company overlay says so in its heading even before setup fills the
+    # line. English only, so a translated overlay ("gemeinsames Firmenwissen")
+    # falls through to the structural test below rather than to `personal`.
     if re.search(r"^#.*company knowledge vault", text, re.M | re.I):
         return "company", ""
+    # Structural fallback: the FOLDERS say which mode this is, in every
+    # language, because the numbering scheme is what the kit freezes.
+    # `company` is the only mode with 70-/80- and without 10-/20-.
+    try:
+        tops = {n[:3] for n in os.listdir(root)
+                if os.path.isdir(os.path.join(root, n))}
+    except OSError:
+        tops = set()
+    if tops & {"70-", "80-"} and not tops & {"10-", "20-"}:
+        return "company", "not stated in CLAUDE.md — read from the folder layout"
     if "{{MODE}}" in text:
         return "personal", ("NOT SET — CLAUDE.md still contains {{MODE}}; "
                             "setup step 5e never ran")
@@ -503,12 +621,17 @@ def main():
 
     orphans, near_empty, gaps, expired = [], [], [], []
     mode, mode_note = vault_mode(root)
+    # Both vocabularies stay live: a half-translated vault carries notes in
+    # each, and dropping one of them only moves the blind spot.
+    maturity_values = set(schema_scale(root, "maturity", MATURITY)) | set(MATURITY)
+    validity_values = schema_scale(root, "status", VALIDITY)
+    superseded = superseded_pattern([validity_values[-1], VALIDITY[-1]])
     today = datetime.date.today().isoformat()
     gap_counts = collections.Counter()
     for rel, text in sorted(v.notes.items()):
         if ignored(rel):
             continue
-        if not is_infra(rel) and not unlinked_ok(rel) and not inbound[rel]:
+        if not is_infra(rel, text) and not unlinked_ok(rel) and not inbound[rel]:
             orphans.append(rel)
         words = len(body(text).split())
         # Inbox captures are SUPPOSED to be short — friction there costs
@@ -516,7 +639,7 @@ def main():
         # them as a defect punishes exactly the behaviour the rules ask for,
         # and someone coming back after three weeks would read "six notes too
         # thin" instead of "six things you remembered".
-        if not is_infra(rel) and words < NEAR_EMPTY_WORDS \
+        if not is_infra(rel, text) and words < NEAR_EMPTY_WORDS \
                 and not is_inbox(rel) and not is_material(rel) \
                 and os.path.dirname(rel) not in short_ok:
             near_empty.append(f"{rel} ({words} words)")
@@ -527,15 +650,15 @@ def main():
         # forever. At one source a week the report reaches fifty findings in
         # a year, and a report that is always red stops being read. The one
         # tool that finds the real problems then drowns in its own noise.
-        if is_infra(rel) or is_inbox(rel) or is_material(rel):
+        if is_infra(rel, text) or is_inbox(rel) or is_material(rel):
             continue
         fm, missing = frontmatter(text), []
         if not re.search(r"^type:\s*\S", fm, re.M):
             missing.append("no type:")
         if not re.search(r"^created:\s*\S", fm, re.M):
             missing.append("no created:")
-        s = re.search(r"^status:\s*([\w-]+)", fm, re.M)
-        if s and s.group(1) in MATURITY:
+        s = re.search(r"^status:\s*([^\s#]+)", fm, re.M)
+        if s and s.group(1).lower() in maturity_values:
             missing.append("`status:` still used for maturity")
         # Mode-dependent required fields. In a work brain `ownership:` is the
         # one field with a legal consequence — it decides what has to be handed
@@ -552,10 +675,35 @@ def main():
         # A date that expires and nobody notices is decoration. These two
         # fields promise "distrust me after this day" — so somebody has to
         # say when that day has passed.
+        # A date the tool cannot READ is the worse half of the same problem.
+        # The pattern used to demand exactly `\d{4}-\d{2}-\d{2}` anywhere in
+        # the line, so `stale_after: "2020-01-01"` (YAML quoting), `2020-1-1`
+        # (unpadded) and `01.01.2020` (the German spelling a translated vault
+        # produces) all matched NOTHING — and a field that matches nothing is
+        # a field that never expires. The note promised "distrust me after
+        # this day" and the report stayed silent about it forever. So: read
+        # the value, accept the spellings that are unambiguous, and say so
+        # out loud when it cannot be read instead of assuming it is fine.
         for field in ("stale_after", "review_due"):
-            m = re.search(rf"^{field}:\s*(\d{{4}}-\d{{2}}-\d{{2}})", fm, re.M)
-            if m and m.group(1) < today:
-                expired.append(f"{rel} — {field}: {m.group(1)}")
+            m = re.search(rf"^{field}:[ \t]*(.+?)[ \t]*$", fm, re.M)
+            if not m:
+                continue
+            value = m.group(1).split(" #")[0].strip().strip("\"'")
+            iso = re.match(r"(\d{4})-(\d{1,2})-(\d{1,2})$", value)
+            if iso:
+                day = "%04d-%02d-%02d" % tuple(int(g) for g in iso.groups())
+                if day < today:
+                    expired.append(f"{rel} — {field}: {value}")
+            elif value and not PLACEHOLDER.match(value):
+                # An UNFILLED field is a different finding from an unreadable
+                # one, and it already has an owner: `progress.py` counts
+                # `<…>` and `{{…}}` as open gaps, and the setup fills them.
+                # Reporting them here too made a freshly assembled vault
+                # arrive with a finding it cannot fix — the report is meant
+                # to start at zero, and a repair that moves it off zero on
+                # day one is not a repair.
+                expired.append(f"{rel} — {field}: {value!r} is not a readable "
+                               "date (YYYY-MM-DD) — nothing can ever expire it")
 
     # Reachability only means something where a folder HAS a signpost —
     # otherwise the missing index.md is the finding, not the notes.
@@ -564,37 +712,24 @@ def main():
         folders[os.path.dirname(rel)].append(rel)
     for folder, members in sorted(folders.items()):
         real = sorted(r for r in members
-                      if not is_infra(r) and not unlinked_ok(r) and not ignored(r))
+                      if not is_infra(r, v.notes[r]) and not unlinked_ok(r) and not ignored(r))
         if not real:
             continue
         if os.path.join(folder, "index.md") in v.notes:
             unreachable += [r for r in real if r not in signposted
-                            and not SUPERSEDED.search(v.notes[r])]
+                            and not superseded.search(v.notes[r])]
         else:
             no_index.append((len(real), f"{folder or '(root)'} ({len(real)} notes)"))
     no_index = [line for _, line in sorted(no_index, reverse=True)]
 
     chains, seen = [], set()
-    # Both directions, in every language a translated vault might use. A
-    # vault whose rules file was translated writes "Ersetzt durch" — matching
-    # only the English would report "0 one-sided chains" on a vault full of
-    # them, which is worse than not checking at all.
-    # The keywords stay ENGLISH even in a translated vault — same rule as for
-    # frontmatter values, and for a hard reason: "ersetzt" is an ordinary German
-    # verb ("this folder replaces no system"), so matching it would flag normal
-    # prose as a broken chain. Translated forms are still recognised, but only
-    # at the start of a line, where a status note stands and prose does not.
-    # The English form is anchored too, for the same reason as the translated
-    # ones: a signpost entry like `* [x.md](x.md) - supersedes the old flow`
-    # DESCRIBES a replacement, it does not declare one, and reading it as a
-    # claim invented a chain whose other half could never exist. A real status
-    # note stands at the start of its line (after at most a list or quote mark
-    # and bold), which is exactly what spec 4.2 prescribes.
-    LEAD = r"^[ \t]*(?:[-*>][ \t]*)?\**[ \t]*"
-    sup = re.compile(LEAD + r"(supersedes\b|ersetzt(?! durch)\b|remplace\b)", re.I | re.M)
-    supby = re.compile(LEAD + r"(superseded by\b|ersetzt durch\b|remplacé par\b)", re.I | re.M)
+    # SUP / SUPBY are defined at module level — the SAME two patterns the
+    # `unreachable` exemption above uses. They were two separate regexes for a
+    # while, one multilingual and one English-only, and the English-only half
+    # meant a translated vault got its chains checked but never its
+    # exemptions: every replaced note showed up as unreachable, forever.
     for rel in sorted(v.notes):
-        for keyword, back, phrase in ((sup, supby, "Superseded by"), (supby, sup, "Supersedes")):
+        for keyword, back, phrase in ((SUP, SUPBY, "Superseded by"), (SUPBY, SUP, "Supersedes")):
             for target, line, raw in v.links(rel, keyword):
                 hit = v.resolve(target, rel)
                 if not hit or hit not in v.notes or hit == rel:
@@ -606,13 +741,23 @@ def main():
 
     print(f"hygiene — {root}")
     print(f"mode: {mode}" + (f" ({mode_note})" if mode_note else ""))
-    print(f"{len(v.notes)} notes scanned ({len([r for r in v.notes if is_infra(r)])} kit files, "
+    print(f"{len(v.notes)} notes scanned ({len([r for r in v.notes if is_infra(r, v.notes[r])])} kit files, "
           f"{len(signposts)} signposts)")
     if ignored_notes:
         # Named, never silent: an exemption you cannot see is indistinguishable
         # from a check that stopped working.
         print(f"skipped via .hygieneignore: {len(ignored_notes)} notes in "
               f"{', '.join(ignored_folders)}")
+    if v.unreadable:
+        # Deliberately NOT a rubric: a rubric says "your vault has a defect",
+        # this says "this report is incomplete". The difference matters — a
+        # missing permission is a fact about the machine, not about the notes.
+        print(f"could not be read, so NOT checked — {len(v.unreadable)} path(s):")
+        for e in v.unreadable[:limit]:
+            path = getattr(e, "filename", None) or str(e)
+            print(f"  {path} — {getattr(e, 'strerror', None) or 'unreadable'}")
+        if len(v.unreadable) > limit:
+            print(f"  … and {len(v.unreadable) - limit} more")
     report("orphans — nothing links here (excl. inbox 00-*, archive 90-*)", orphans, limit)
     report("dead links — target does not exist", dead, limit)
     report(f"near-empty — under {NEAR_EMPTY_WORDS} words of body", near_empty, limit)

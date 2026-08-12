@@ -8,8 +8,12 @@ Kit version: 1.3.0 (brainwarden — updates read this line to know what
 they're upgrading from, and set it to the new version afterwards)
 
 **Vault language: {{LANGUAGE}}** — write all notes, titles and links in
-this language (set during setup; the folder names stay English so the
-skills keep working).
+this language (set during setup). Folder names and kit page names may be
+translated with everything else: the tools find the inbox, the decisions
+folder and the archive by their NUMBER (`00-`, `40-`, `90-`) and a kit page
+by its `<!-- kit-page -->` marker, never by an English word. Only
+`CLAUDE.md`, `index.md` and `Home.md` keep their names — those three are
+loaded by name.
 
 **Vault mode: company** — this is a SHARED vault. It holds how the
 company works, not what one person is up to. There are no projects, no
@@ -85,6 +89,16 @@ is filled.** Everything else is a proposal, no matter how confident it
 reads. Rule for Claude: never set `verified:` yourself — that field
 belongs to the person who is allowed to release; anything you write
 carries `generated:` and stays `draft` until a human replaces it.
+
+**The two scales above are this vault's authority.** `hygiene.py`,
+`search.py --stats` and `progress.py` read the `maturity:` and `status:`
+lines out of THIS file and compare notes against what they find here. So the
+words may be translated (`status: entwurf | gültig | überholt`) — but then
+they must be translated HERE too, and each scale must keep its order:
+`maturity` runs unfinished → worked out, `status` runs draft → released →
+retired. Translate the values in the notes and not in this file and every
+one of those checks quietly stops matching, which reads exactly like a vault
+with nothing wrong.
 
 **`maturity` vs `status` — two different questions.** `maturity`
 (knowledge notes) asks how worked out a note is: `seed` · `growing` ·

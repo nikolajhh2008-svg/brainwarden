@@ -68,11 +68,44 @@ ORPHAN = re.compile(r"^\s*>.*(?<![*`])(?:TO FILL IN|AUSFÜLLEN)(?![*`])(?!\s*\()
 # describes what the vault is FOR.
 FIELD = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*:[ \t]*<[^`\n]", re.M)
 LABEL = re.compile(r"^\*\*[^*\n]+:\*\*[ \t]*<[^`\n]", re.M)
-SKIP_DIRS = {".git", ".obsidian", ".tools", ".claude", "_templates", "90-archive"}
+SKIP_DIRS = {".git", ".obsidian", ".tools", ".claude", "_templates"}
+# The archive is cold storage: a retired note keeps whatever markers it had,
+# and counting them means the number can never reach zero. Recognised by
+# NUMBER, not by name — a German vault carries `90-archiv`, and matching the
+# English spelling meant the exemption silently stopped applying in exactly
+# the vault that had translated the rest as the runbook asks.
+SKIP_PREFIXES = ("90-",)
 # Files that TALK about the gaps rather than carrying one, and files whose
 # placeholders are permanent by design. Counting the rules sheet or a note
-# template as an open gap would mean the vault can never reach zero.
-SKIP_FILES = {"CLAUDE.md", "_template.md"}
+# template as an open gap would mean the vault can never reach zero. The
+# leading underscore is the structural half of this: `_template.md` is
+# `_vorlage.md` in a translated vault, and every `_`-prefixed file in this
+# kit is a template that keeps its tokens forever.
+SKIP_FILES = {"CLAUDE.md"}
+# Fallback only — the vault's own CLAUDE.md is the authority, see
+# status_scale(). Position 1 is the released state ("stable"), which is the
+# one number this tool exists to report.
+VALIDITY = ("draft", "stable", "deprecated")
+
+
+def status_scale(vault):
+    """The `status:` values THIS vault uses, in its own CLAUDE.md's order.
+
+    A translated vault writes `status: entwurf | gültig | überholt`. Matching
+    the English `stable` then reported "0 files verified" forever — on the
+    one number this tool leads with, in the one vault that had followed the
+    runbook. The ORDER is what the kit freezes, not the words."""
+    try:
+        with open(os.path.join(vault, "CLAUDE.md"), encoding="utf-8-sig",
+                  errors="ignore") as fh:
+            rules = fh.read()
+    except OSError:
+        return list(VALIDITY)
+    hit = re.search(r"^status:[ \t]*([^\n#]*\|[^\n#]*?)[ \t]*(?:#.*)?$", rules, re.M)
+    if not hit:
+        return list(VALIDITY)
+    values = [w.strip().lower() for w in hit.group(1).split("|") if w.strip()]
+    return values if len(values) >= 2 else list(VALIDITY)
 
 
 def frontmatter(text):
@@ -84,9 +117,11 @@ def frontmatter(text):
 
 def walk(vault):
     for root, dirs, files in os.walk(vault):
-        dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
+        dirs[:] = [d for d in dirs if d not in SKIP_DIRS
+                   and not d.startswith(".") and not d.startswith(SKIP_PREFIXES)]
         for name in sorted(files):
-            if not name.endswith(".md") or name in SKIP_FILES:
+            if not name.endswith(".md") or name in SKIP_FILES \
+                    or name.startswith("_"):
                 continue
             path = os.path.join(root, name)
             rel = os.path.relpath(path, vault)
@@ -105,6 +140,7 @@ def main():
     a = ap.parse_args()
     vault = os.path.expanduser(a.vault)
 
+    released = status_scale(vault)[1]
     notes = verified = stable = 0
     gaps = collections.Counter()          # file -> gaps of both shapes
     roles = collections.Counter()
@@ -113,7 +149,8 @@ def main():
     for rel, text in walk(vault):
         notes += 1
         fm = frontmatter(text)
-        is_stable = re.search(r"^status:\s*stable\b", fm, re.M) is not None
+        is_stable = re.search(rf"^status:\s*(?:{re.escape(released)}|stable)\b",
+                              fm, re.M | re.I) is not None
         is_verified = re.search(r"^verified:\s*\S", fm, re.M) is not None
         stable += is_stable
         verified += is_stable and is_verified

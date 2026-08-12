@@ -2,7 +2,7 @@
 
 Shared company knowledge vault (Obsidian folder + Claude Code working
 directory, same Markdown files). **Mode:** company · **Note language:**
-{{LANGUAGE}} (folder names stay English).
+{{LANGUAGE}} — folder names too; the number prefixes are what the tools read.
 
 **Rules here:** [CLAUDE.md](CLAUDE.md) is binding. Two company rules on
 top: content counts as company truth only with `status: stable` AND a
