@@ -11,7 +11,8 @@ measured here instead:
 
     orphans        notes nothing links to
     dead links     [[wikilinks]] and [markdown](links) whose target is gone
-    near-empty     notes with almost no body
+    near-empty     notes with almost no body (a folder whose index.md
+                   carries `<!-- short-notes-ok -->` is exempt)
     unreachable    notes no index.md and no map of content points to (spec 3)
     folders        folders that carry notes but no index.md signpost
     frontmatter    missing type:/created:, or `status:` still used for maturity
@@ -491,6 +492,15 @@ def main():
                 signposted.add(nxt)
                 queue.append(nxt)
 
+    # Ein Ordner darf in seinem EIGENEN Wegweiser erklären, dass seine
+    # Notizen kurz sein sollen — ein Gedächtnis-Spiegel, ein Glossar, ein
+    # Zitat-Ordner. Das ist zielgenauer als `.hygieneignore`: Nur diese
+    # eine Rubrik schweigt dort, jede andere Prüfung greift weiter.
+    short_ok = set()
+    for rel in v.notes:
+        if os.path.basename(rel) == "index.md" and "<!-- short-notes-ok" in v.notes[rel]:
+            short_ok.add(os.path.dirname(rel))
+
     orphans, near_empty, gaps, expired = [], [], [], []
     mode, mode_note = vault_mode(root)
     today = datetime.date.today().isoformat()
@@ -507,7 +517,8 @@ def main():
         # and someone coming back after three weeks would read "six notes too
         # thin" instead of "six things you remembered".
         if not is_infra(rel) and words < NEAR_EMPTY_WORDS \
-                and not is_inbox(rel) and not is_material(rel):
+                and not is_inbox(rel) and not is_material(rel) \
+                and os.path.dirname(rel) not in short_ok:
             near_empty.append(f"{rel} ({words} words)")
         # Inbox captures need no frontmatter, and neither do the raw sources
         # `brain-ingest` files away: a PDF, an article, a transcript is
