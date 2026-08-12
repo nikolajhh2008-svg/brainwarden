@@ -58,6 +58,33 @@ MIN_IN_LEN = 4                      # shorter terms: word starts only
 MATURITY = ("seed", "growing", "evergreen")
 VALIDITY = ("draft", "stable", "deprecated")
 
+
+def schema_scales(root):
+    """The scales THIS vault uses, read from its own CLAUDE.md.
+
+    A translated vault writes `status: entwurf | gültig | überholt` in its
+    rules file and in every note. Comparing against the English words then
+    reported every correct note as "outside the schema" — a permanent false
+    finding in exactly the vault that followed its own rules. The rules file
+    is the authority; the English words are only the fallback.
+    """
+    m, v = set(MATURITY), set(VALIDITY)
+    try:
+        with open(os.path.join(root, "CLAUDE.md"), encoding="utf-8-sig",
+                  errors="ignore") as fh:
+            rules = fh.read()
+    except OSError:
+        return m, v
+    for key, target in (("maturity", m), ("status", v)):
+        # Der Wert endet am Zeilenkommentar: die Schema-Zeile trägt fast
+        # immer eine Erklärung hinter `#`.
+        hit = re.search(rf"^{key}:[ \t]*([^\n#]*\|[^\n#]*?)[ \t]*(?:#.*)?$",
+                        rules, re.M)
+        if hit:
+            target.update(w.strip().lower() for w in hit.group(1).split("|")
+                          if w.strip())
+    return m, v
+
 # Kit infrastructure, not notes. Counting these inflates every number and
 # their code examples ("status: seed | growing | evergreen" in CLAUDE.md)
 # used to be counted as real frontmatter.
@@ -175,6 +202,7 @@ def stats(root):
     import collections
     folders = collections.Counter()
     maturity, validity, other_status = collections.Counter(), collections.Counter(), collections.Counter()
+    maturity_ok, validity_ok = schema_scales(root)
     words, infra, legacy = [], 0, []
     for path, rel in walk_notes(root):
         if is_infra(rel):
@@ -191,11 +219,11 @@ def stats(root):
             maturity[ripeness] += 1
         value = fm_value(fm, "status")
         if value:
-            if value in MATURITY:          # old schema: status held the ripeness
+            if value in maturity_ok:       # old schema: status held the ripeness
                 legacy.append(rel)
                 if not ripeness:
                     maturity[value] += 1
-            elif value in VALIDITY:
+            elif value in validity_ok:
                 validity[value] += 1
             else:
                 other_status[value] += 1
@@ -213,8 +241,9 @@ def stats(root):
     if other_status:
         print("status (values outside the schema): "
               + " · ".join(f"{s} {n}" for s, n in sorted(other_status.items())))
-        print("  ↳ expected: maturity: " + "|".join(MATURITY) + " · status: " + "|".join(VALIDITY)
-              + " (a translated scale? then the update path has to map it)")
+        print("  ↳ expected: maturity: " + "|".join(sorted(maturity_ok))
+              + " · status: " + "|".join(sorted(validity_ok))
+              + " (read from this vault's CLAUDE.md)")
     if legacy:
         print(f"legacy schema: `status:` still used for maturity in {plural(len(legacy), 'note')} "
               f"(update path: rename it to `maturity:`) — e.g. " + ", ".join(legacy[:3]))
