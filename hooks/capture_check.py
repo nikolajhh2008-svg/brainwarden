@@ -25,7 +25,7 @@ this one keeps score, and the score decides how often it may speak:
 
 What it can honestly measure, and what it cannot: it CANNOT tell whether
 you answered, or what you said. It only compares file timestamps — did a
-`.md` file appear in `00-inbox/` or `40-decisions/` after it asked? That
+`.md` file appear in the `00-*` or `40-*` folder after it asked? That
 proxy is imperfect in a known direction: a capture you write by hand counts
 as a hit, and a turn you interrupt counts as a miss. Both are the right
 answer for the purpose — the question is not "was I obeyed" but "is this
@@ -127,6 +127,29 @@ def vault_path():
     except OSError:
         pass
     return os.path.expanduser("~/Brain")
+
+
+def watched_folders(vault):
+    """(inbox, decisions) — found by NUMBER, not by name.
+
+    A vault whose folder names were translated carries `40-entscheidungen`
+    or `40-decisiones`. Matching the English spelling meant the decisions
+    folder was silently never watched: capture a decision, and the hook
+    still counted the turn as "nothing reached the brain". The numeric
+    prefix is what the numbering scheme is for.
+    """
+    inbox = decisions = None
+    try:
+        for name in sorted(os.listdir(vault)):
+            if not os.path.isdir(os.path.join(vault, name)):
+                continue
+            if inbox is None and name.startswith("00-"):
+                inbox = os.path.join(vault, name)
+            elif decisions is None and name.startswith("40-"):
+                decisions = os.path.join(vault, name)
+    except OSError:
+        pass
+    return inbox, decisions
 
 
 def landed_since(folders, cutoff):
@@ -250,11 +273,11 @@ def main():
         payload = {}
 
     vault = vault_path()
-    inbox = os.path.join(vault, "00-inbox")
-    folders = [inbox, os.path.join(vault, "40-decisions")]
+    inbox, decisions = watched_folders(vault)
+    folders = [f for f in (inbox, decisions) if f]
 
     # No vault on this machine (someone else's computer)? Stay silent.
-    if not os.path.isdir(inbox):
+    if not inbox or not os.path.isdir(inbox):
         return 0
 
     now = time.time()
@@ -309,8 +332,9 @@ def main():
         "capture triggers for THIS session once: (a) was a decision settled? "
         "(b) was a date or deadline named? (c) did something go live? (d) did "
         "a new person come up? (e) was a lesson learned the hard way? If YES: "
-        f"run brain-capture now (inbox: {inbox}, decisions as a record in "
-        f"{folders[1]}), then end the turn normally. If NO: just end the turn "
+        f"run brain-capture now (inbox: {inbox}"
+        + (f", decisions as a record in {decisions}" if decisions else "")
+        + "), then end the turn normally. If NO: just end the turn "
         "— invent nothing. Say in one line what you captured, or that there "
         f"was nothing worth keeping. {backoff} If the human asks to stop being "
         f"asked at all, set level=5 in {state_path()} and tell them deleting "
