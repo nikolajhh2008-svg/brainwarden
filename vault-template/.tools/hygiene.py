@@ -52,7 +52,13 @@ INFRA_FILES = {"CLAUDE.md", "index.md", "Home.md", "Deadlines.md", "About me.md"
                "About this vault.md", "Inbox rule.md", "README.md"}
 # Orphans there are not a finding: captures are unlinked by definition
 # (the review empties the inbox) and the archive is cold storage.
-UNLINKED_OK = ("00-inbox", "90-archive")
+# Recognised by NUMBER, not by name. The setup asks people to keep folder
+# names English, and real vaults do not: a German vault carries `90-archiv`,
+# `30-wissen`, `40-entscheidungen`. Matching the English spelling meant the
+# inbox and archive exemptions silently stopped applying in exactly the
+# vaults that had followed the rest of the advice. The numeric prefix is
+# what the numbering scheme exists for, and it survives every translation.
+UNLINKED_PREFIXES = ("00-", "90-")
 # Superseded records are deliberately dropped from their folder's index.md
 # (the signpost lists what applies, not what applied). Flagging them forever
 # would make "0 unreachable" impossible from the first replacement onwards.
@@ -171,15 +177,24 @@ def top_folder(rel):
     return rel.split(os.sep)[0] if os.sep in rel else "(root)"
 
 def unlinked_ok(rel):
-    return top_folder(rel) in UNLINKED_OK
+    return top_folder(rel).startswith(UNLINKED_PREFIXES)
+
+
+def is_inbox(rel):
+    return top_folder(rel).startswith("00-")
 
 
 def is_material(rel):
-    """`90-archive/raw/` holds the SOURCES an ingest was made from — a PDF,
-    an article, a transcript. They are material, not notes: no frontmatter,
-    any length, nobody links to them. Every note-shaped check has to skip
-    them, or ordinary use makes the report grow a finding per source."""
-    return rel.replace(os.sep, "/").split("/")[:2] == ["90-archive", "raw"]
+    """The archive's raw folder holds the SOURCES an ingest was made from —
+    a PDF, an article, a transcript. They are material, not notes: no
+    frontmatter, any length, nobody links to them. Every note-shaped check
+    skips them, or ordinary use grows the report by one finding per source.
+
+    Matched by shape, not by name: any `90-*` folder, any subfolder whose
+    name contains `raw` (`raw/`, `raw-verarbeitet/`, `rohmaterial-raw/`)."""
+    parts = rel.replace(os.sep, "/").split("/")
+    return (len(parts) > 2 and parts[0].startswith("90-")
+            and "raw" in parts[1].lower())
 
 
 def read_ignores(root):
@@ -492,7 +507,7 @@ def main():
         # and someone coming back after three weeks would read "six notes too
         # thin" instead of "six things you remembered".
         if not is_infra(rel) and words < NEAR_EMPTY_WORDS \
-                and top_folder(rel) != "00-inbox" and not is_material(rel):
+                and not is_inbox(rel) and not is_material(rel):
             near_empty.append(f"{rel} ({words} words)")
         # Inbox captures need no frontmatter, and neither do the raw sources
         # `brain-ingest` files away: a PDF, an article, a transcript is
@@ -501,7 +516,7 @@ def main():
         # forever. At one source a week the report reaches fifty findings in
         # a year, and a report that is always red stops being read. The one
         # tool that finds the real problems then drowns in its own noise.
-        if is_infra(rel) or top_folder(rel) == "00-inbox" or is_material(rel):
+        if is_infra(rel) or is_inbox(rel) or is_material(rel):
             continue
         fm, missing = frontmatter(text), []
         if not re.search(r"^type:\s*\S", fm, re.M):
@@ -587,7 +602,7 @@ def main():
         # from a check that stopped working.
         print(f"skipped via .hygieneignore: {len(ignored_notes)} notes in "
               f"{', '.join(ignored_folders)}")
-    report(f"orphans — nothing links here (excl. {', '.join(UNLINKED_OK)})", orphans, limit)
+    report("orphans — nothing links here (excl. inbox 00-*, archive 90-*)", orphans, limit)
     report("dead links — target does not exist", dead, limit)
     report(f"near-empty — under {NEAR_EMPTY_WORDS} words of body", near_empty, limit)
     report("not reachable from a signpost (index.md / MOC / Home)", unreachable, limit)
