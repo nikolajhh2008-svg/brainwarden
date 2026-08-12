@@ -10,6 +10,7 @@ confidentiality: internal
 review_due: {{DATE}}   # setup: today + 12 months — NOT today, or this page expires tomorrow
 ---
 
+<!-- kit-page: copy-date -->
 # About this copy
 
 **This copy is from: {{DATE}}**
