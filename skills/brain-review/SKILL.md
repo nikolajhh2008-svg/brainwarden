@@ -171,6 +171,13 @@ Trigger-based, not scheduled; say in the report which ones ran.
   in place and drops to `status: draft`, never moved out. Either way the human sets
   `verified: {by: human:<name>, at: YYYY-MM-DD}`, never you.
 - Never invent an owner, a number or a field value. Missing stays missing.
+- **Date the copy and send it — the two steps that get forgotten.** `THIS-COPY.md` says so about
+  itself, and this review is the only recurring moment that could do it. So: raise the date at the
+  top of `THIS-COPY.md`, add one changelog line for what changed, and then actually distribute —
+  `git push` if the vault has a remote, otherwise the agreed channel. A correction that stays on the
+  maintainer's machine is not a correction; everyone else keeps reading last month's answer and
+  cannot tell. If the distribution channel is still an open `TO FILL IN`, say that out loud in the
+  report: nothing else in this mode matters until it is decided.
 - **Report the number that matters:** `python3 <vault>/.tools/progress.py` — how many notes carry
   `verified:`, and only then how many gaps are left. Name the movement since last week ("2 more
   released"), and if nothing moved, say that plainly. A shared vault fails by looking finished:

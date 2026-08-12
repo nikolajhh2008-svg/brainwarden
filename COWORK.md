@@ -8,6 +8,17 @@ does not, and what to do instead.
 
 **The short version: the vault works. The convenience layer does not.**
 
+> **Whoever set the vault up: this page has to travel.** It is the only
+> document in the kit addressed to the colleagues who just read the vault,
+> and it lives in the kit repo, which the setup tells you that you may
+> delete. Step 7b of `SETUP-FOR-CLAUDE.md` copies it to
+> `<vault>/.tools/COWORK.md` (not the vault root — a kit document there
+> turns three `hygiene.py` rubrics red) and sends it on. If your vault's
+> notes are not in English, translate the instruction block in step 3
+> below before you hand it over: it is the one page those colleagues are
+> asked to read, and handing it over in a language the rest of the vault
+> does not use is how the first ten minutes go wrong.
+
 ## What carries over — the part that matters
 
 Everything that makes the vault navigable is plain Markdown, and Cowork
@@ -65,7 +76,26 @@ everyone else Cowork.
    know, ask the owner named in the note" is a correct answer.
    ```
 
-4. **Optional, for people who want the five verbs:** package each skill as
+4. **Type the first three sentences.** Say this in the handover, out
+   loud, because the vault itself does not contain it and a folder full
+   of Markdown gives nobody a first move:
+
+   - *"What is this folder, in three sentences?"* — it reads
+     `About this vault.md` and answers.
+   - *"How do we do <the thing you were hired to do> here?"* — the real
+     question, and the one the vault exists for. If the answer is "I
+     don't know, ask <role>", that is correct behaviour, not a broken
+     folder.
+   - *"Write a suggestion into 00-inbox/suggestions/: …"* — how you
+     correct something. It is a proposal until someone releases it, you
+     cannot break anything, and a rejected one costs nothing.
+
+   Hand these three over in the vault's language, like the block above.
+
+   Nothing has to be learned beyond those three. Everything else in this
+   page is for whoever maintains the folder.
+
+5. **Optional, for people who want the five verbs:** package each skill as
    a zip and enable it under Customize → Skills on claude.ai. What carries
    over is the procedure, not the tooling: every skill's retrieval step is
    `python3 .tools/search.py`, and `brain-review` also calls `hygiene.py`,
@@ -73,6 +103,14 @@ everyone else Cowork.
    applies to those lines. Asking and capturing survive it (they are file
    reads and file writes); the weekly review is the one that really wants
    Claude Code. Skip this for read-only users — they do not need it.
+
+   Worth being blunt about, because the setup does the opposite: in
+   `company` mode Step 4a copies the five skills into
+   `<vault>/.claude/skills/`, and Cowork does not read that folder. For
+   everyone on Cowork those files are inert — not broken, just not
+   loaded. They are there for the one person who opens the vault in
+   Claude Code. Nothing is missing for the readers: looking something up
+   needs the project instruction in step 3 and nothing else.
 
 ## Which one for whom
 

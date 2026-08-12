@@ -195,7 +195,19 @@ Default paths, offered — never imposed:
 |---|---|---|
 | `personal` | `~/Brain` | `claude` (Step 4) |
 | `professional` | `~/Brain-work` | `claude` — as a SECOND brain next to a private one: `workbrain` (Step 4b) |
-| `company` | `~/Brain-<company-slug>` (e.g. `~/Brain-acme`) | `teambrain` |
+| `company` | `~/Brain-<company-slug>` (e.g. `~/Brain-acme`) | `cd <vault> && teambrain` — the `cd` is not optional, see below |
+
+**`company` is the one mode where the start command is two words.** The
+other two brains are ambient: their rules live in a configuration
+directory (Step 6) and their skills in `~/.claude/skills/`, so `claude`
+from anywhere finds them. A company vault deliberately has neither — no
+global rules block (Step 6 skips it) and its skills sit inside the vault
+(Step 4a). `teambrain` on its own therefore opens a Claude Code session
+that knows nothing about the vault; it only keeps sessions and settings
+apart from the private ones. What loads the vault is being IN it. Say
+that sentence when you hand over, and put it in the handover note —
+it is the single most likely reason someone reports "the brain doesn't
+work".
 
 **First check whether the target path already exists.** If it does: STOP
 and ask — adopt it (3c), merge into it, or pick another path. Never copy
@@ -246,9 +258,10 @@ matches what they asked for, and the "existing files left untouched" list
 is empty on a fresh install. If it is not, you are not on a fresh
 install — stop and switch to 3c.
 
-The order it applies internally matters: the company overlay deliberately OVERWRITES nine core
-files — six `index.md` (root, `00-inbox/`, `30-knowledge/`,
-`40-decisions/`, `90-archive/`, `_templates/`), `Home.md`, `Deadlines.md`
+The order it applies internally matters: the company overlay deliberately OVERWRITES thirteen core
+files. **Nine of them are signposts and rules** — six `index.md` (root,
+`00-inbox/`, `30-knowledge/`, `40-decisions/`, `90-archive/`,
+`_templates/`), `Home.md`, `Deadlines.md`
 and **`CLAUDE.md`** — because they describe a vault that does not exist
 here; a signpost pointing at a missing folder makes the whole navigation
 lie. `CLAUDE.md` is the one that matters most: the core version calls
@@ -259,6 +272,16 @@ into a shared vault — the exact thing `60-roles/` forbids. The company
 `Home.md` carries the SAME four block markers, so the review treats it
 identically; the company `Deadlines.md` adds the four fields this mode
 requires (`owner`, `audience`, `confidentiality`, `review_due`).
+**The other four are note templates** —
+`_templates/knowledge-note.md`, `_templates/source-note.md`,
+`_templates/sop-note.md` and `40-decisions/_template.md`. The core
+versions produce notes this mode rejects: they carry `ownership: private`
+(not a field in the company schema, and a claim a shared vault cannot
+make) and none of the four required fields. Measured: a decision record
+copied straight from the core template puts `hygiene.py`'s
+**frontmatter gaps** at 1, and Step 9 requires 0 — while nothing in the
+kit points at the template, because both `hygiene.py` and `progress.py`
+skip `_templates/`.
 The `processes/` overlay likewise brings its own root `index.md`, so that
 `50-processes/` appears in the cold-entry signpost. On a FRESH install that overwrite is what you want. On the
 ADOPT path it is not: never run the overlay over someone's existing
@@ -323,8 +346,18 @@ The rest of adopting:
   if it says *personal knowledge vault*, `cp -Rn` kept the core file and
   the binding rules now describe projects, areas and person notes that do
   not exist here. `hygiene.py` must report `mode: company`. Copy the
-  company versions of `CLAUDE.md`, `Home.md`, `Deadlines.md` and the five
-  `index.md` over by hand, one OK per file.
+  company versions of `CLAUDE.md`, `Home.md`, `Deadlines.md` and the six
+  `index.md` (root, `00-inbox/`, `30-knowledge/`, `40-decisions/`,
+  `90-archive/`, `_templates/`) over by hand, one OK per file.
+- **`company`: the four note templates too.** `cp -Rn` keeps whatever
+  was already there, so an adopted vault ends up with the CORE
+  `_templates/knowledge-note.md`, `source-note.md`, `sop-note.md` and
+  `40-decisions/_template.md` — which carry `ownership: private` and none
+  of this mode's four required fields, so every note built from them
+  lands in `hygiene.py`'s **frontmatter gaps**. Copy the company versions
+  over these four as well. Templates are kit infrastructure, not their
+  content: if they edited one themselves, diff and port their changes
+  rather than overwriting blind.
 
 ### 3d. What must exist afterwards
 
@@ -483,6 +516,10 @@ below stands for `~/.claude-work` (professional) or
    configuration directory only keeps sessions and settings apart.)
 4. `source ~/.zshrc` (or open a new terminal), then `workbrain` starts
    Claude Code with the work brain's rules, skills and sessions only.
+   **`teambrain` does less than that** — it separates sessions and
+   settings and nothing else, because a company vault has no rules block
+   and its skills live inside the vault. The command that opens a company
+   brain is `cd <vault> && teambrain` (3a).
 
 `CLAUDE_CONFIG_DIR` is Claude Code's documented way to keep two setups
 apart: rules (`CLAUDE.md`), skills and session history live inside that
@@ -607,6 +644,17 @@ roles and knowledge):
 Then, in every mode, two more things:
 - **Update the waypoints** of the folders you filled (3e): the new notes
   become "Entry points", the `generated:` marker gets today's date.
+  **One exception, and it is a `company` one:** `50-processes/index.md`
+  says "Drafts stay off this list until they are stable and verified",
+  and everything you just wrote is `draft` by construction (5b.5). Obey
+  the folder — leave the SOP off that list. It is not orphaned: `Home.md`
+  links it in `right-now` and `70-onboarding/onboarding-path.md` links it
+  as the day-one step, and `hygiene.py` confirms it (`orphans: 0`,
+  `not reachable from a signpost: 0`). Say this out loud at handover,
+  because the SOP folder's signpost reading "empty" while the folder
+  holds a file looks like a bug and is not: the list means "released",
+  and nothing is released yet. It fills up at the first review that
+  releases something.
 - **Show it:** have them open Obsidian ("Open folder as vault" →
   `<vault>`) and click **Home**. A populated brain, minutes in, before
   any interview — that moment is the point of this whole step.
@@ -658,19 +706,35 @@ belongs into one of those four, or it is a decision (`40-decisions/`).
    `review_due:` gets today + 12 months. Three of the nine are prose, not
    frontmatter (`**What it is for:**`, `**Who may read it:**`,
    `**Who may release content:**`), so a frontmatter-only grep misses
-   them. **No check catches any of this** — the placeholder scan looks for
-   `{{…}}`, and `hygiene.py` accepts any non-empty value. Find them by
-   looking:
+   them. **The `{{…}}` placeholder scan in Step 9 catches none of this,
+   and `hygiene.py` accepts any non-empty value** — `owner: <role that
+   owns this vault>` reads as a filled field to every check in the kit
+   except one. Use that one:
 
-       grep -rn "<[A-Za-z][^>]*>" <vault> --include="*.md" \
-            --exclude-dir=_templates --exclude-dir=.tools \
-            --exclude=CLAUDE.md --exclude=_template.md
+       cd <vault> && <python> .tools/progress.py --open
 
-   Nine of its hits are the fields; three are command examples that must
-   stay as they are (`search.py <terms>`, `capture: <thought>`,
-   `{by: human:<name>, at: <date>}`). `<vault>/CLAUDE.md` is excluded on
-   purpose: its `owner: <role …>` is the schema EXAMPLE inside a fenced
-   block, not a field. Editing it there breaks the rules file.
+   It lists every file still carrying an unfilled `<…>` field, counts
+   them, and goes to zero when you have answered them. On a fresh company
+   vault it reports **10 open gaps in 4 files (9 unfilled `<…>` fields,
+   1 marked TO FILL IN)**. If your run shows more, you have notes of your
+   own with fields left open; if it shows fewer, someone answered some
+   already. Command examples in backticks (`search.py <terms>`) and the
+   note templates are deliberately not counted.
+
+   **Do not hunt these with `grep`,** even though the shape invites it.
+   A line-based grep fails twice here, and both failures were measured on
+   a real company vault:
+   - The longest field, `**What it is for:** <the one question this vault
+     has to answer well — …>`, WRAPS ACROSS TWO LINES. No line-based
+     pattern that requires a closing `>` will ever see it, and it is the
+     field that says what the whole vault is for.
+   - In `company` mode Step 4a has just put the five skills into
+     `<vault>/.claude/skills/`. Those files are full of `<…>` by design.
+     A grep over the vault returns **58 hits, 54 of them skill files you
+     must never edit** — the exact "invite someone to fix a freshly
+     installed skill" problem that Step 9's scan avoids by skipping
+     `.claude/`. If you grep anyway, exclude `--exclude-dir=.claude`, and
+     read the result knowing it still cannot see the wrapped field.
 2. If the language is not English, translation happens in TWO waves.
    Measured: a full pass is 23–25 files, which does not fit inside "the
    first win within minutes" — and most of those files the human never
@@ -820,11 +884,83 @@ If the git identity was missing in Step 2, set it **repo-local** here —
 `cd <vault> && git config user.name "…" && git config user.email "…"` —
 never `--global` without asking first.
 
-`company` only: several people share the vault through a **private Git
-remote** (each person clones and pulls) — never through a synced cloud
-folder; Git plus cloud sync on the same folder is how vaults corrupt.
-Before the first push, check the vault contains no credentials and no
-personal data that does not belong there.
+### 7a. `company` only — how the other people actually get it
+A shared vault that reaches one machine is a private vault with extra
+paperwork. This is the step that decides whether the mode works at all,
+and it is **not** something you can leave to "they'll figure it out": the
+vault ships with the question standing open as a `TO FILL IN` marker in
+`THIS-COPY.md`, and `progress.py` counts it until somebody answers it.
+
+**Do not skip to Git.** Ask first, in one message, and take the answer
+seriously:
+
+> "Two things I can't decide for you. First: how do the other <n> people
+> get this folder — is there a Git server you already use, or is a
+> folder on the office drive plus a copy on each machine closer to how
+> you work? Second: of those <n>, how many will actually open a terminal?"
+
+The second answer decides the first.
+
+- **Nearly nobody opens a terminal** (the normal case in a small
+  company). Then Git is the wrong shape for the readers, and pretending
+  otherwise is how this fails in week three. One person — the
+  maintainer — keeps the vault in Git and works in Claude Code. Everyone
+  else gets a **copy** and reads it in Claude Cowork (point them at
+  `COWORK.md`, see 7b) or in Obsidian, or simply in any text editor: it
+  is Markdown. Their contributions travel as files in
+  `00-inbox/suggestions/`, back to the maintainer by whatever channel
+  the company already uses. Write that channel into `THIS-COPY.md`'s
+  second `TO FILL IN` line, replacing it.
+- **Several people are comfortable with Git.** Then a **private remote**
+  everyone clones and pulls — never a synced cloud folder; Git plus
+  Dropbox/OneDrive on the same folder is how vaults corrupt. Even here,
+  keep **one writer**: only the maintainer commits to the shared branch,
+  everyone else's clone is read-only and contributes through
+  `00-inbox/suggestions/`. Two people editing the same note on the same
+  day is a merge conflict, it will happen in the first month, and this
+  kit teaches no conflict workflow. If the company genuinely needs
+  several writers, say plainly that they need a Git workflow (branches,
+  pull requests) that is outside this kit, and that a wiki may be the
+  better tool.
+
+Either way, before the first push or the first copy: check the vault
+contains no credentials and no personal data that does not belong there.
+
+Then close the loop in `THIS-COPY.md` — both markers, or say out loud
+which one is staying open and put it under Home's open questions:
+1. the distribution route (`TO FILL IN (IT / knowledge owner)`),
+2. where a finished suggestion goes (`TO FILL IN (knowledge owner)`).
+
+**Name the recurring chore, because nothing automates it.** Every time
+the maintainer releases something, three things have to happen: raise the
+date at the top of `THIS-COPY.md`, add a changelog line there, and push
+or re-send. The weekly review (`brain review`) empties the inbox, refreshes
+`Home.md` and commits — it does **not** date that file and does not send
+anything anywhere. Tell the maintainer to put those three on their review
+day by hand. A vault whose copies silently age is the documented way this
+mode dies, and the date is the only thing that shows it.
+
+### 7b. `company` only — hand over `COWORK.md`, don't just mention it
+The colleagues who only look things up should not need a terminal, and
+`COWORK.md` in this repo is the page written for exactly them: point
+Claude Desktop at the folder, paste one short instruction block, ask
+questions. Two things you must do rather than assume:
+- **Copy it into `<vault>/.tools/`** — `cp COWORK.md <vault>/.tools/` —
+  and send it to them. It lives in the kit repo, and you are about to
+  tell the human they may delete that repo. Do not leave the only
+  instructions for eleven of twelve people inside a folder that is about
+  to disappear. **`.tools/` and not the vault root**: measured — a
+  `COWORK.md` in the root turns three `hygiene.py` rubrics red at once
+  (`orphans`, `not reachable from a signpost`, `frontmatter gaps`),
+  because it is a kit document and has no note frontmatter, and Step 9
+  requires all of them to be `0`. `.tools/` is excluded from search,
+  from hygiene and from the placeholder check, which is exactly what a
+  kit document needs.
+- **Translate the instruction block in its step 3** into the vault
+  language before handing it over, and paste the vault's own path into
+  it. It is the block those colleagues copy verbatim into Cowork; in an
+  English original, a German-speaking bookkeeper reads the one page they
+  were asked to read in a language the rest of the vault does not use.
 
 ## Step 8 — Two ways to deepen: the harvest, then the interview
 
@@ -988,7 +1124,15 @@ naming, because they are what a hand-written check kept missing:
       ```
 - [ ] `<python> <vault>/.tools/search.py test` runs without error, and
       `ls <vault>/.tools/` shows `search.py`, `hygiene.py`,
-      `INTERVIEW.md` and `hooks/` (`company` also: `progress.py`)
+      `INTERVIEW.md` and `hooks/` (`company` also: `progress.py` and the
+      `COWORK.md` you copied in 7b)
+- [ ] `company` only: `<python> <vault>/.tools/progress.py --open` reports
+      **no unfilled `<…>` fields**. This is the check for 5e's
+      angle-bracket work, and it is the only one there is — `hygiene.py`
+      reads `owner: <role that owns this vault>` as a filled field. A
+      remaining `TO FILL IN` marker is allowed if you named it out loud
+      and put it under Home's open questions; an unfilled `<…>` field is
+      not, because nobody will ever be told about it.
 - [ ] The five brain-* skills are where THIS mode puts them:
       `ls <vault>/.claude/skills/` in `company` (Step 4a keeps company
       skills inside the vault), otherwise `ls ~/.claude/skills/` — with

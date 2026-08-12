@@ -5,21 +5,37 @@
     python3 .tools/progress.py --open     # every file still carrying gaps
     python3 .tools/progress.py --by-role  # who has to answer how much
 
-A shared vault ships as scaffolding: the structure is right, the house
-rules are missing, and every missing rule sits in the text as an
-`TO FILL IN` marker (a translated vault uses its own word, e.g. `AUSFÜLLEN`). Two numbers describe that state, and
-only one of them matters.
+A shared vault ships as scaffolding: the structure is right and the house
+rules are missing. Those missing rules come in TWO shapes, and an earlier
+version of this script only counted one of them — which made a freshly
+assembled vault report "1 open gap" when nine more were sitting in plain
+sight:
 
-  - **Gaps closed** is the easy number and the misleading one. Markers
-    disappear when someone deletes them, and a deleted marker is not an
-    answer.
+  - **`<angle-bracket>` fields** — `owner: <role that owns this vault>`,
+    `**Who may release content:** <role(s)>`. This is the common shape;
+    a fresh company vault ships nine of them across three files, and
+    `hygiene.py` cannot see them because `<role that owns this vault>` is
+    a perfectly non-empty value.
+  - **`TO FILL IN (role)` markers** (a translated vault uses its own
+    word, e.g. `AUSFÜLLEN`) — used where the gap is a whole decision
+    rather than one field, e.g. how copies are distributed.
+
+Both are counted. Command examples in backticks (`search.py <terms>`) are
+not, and neither are the template files, which keep their placeholders
+forever by design.
+
+Two numbers describe the vault's state, and only one of them matters.
+
+  - **Gaps closed** is the easy number and the misleading one. A field
+    stops being counted when someone types anything into it, and typing
+    something is not the same as it being right.
   - **Files verified** is the honest one. A file counts only with
     `status: stable` AND a `verified:` line — a human read it and said
     yes. That is the line between a draft and something a colleague may
     act on, and nothing in this repo sets it automatically.
 
-So the summary leads with the second number. A vault at "90% of markers
-gone, 0 files verified" is not 90% done; it is 0% done with tidier text.
+So the summary leads with the second number. A vault at "90% of gaps
+closed, 0 files verified" is not 90% done; it is 0% done with tidier text.
 
 Exit code is 0 unless something is actually wrong with the vault.
 """
@@ -42,11 +58,21 @@ GAP = re.compile(r"(?:TO FILL IN|AUSFÜLLEN)\s*\(([^)]{1,60})\)")
 # appears in normal sentences, and matching case-insensitively reported two
 # perfectly fine ones as defects. The shouting spelling is the marker.
 ORPHAN = re.compile(r"^\s*>.*(?<![*`])(?:TO FILL IN|AUSFÜLLEN)(?![*`])(?!\s*\()", re.M)
+# An unfilled `<…>` field, in the only two places one can legitimately sit:
+# a frontmatter line, or a bold-label prose line. Anything inside backticks
+# is a command example (`search.py <terms>`), never a gap — that distinction
+# is the whole reason this is two narrow patterns instead of one broad one.
+# FIELD deliberately does not require a closing `>`: the longest field in
+# the shipped `About this vault.md` wraps across two lines, so every
+# line-based scan that demanded `<…>` missed exactly the field that
+# describes what the vault is FOR.
+FIELD = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*:[ \t]*<[^`\n]", re.M)
+LABEL = re.compile(r"^\*\*[^*\n]+:\*\*[ \t]*<[^`\n]", re.M)
 SKIP_DIRS = {".git", ".obsidian", ".tools", ".claude", "_templates", "90-archive"}
-# Files that TALK about the markers rather than carrying one. Counting the
-# instruction sheet as an open gap would mean the vault can never reach zero.
-SKIP_FILES = {"ERSTE-ANTWORTEN.md", "FIRST-ANSWERS.md", "CLAUDE.md",
-              "FUER-VERANTWORTLICHE.md", "FOR-MAINTAINERS.md"}
+# Files that TALK about the gaps rather than carrying one, and files whose
+# placeholders are permanent by design. Counting the rules sheet or a note
+# template as an open gap would mean the vault can never reach zero.
+SKIP_FILES = {"CLAUDE.md", "_template.md"}
 
 
 def frontmatter(text):
@@ -80,9 +106,9 @@ def main():
     vault = os.path.expanduser(a.vault)
 
     notes = verified = stable = 0
-    gaps = collections.Counter()          # file -> markers
+    gaps = collections.Counter()          # file -> gaps of both shapes
     roles = collections.Counter()
-    unaddressed = 0
+    unaddressed = fields = markers = 0
 
     for rel, text in walk(vault):
         notes += 1
@@ -93,12 +119,18 @@ def main():
         verified += is_stable and is_verified
         found = GAP.findall(text)
         orphans = ORPHAN.findall(text)
-        if found or orphans:
-            gaps[rel] = len(found) + len(orphans)
+        # `<…>` fields: frontmatter lines are matched against the frontmatter
+        # block only, so a `type: knowledge | source` example further down the
+        # body cannot be mistaken for one.
+        open_fields = len(FIELD.findall(fm)) + len(LABEL.findall(text))
+        if found or orphans or open_fields:
+            gaps[rel] = len(found) + len(orphans) + open_fields
             for who in found:
                 for part in re.split(r"\s*/\s*", who.strip()):
                     roles[part.strip()] += 1
             unaddressed += len(orphans)
+            fields += open_fields
+            markers += len(found) + len(orphans)
 
     if not notes:
         print(f"No notes found under {vault}")
@@ -107,7 +139,8 @@ def main():
     total_gaps = sum(gaps.values())
     print(f"\n  {verified} of {notes} notes verified"
           f"   ({stable} stable, {verified} of those confirmed by a human)")
-    print(f"  {total_gaps} open gaps in {len(gaps)} files")
+    print(f"  {total_gaps} open gaps in {len(gaps)} files"
+          f"   ({fields} unfilled <…> fields, {markers} marked TO FILL IN)")
     if total_gaps and not verified:
         print("\n  Nothing is company truth yet. The first verified process")
         print("  note is the milestone — not the last deleted marker.")
@@ -115,12 +148,16 @@ def main():
         share = 100.0 * verified / notes
         print(f"\n  {share:.0f}% of this vault can be acted on.")
 
-    if a.by_role and roles:
+    if a.by_role and (roles or fields):
         print("\n  Gaps by who has to answer:")
         for who, n in roles.most_common():
             print(f"    {n:4}  {who}")
         if unaddressed:
             print(f"    {unaddressed:4}  (no role named — these need one)")
+        if fields:
+            # A `<…>` field never names a role; the file it sits in does.
+            # --open is the list that actually helps here.
+            print(f"    {fields:4}  (unfilled <…> fields — see --open)")
 
     if a.open and gaps:
         print("\n  Files with open gaps (most first):")
