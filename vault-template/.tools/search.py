@@ -135,7 +135,9 @@ def walk_notes(root):
         # as notes, and `.private/` would surface in every search.
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS and not d.startswith(".")]
         for f in sorted(files):
-            if not f.endswith(".md") or f.startswith("_"):
+            if not f.endswith(".md"):
+                continue
+            if f.startswith("_") and ist_vorlage(os.path.join(dirpath, f)):
                 continue
             path = os.path.join(dirpath, f)
             yield path, os.path.relpath(path, root)
@@ -169,6 +171,24 @@ def fm_value(fm, key):
     return (m.group(1).split(" #")[0].strip().strip("\"'").lower() or None)
 
 KIT_PAGE = "<!-- kit-page"
+
+def ist_vorlage(path):
+    """Eine Vorlagendatei - erkannt am Inhalt, nicht am Namen.
+
+    Bisher galt jede Datei mit fuehrendem `_` als Vorlage und wurde
+    stillschweigend uebersprungen: `_privat.md` existierte fuer die Suche
+    und fuer den Zustandsbericht schlicht nicht. Der Ordner `_templates/`
+    ist ohnehin ausgeschlossen; hier geht es um die Vorlage, die daneben
+    liegt (`40-decisions/_template.md`, uebersetzt `_vorlage.md`). Die
+    erkennt man daran, dass ihre Platzhalter noch drinstehen - das gilt in
+    jeder Sprache.
+    """
+    try:
+        with open(path, encoding="utf-8-sig", errors="ignore") as fh:
+            return "{{" in fh.read(4000)
+    except OSError:
+        return False
+
 
 def is_infra(rel, text=""):
     """Kit scaffolding: root/folder signposts and the raw/ readme.

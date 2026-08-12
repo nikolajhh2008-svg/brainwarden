@@ -234,6 +234,24 @@ def superseded_pattern(retired):
 KIT_PAGE = "<!-- kit-page"
 
 
+def ist_vorlage(path):
+    """Eine Vorlagendatei - erkannt am Inhalt, nicht am Namen.
+
+    Bisher galt jede Datei mit fuehrendem `_` als Vorlage und wurde
+    stillschweigend uebersprungen: `_privat.md` existierte fuer die Suche
+    und fuer den Zustandsbericht schlicht nicht. Der Ordner `_templates/`
+    ist ohnehin ausgeschlossen; hier geht es um die Vorlage, die daneben
+    liegt (`40-decisions/_template.md`, uebersetzt `_vorlage.md`). Die
+    erkennt man daran, dass ihre Platzhalter noch drinstehen - das gilt in
+    jeder Sprache.
+    """
+    try:
+        with open(path, encoding="utf-8-sig", errors="ignore") as fh:
+            return "{{" in fh.read(4000)
+    except OSError:
+        return False
+
+
 def is_infra(rel, text=""):
     """Kit scaffolding rather than a note.
 
@@ -351,7 +369,8 @@ class Vault:
                     self.odd_names.append(f"{rel} — {bad}")
                 for key in {norm(f), norm(os.path.splitext(f)[0])}:
                     self.by_name.setdefault(key, rel)
-                if f.endswith(".md") and not f.startswith("_"):
+                if f.endswith(".md") and not (f.startswith("_")
+                                              and ist_vorlage(os.path.join(dirpath, f))):
                     try:
                         raw = open(os.path.join(dirpath, f), "rb").read()
                     except OSError as e:
